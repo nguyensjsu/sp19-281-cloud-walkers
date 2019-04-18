@@ -1,0 +1,61 @@
+---
+swagger: "2.0"
+info:
+  description: "Post/read questions, answers, and comments"
+  version: "1.0.0"
+  title: "Cloud Walkers Message API"
+host: "34.208.28.95:3000"
+basePath: "/msgstore/v1"
+schemes:
+- "http"
+paths:
+  /spaces:
+    get:
+      summary: "Gets all spaces"
+      description: "Returns a list containing all spaces."
+      parameters: []
+      responses:
+        200:
+          description: "A list of spaces"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                _id:
+                  type: "string"
+                  format: "uuid"
+                title:
+                  type: "string"
+                createdOn:
+                  type: "string"
+                  format: "date-time"
+                description:
+                  type: "string"
+                tags:
+                  type: "array"
+                  items:
+                    $ref: "#/definitions/spaces_tags"
+definitions:
+  spaces_tags:
+    required:
+    - "tag"
+    properties:
+      tag:
+        type: "string"
+  inline_response_200:
+    properties:
+      _id:
+        type: "string"
+        format: "uuid"
+      title:
+        type: "string"
+      createdOn:
+        type: "string"
+        format: "date-time"
+      description:
+        type: "string"
+      tags:
+        type: "array"
+        items:
+          $ref: "#/definitions/spaces_tags"

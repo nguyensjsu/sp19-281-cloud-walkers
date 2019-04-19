@@ -21,7 +21,37 @@
 			"response": []
 		},
 		{
-			"name": "Get spaces",
+			"name": "Get all spaces",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get two spaces",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get one space",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -51,21 +81,6 @@
 			"response": []
 		},
 		{
-			"name": "Get answer for question",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Get one question",
 			"request": {
 				"method": "GET",
@@ -81,7 +96,37 @@
 			"response": []
 		},
 		{
-			"name": "Get one space",
+			"name": "Get two questions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get answers for question",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get two answers",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -112,6 +157,21 @@
 		},
 		{
 			"name": "Get comments for answer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get two comments",
 			"request": {
 				"method": "GET",
 				"header": [],

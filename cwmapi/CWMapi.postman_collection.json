@@ -111,6 +111,21 @@
 			"response": []
 		},
 		{
+			"name": "Post Question",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get answers for question",
 			"request": {
 				"method": "GET",
@@ -142,6 +157,21 @@
 		},
 		{
 			"name": "Get one answer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post answer",
 			"request": {
 				"method": "GET",
 				"header": [],

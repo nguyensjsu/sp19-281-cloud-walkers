@@ -56,54 +56,21 @@ var routes = Routes{
 		Ping,
 	},
 
-	Route{
-		"ObjectidsGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/objectids",
-		ObjectidsGet,
-	},
 
 	Route{
-		"ObjectidsGetSpaces",
+		"QuestionsGet",
 		strings.ToUpper("Get"),
-		"/msgstore/v1/objectids/spaces",
-		ObjectidsGet,
+		"/msgstore/v1/questions",
+		QuestionsGet,
 	},
 
-	Route{
-		"ObjectidsGetQuestions",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/objectids/questions/{spaceId}",
-		ObjectidsGet,
+	{
+		"PostQuestion",
+		strings.ToUpper("Post"),
+		"/msgstore/v1/questions",
+		PostQuestion,
 	},
 
-	Route{
-		"ObjectidsGetAnswers",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/objectids/answers/{questionId}",
-		ObjectidsGet,
-	},
-
-	Route{
-		"QuestionQuestionIdGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/question/{questionId}",
-		QuestionQuestionIdGet,
-	},
-
-	Route{
-		"QuestionsSpaceIdGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/questions/{spaceId}",
-		QuestionsSpaceIdGet,
-	},
-
-	Route{
-		"SpaceSpaceIdGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/space/{spaceId}",
-		SpaceSpaceIdGet,
-	},
 
 	Route{
 		"SpacesGet",
@@ -113,32 +80,39 @@ var routes = Routes{
 	},
 
 	{
-		"AnswerAnswerIdGet",
+		"GetAnswers",
 		strings.ToUpper("Get"),
-		"/msgstore/v1/answer/{answerId}",
-		AnswerAnswerIdGet,
+		"/msgstore/v1/answers",
+		GetAnswers,
+	},
+
+
+	{
+		"PostAnswer",
+		strings.ToUpper("Post"),
+		"/msgstore/v1/answers",
+		PostAnswer,
 	},
 
 	{
-		"AnswersQuestionIdGet",
+		"GetComments",
 		strings.ToUpper("Get"),
-		"/msgstore/v1/answers/{questionId}",
-		AnswersQuestionIdGet,
+		"/msgstore/v1/comments",
+		GetComments,
 	},
 
 	{
-		"CommentCommentIdGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/comment/{commentId}",
-		CommentCommentIdGet,
+		"PostComment",
+		strings.ToUpper("Post"),
+		"/msgstore/v1/comments",
+		PostComment,
 	},
 
 	{
-		"CommentsAnswerIdGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/comments/{answerId}",
-		CommentsAnswerIdGet,
+		"PostReply",
+		strings.ToUpper("Post"),
+		"/msgstore/v1/reply",
+		PostReply,
 	},
-
 
 }

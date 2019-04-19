@@ -11,14 +11,20 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"gopkg.in/mgo.v2/bson"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 )
 
 func SpacesGet(w http.ResponseWriter, r *http.Request) {
 	pp := parseUrl(r.URL)
-	spaces := getSpaces(depth(pp))
+	spaceFilter := queryVals(pp.queryParams, "spaceId");
+
+	fmt.Println(spaceFilter)
+
+	spaces := getSpaces(queryVals(pp.queryParams, "spaceId"), depth(pp))
 	jsonVal, err := json.MarshalIndent(spaces, "", "   ");
 
 	if(err != nil){
@@ -30,37 +36,10 @@ func SpacesGet(w http.ResponseWriter, r *http.Request) {
 }
 
 
-func SpaceSpaceIdGet(w http.ResponseWriter, r *http.Request) {
+func QuestionsGet(w http.ResponseWriter, r *http.Request) {
 	pp := parseUrl(r.URL)
-	id := getPath(pp)
-	space := getSpace(id, depth(pp))
-	jsonVal, err := json.MarshalIndent(space, "", "   ");
 
-	if(err != nil){
-		log.Fatal(err);
-	}
-	w.Header().Set("Content-Type","application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonVal);}
-
-func QuestionQuestionIdGet(w http.ResponseWriter, r *http.Request) {
-	pp := parseUrl(r.URL)
-	id := getPath(pp)
-	question := getQuestion(id, depth(pp))
-	jsonVal, err := json.MarshalIndent(question, "", "   ");
-
-	if(err != nil){
-		log.Fatal(err);
-	}
-	w.Header().Set("Content-Type","application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonVal);
-}
-
-func QuestionsSpaceIdGet(w http.ResponseWriter, r *http.Request) {
-	pp := parseUrl(r.URL)
-	id := getPath(pp)
-	questions := getQuestions(id, depth(pp))
+	questions := getQuestions(queryVals(pp.queryParams, "spaceId"), queryVals(pp.queryParams, "questionId"), depth(pp))
 	jsonVal, err := json.MarshalIndent(questions, "", "   ");
 
 	if(err != nil){
@@ -71,54 +50,12 @@ func QuestionsSpaceIdGet(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonVal);
 }
 
-func ObjectidsGet (w http.ResponseWriter, r *http.Request) {
-	pp := parseUrl(r.URL)
-	id := getPath(pp)
-
-	var ids []string
-
-	if (strings.HasPrefix(id, "spaces")) {
-		ids = append(ids, "spaces")
-	} else if(strings.HasPrefix(id, "questions")){
-		ids = append(ids, "questions")
-		ids = append(ids, strings.TrimPrefix(id, "questions/"))
-	} else if(strings.HasPrefix(id, "answers")){
-		ids = append(ids, "answers")
-		ids = append(ids, strings.TrimPrefix(id, "answers/"))
-	}else{
-		ids = append(ids, "")
-	}
-
-	jsonVal, err := json.MarshalIndent(getObjectIds(ids), "", "   ");
-	if (err != nil) {
-		log.Fatal(err);
-	}
-	w.Header().Set("Content-Type","application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonVal);
-
-}
-
-// AnswerAnswerIdGet - Gets one answer
-func AnswerAnswerIdGet(w http.ResponseWriter, r *http.Request) {
-	pp := parseUrl(r.URL)
-	id := getPath(pp)
-	answer := getAnswer(id, depth(pp))
-	jsonVal, err := json.MarshalIndent(answer, "", "   ");
-
-	if(err != nil){
-		log.Fatal(err);
-	}
-	w.Header().Set("Content-Type","application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonVal);
-}
 
 // AnswersQuestionIdGet - Gets all answers for a question
-func AnswersQuestionIdGet(w http.ResponseWriter, r *http.Request) {
+func GetAnswers(w http.ResponseWriter, r *http.Request) {
 	pp := parseUrl(r.URL)
-	id := getPath(pp)
-	answers := getAnswers(id, depth(pp))
+
+	answers := getAnswers(queryVals(pp.queryParams, "questionId") ,queryVals(pp.queryParams, "answerId"), depth(pp))
 	jsonVal, err := json.MarshalIndent(answers, "", "   ");
 
 	if(err != nil){
@@ -130,28 +67,12 @@ func AnswersQuestionIdGet(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// CommentCommentIdGet - Gets one answer
-func CommentCommentIdGet(w http.ResponseWriter, r *http.Request) {
-
-	pp := parseUrl(r.URL)
-
-	comments := getComment(pp.pathItems[len(pp.pathItems) - 1], depth(pp))
-	jsonVal, err := json.MarshalIndent(comments, "", "   ");
-
-	if(err != nil){
-		log.Fatal(err);
-	}
-	w.Header().Set("Content-Type","application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonVal);
-}
-
 // CommentsAnswerIdGet - Gets all top-level comments for an answer
-func CommentsAnswerIdGet(w http.ResponseWriter, r *http.Request) {
+func GetComments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	pp := parseUrl(r.URL)
-	id := getPath(pp)
-	comments := getCommentsForAnswer(id, depth(pp))
+
+	comments := getComments(queryVals(pp.queryParams, "answerId"), queryVals(pp.queryParams, "commentId"), depth(pp))
 	jsonVal, err := json.MarshalIndent(comments, "", "   ");
 
 	if(err != nil){
@@ -161,4 +82,235 @@ func CommentsAnswerIdGet(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 }
+
+// AddQuestion - post a question to a space
+func PostQuestion(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	pp := parseUrl(r.URL)
+
+	nSpaceId := paramCount(pp.queryParams, "spaceId")
+	if(nSpaceId != 1){
+		http.Error(w, fmt.Sprint("Only one spaceId is allowed.  %d given", nSpaceId), http.StatusBadRequest)
+		return
+	}
+
+	spaceId := pp.queryParams.Get("spaceId")
+	if(!bson.IsObjectIdHex(spaceId)){
+		http.Error(w, fmt.Sprint("Invalid spaceId:  %s", spaceId), http.StatusBadRequest)
+		return
+	}
+
+	var newQ NewQuestion
+
+	err = json.Unmarshal(b, &newQ)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	space := getSpaces([]string{spaceId}, 0)
+
+	if(space == nil){
+		if err != nil {
+			http.Error(w, fmt.Sprint("Invalid spaceId: %s", spaceId), http.StatusNotFound)
+			return
+		}
+	}
+
+	question := postQuestion(bson.ObjectIdHex(spaceId), newQ);
+
+	jsonVal, err := json.MarshalIndent(question, "", "   ");
+
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	w.Header().Set("Content-Type","application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonVal);
+}
+
+// PostAnswer - post an answer to a question
+func PostAnswer(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	pp := parseUrl(r.URL)
+
+	nQuestionIds := paramCount(pp.queryParams, "questionId")
+	if(nQuestionIds != 1){
+		http.Error(w, fmt.Sprint("Only one questionId is allowed.  %d given", nQuestionIds), http.StatusBadRequest)
+		return
+	}
+
+	questionId := pp.queryParams.Get("questionId")
+	if(!bson.IsObjectIdHex(questionId)){
+		http.Error(w, fmt.Sprint("Invalid questionId:  %s", questionId), http.StatusBadRequest)
+		return
+	}
+
+	var newA NewAnswer
+
+	err = json.Unmarshal(b, &newA)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	question := getQuestions([]string{}, []string{questionId}, 0)
+
+	if(question == nil){
+		if err != nil {
+			http.Error(w, fmt.Sprint("Invalid questionId: %s", questionId), http.StatusNotFound)
+			return
+		}
+	}
+
+	answer := postAnswer(bson.ObjectIdHex(questionId), newA);
+
+	jsonVal, err := json.MarshalIndent(answer, "", "   ");
+
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	w.Header().Set("Content-Type","application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonVal);
+
+}
+
+// PostComment - post a comment to an answer
+func PostComment(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	pp := parseUrl(r.URL)
+
+	nAnswerIds := paramCount(pp.queryParams, "answerId")
+	if(nAnswerIds != 1){
+		http.Error(w, fmt.Sprint("Only one answer is allowed.  %d given", nAnswerIds), http.StatusBadRequest)
+		return
+	}
+
+	answerId := pp.queryParams.Get("answerId")
+	if(!bson.IsObjectIdHex(answerId)){
+		http.Error(w, fmt.Sprint("Invalid answerId:  %s", answerId), http.StatusBadRequest)
+		return
+	}
+
+	var newC NewComment
+
+	err = json.Unmarshal(b, &newC)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	answer := getAnswers([]string{}, []string{answerId}, 0)
+
+	if(answer == nil){
+		if err != nil {
+			http.Error(w, fmt.Sprint("Invalid answerId: %s", answerId), http.StatusNotFound)
+			return
+		}
+	}
+
+	comment := postComment(bson.ObjectIdHex(answerId), newC);
+
+	jsonVal, err := json.MarshalIndent(comment, "", "   ");
+
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	w.Header().Set("Content-Type","application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonVal);
+
+}
+
+// PostComment - post a comment to an answer
+func PostReply(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	pp := parseUrl(r.URL)
+
+	nCommentIds := paramCount(pp.queryParams, "commentId")
+	if(nCommentIds != 1){
+		http.Error(w, fmt.Sprint("Only one comment is allowed.  %d given", nCommentIds), http.StatusBadRequest)
+		return
+	}
+
+	commentId := pp.queryParams.Get("commentId")
+	if(!bson.IsObjectIdHex(commentId)){
+		http.Error(w, fmt.Sprint("Invalid commentId:  %s", commentId), http.StatusBadRequest)
+		return
+	}
+
+	var newC NewComment
+
+	err = json.Unmarshal(b, &newC)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	comments := getComments([]string{}, []string{commentId}, 0)
+
+	if(comments == nil){
+		if err != nil {
+			http.Error(w, fmt.Sprint("Invalid commentId: %s", commentId), http.StatusNotFound)
+			return
+		}
+	}
+
+	comment := postReply(comments[0].AnswerId, bson.ObjectIdHex(commentId), newC);
+
+	jsonVal, err := json.MarshalIndent(comment, "", "   ");
+
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	w.Header().Set("Content-Type","application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonVal);
+
+}
+
+
+
+
 

@@ -51,92 +51,73 @@ func ping(){
 	}
 }
 
-func getObjectIds(ids []string) ([]bson.ObjectId){
+func getOr(filters []string, fieldType string)(bson.M){
+	var query bson.M;
 
-	var ret []bson.ObjectId;
+	switch len(filters) {
 
-	switch ids[0] {
-	case "":
-		for i := 0; i < 10; i++ {
-			ret = append(ret, bson.NewObjectId())
+	case 0:
+
+	case 1:
+		query = bson.M{fieldType: bson.ObjectIdHex(filters[0])}
+	default:
+		orQuery := []bson.M{}
+
+		for _, spaceId := range filters {
+			if (bson.IsObjectIdHex(spaceId)) {
+				orQuery = append(orQuery, bson.M{fieldType: bson.ObjectIdHex(spaceId)})
+			}
 		}
-	case "spaces":
-		spaces := getSpaces(0);
-		for i := 1; i < len(spaces); i++{
-			ret = append(ret, spaces[i].Id)
-		}
-	case "questions":
-		questions := getQuestions(ids[1], 0)
-		for i := 0; i < len(questions); i++ {
-			ret = append(ret, questions[i].Id)
-		}
-	case "answers":
-		answers := getAnswers(ids[1], 0)
-		for i := 0; i < len(answers); i++ {
-			ret = append(ret, answers[i].Id)
-		}
+
+		query = bson.M{"$or": orQuery}
 	}
 
-	return ret;
+	return query
 }
 
-func getSpaces (nestingLevel int) ([] Space){
+func getAndFilters(leftSide bson.M, rightSide bson.M)(bson.M){
+	if(leftSide == nil){
+		return rightSide
+	} else if (rightSide == nil){
+		return leftSide
+	}
+
+	return bson.M{"$and" : []bson.M{leftSide, rightSide}}
+}
+
+func getSpaces (spaceFilter [] string, nestingLevel int) ([] Space){
 	session, err := mgo.Dial(mongodb_server)
 	if err != nil {
 		panic(err)
 	}
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_spaces)
+
+	var query bson.M = getOr(spaceFilter, "_id");
+
 	var spaceRecs []Space
-	err = c.Find(nil).All(&spaceRecs)
+	err = c.Find(query).All(&spaceRecs)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if(nestingLevel > 0){
 		for i := 0; i < len(spaceRecs); i++ {
-			spaceRecs[i].Questions = getQuestions(spaceRecs[i].Id.Hex(), nestingLevel - 1)
+			spaceRecs[i].Questions = getQuestions([]string{spaceRecs[i].Id.Hex()}, []string{}, nestingLevel - 1)
 		}
 	}
 
 	return spaceRecs;
 }
 
-func getSpace (spaceId string, nestingLevel int) (Space){
+func getQuestions(spaceFilter [] string, questionFilter [] string, nestingLevel int) ([] Question){
 	session, err := mgo.Dial(mongodb_server)
 	if err != nil {
 		panic(err)
 	}
-	query := bson.M{"_id": bson.ObjectIdHex(spaceId)}
-	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(mongodb_database).C(collection_spaces)
-	fmt.Println(query)
-	var spaceRec Space
-	err = c.Find(query).One(&spaceRec)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if(nestingLevel > 0){
-		spaceRec.Questions = getQuestions(spaceId, nestingLevel -1)
-	}
-
-	return spaceRec;
-}
-
-func getQuestions(spaceId string, nestingLevel int) ([] Question){
-	session, err := mgo.Dial(mongodb_server)
-	if err != nil {
-		panic(err)
-	}
-	var query bson.M;
+	var query bson.M = getAndFilters(getOr(spaceFilter, "spaceId"), getOr(questionFilter, "_id"));
 	var questionRecs []Question
 
-	if(bson.IsObjectIdHex(spaceId)) {
-		query = bson.M{"spaceId": bson.ObjectIdHex(spaceId)}
-	} else {
-		return questionRecs
-	}
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_questions)
@@ -149,7 +130,7 @@ func getQuestions(spaceId string, nestingLevel int) ([] Question){
 
 	if(nestingLevel > 0){
 		for i := 0; i < len(questionRecs); i++ {
-			questionRecs[i].Answers = getAnswers(questionRecs[i].Id.Hex(), nestingLevel - 1)
+			questionRecs[i].Answers = getAnswers([]string{questionRecs[i].Id.Hex()}, []string{}, nestingLevel - 1)
 		}
 	}
 
@@ -157,40 +138,36 @@ func getQuestions(spaceId string, nestingLevel int) ([] Question){
 
 }
 
-func getQuestion(questionId string, nestingLevel int) (Question){
+func postQuestion(spaceId bson.ObjectId, newQ NewQuestion)(*Question){
+
 	session, err := mgo.Dial(mongodb_server)
 	if err != nil {
 		panic(err)
 	}
-	query := bson.M{"_id": bson.ObjectIdHex(questionId)}
+
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_questions)
-	var questionRec Question
-	fmt.Println(query)
-	err = c.Find(query).One(&questionRec)
+
+	qid := bson.NewObjectId()
+	date := time.Now()
+
+	var question = Question{
+		Id: qid, SpaceId: spaceId, QuestionText: newQ.QuestionText, CreatedOn: date, CreatedBy: newQ.UserId}
+
+	err = c.Insert(question)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
-
-	if(nestingLevel > 0){
-		questionRec.Answers = getAnswers(questionId, nestingLevel - 1)
-	}
-
-	return questionRec;
+	return &question
 }
 
-func getAnswers(questionId string, nestingLevel int) ([] Answer){
+func getAnswers(questionFilter [] string, answerFilter [] string, nestingLevel int) ([] Answer){
 	session, err := mgo.Dial(mongodb_server)
 	if err != nil {
 		panic(err)
 	}
-	var query bson.M;
+	var query bson.M = getAndFilters(getOr(questionFilter, "questionId"), getOr(answerFilter, "_id"));
 	var answerRecs []Answer
-
-	// should return error if not valid id
-	if(bson.IsObjectIdHex(questionId)) {
-		query = bson.M{"questionId": bson.ObjectIdHex(questionId)}
-	}
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_answers)
@@ -203,7 +180,7 @@ func getAnswers(questionId string, nestingLevel int) ([] Answer){
 
 	if(nestingLevel > 0){
 		for i := 0; i < len(answerRecs); i++ {
-			answerRecs[i].Comments = getCommentsForAnswer(answerRecs[i].Id.Hex(), nestingLevel - 1)
+			answerRecs[i].Comments = getComments([]string{answerRecs[i].Id.Hex()}, []string{}, nestingLevel - 1)
 		}
 	}
 
@@ -211,57 +188,47 @@ func getAnswers(questionId string, nestingLevel int) ([] Answer){
 
 }
 
-func getAnswer(answerId string, nestingLevel int) (Answer){
+
+func postAnswer(questionId bson.ObjectId, newA NewAnswer)(*Answer){
+
 	session, err := mgo.Dial(mongodb_server)
 	if err != nil {
 		panic(err)
 	}
-	var query bson.M
-	var answerRec Answer
-
-	// should return error if not valid id
-	if(bson.IsObjectIdHex(answerId)) {
-		query = bson.M{"_id": bson.ObjectIdHex(answerId)}
-	} else{
-		return answerRec
-	}
-
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_answers)
 
-	fmt.Println(query)
-	err = c.Find(query).One(&answerRec)
-	if err != nil {
-		log.Fatal(err)
-	}
+	aid := bson.NewObjectId()
+	date := time.Now()
 
-	if(nestingLevel > 0){
-		answerRec.Comments = getCommentsForAnswer(answerId, nestingLevel - 1)
+	var answer = Answer{
+		Id: aid, QuestionId: questionId, AnswerText: newA.AnswerText, CreatedOn: date, CreatedBy: newA.UserId}
+
+	err = c.Insert(answer)
+	if err != nil {
+		panic(err)
 	}
-	return answerRec;
+	return &answer
 }
 
 
-func getCommentsForAnswer(answerId string, nestingLevel int) ([] Comment){
+
+func getComments(answerFilter [] string, commentFilter [] string, nestingLevel int) ([] Comment){
 	session, err := mgo.Dial(mongodb_server)
 	if err != nil {
 		panic(err)
 	}
-	var query bson.M;
-	var commentRecs []Comment
 
-	// should return error if not valid id
-	if(bson.IsObjectIdHex(answerId)) {
+	var answerQuery bson.M
 
-		query = bson.M{
-						"$and": []bson.M{ // you can try this in []interface
-						bson.M{"answerId": bson.ObjectIdHex(answerId)},
-						bson.M{"parentCommentId": nil}},
-						}
-	}else {
-		return commentRecs
+	if(len(answerFilter) > 0){
+		answerQuery = getAndFilters(getOr(answerFilter, "answerId"), bson.M{"parentCommentId": nil})
 	}
+
+
+	var query bson.M = getAndFilters(answerQuery, getOr(commentFilter, "_id"));
+	var commentRecs []Comment
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_comments)
@@ -309,39 +276,49 @@ func getCommentChildren(commentId bson.ObjectId, nestingLevel int ) ([]Comment){
 	return commentRecs
 }
 
-func getComment(commentId string, nestingLevel int) (Comment){
+func postComment(answerId bson.ObjectId, newC NewComment)(*Comment){
+
 	session, err := mgo.Dial(mongodb_server)
 	if err != nil {
 		panic(err)
-	}
-	var query bson.M
-	var commentRec Comment
-
-	// should return error if not valid id
-	if(bson.IsObjectIdHex(commentId)) {
-		query = bson.M{"_id": bson.ObjectIdHex(commentId)}
-	} else{
-		return  commentRec
 	}
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_comments)
 
-	fmt.Println(query)
-	err = c.Find(query).One(&commentRec)
+	aid := bson.NewObjectId()
+	date := time.Now()
+
+	var comment = Comment{
+		Id: aid, AnswerId: answerId, CommentText: newC.CommentText, CreatedOn: date, CreatedBy: newC.UserId}
+
+	err = c.Insert(comment)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
-
-	if(nestingLevel > 0){
-		commentRec.Replies = getCommentChildren(commentRec.Id, nestingLevel - 1)
-
-	}
-
-	return commentRec;
+	return &comment
 }
 
 
+func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewComment)(*Comment){
 
+	session, err := mgo.Dial(mongodb_server)
+	if err != nil {
+		panic(err)
+	}
 
+	session.SetMode(mgo.Monotonic, true)
+	c := session.DB(mongodb_database).C(collection_comments)
 
+	aid := bson.NewObjectId()
+	date := time.Now()
+
+	var comment = Comment{
+		Id: aid, AnswerId: answerId, ParentCommentId: parentCommentId, CommentText: newC.CommentText, CreatedOn: date, CreatedBy: newC.UserId}
+
+	err = c.Insert(comment)
+	if err != nil {
+		panic(err)
+	}
+	return &comment
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	//"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -8,16 +9,25 @@ import (
 
 type parseInfo struct{
 	pathItems []string
-	queryParams map[string] string
+	queryParams url.Values
 }
 
 func toInt(s string) (int){
 	i, _ := strconv.Atoi(s)
+
+	if(i < 0){
+		i = 100
+	}
 	return i
 }
 
 func depth(pp parseInfo)(int){
-	return toInt(pp.queryParams["depth"])
+	d, ex := pp.queryParams["depth"]
+
+	if(ex == true){
+		return toInt(d[0]);
+	}
+	return 0;
 }
 
 func parseUrl(url *url.URL) (parseInfo){
@@ -28,16 +38,7 @@ func parseUrl(url *url.URL) (parseInfo){
 		ret.pathItems = strings.Split(url.Path, "/")
 	}
 
-	ret.queryParams = make(map[string] string)
-
-	if(url.RawQuery != "") {
-		rq := strings.Split(url.RawQuery, "&>")
-
-		for i := 0; i < len(rq); i++ {
-			cq := strings.Split(rq[i], "=")
-			ret.queryParams[cq[0]] = cq[1]
-		}
-	}
+	ret.queryParams =  url.Query()
 
 	return ret
 }
@@ -48,4 +49,12 @@ func getPath(pp parseInfo)(string){
 	}
 
 	return ""
+}
+
+func queryVals(values url.Values , key string)[]string{
+	return values[key]
+}
+
+func paramCount(values url.Values, id string)(int){
+	return len(values[id])
 }

@@ -119,36 +119,40 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 			fmt.Println("findquery panic")
 		}
 
-		fmt.Println("space result", spaceResult)
-
-	    //var title string = spaceResult["title"].(string)
-	    fmt.Println(spaceResult["questions"])
-	    var selectQuestions []map = spaceResult["questions"]
-	   
+	    var selectQuestions []interface{}
+	    selectQuestions = spaceResult["questions"].([]interface{})
 	    var qsCount int = len(selectQuestions)
+	    fmt.Println(qsCount)
+	    // add question to frontend
 
-	    fmt.Println("question count", qsCount)
+	    var result bson.M
+	    result = selectQuestions[0].(bson.M)
+	  
+	    // convert interface to array
+	    fmt.Println("result", result["_id"])
 
-	    // generate frontend json
+	    // // generate frontend json
 	    var response Home
 	    //var resSpace []SpaceAPI
 	    resSpace := make([]SpaceAPI, 1)
 	    resQuestions := make([]QuestionAPI, qsCount)
 	    // add content to resSpace
 	    resSpace[0].Id = spaceResult["_id"].(bson.ObjectId)
-	    resSpace[0].Title = title
+	    resSpace[0].Title = spaceResult["title"].(string)
 
 	    // add content to resQuestions
 	    for i := 0; i < qsCount; i++ {
-	    	resQuestions[i].Id = selectQuestions[i]["_id"]
+	    	var r bson.M
+	    	r = selectQuestions[i].(bson.M)
+	    	resQuestions[i].Id = r["_id"].(bson.ObjectId)
 	    }
 
 	    response.SpaceAPIs = resSpace
 	    response.QuestionAPIs = resQuestions
 
 				
-		//formatter.JSON(w, http.StatusOK, response)
-		formatter.JSON(w, http.StatusOK, spaceResult)
+		formatter.JSON(w, http.StatusOK, response)
+		//formatter.JSON(w, http.StatusOK, spaceResult)
 	}
 }
 

@@ -66,6 +66,47 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Question'
+                  
+
+    post:
+      summary: post a question to a space
+      parameters:
+      - name: spaceId
+        in: query
+        description: The space to post the question into
+        required: true
+        schema:
+          type: string
+
+      description: Adds a new question to a space.
+      operationId: postQuestion
+      requestBody:
+        description: Question to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewQuestion'
+      responses:
+        200:
+          description: question posted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: spaceId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+
 
   /answers:
     get:
@@ -99,6 +140,47 @@ paths:
                 items:
                   $ref: '#/components/schemas/Answer'
 
+    post:
+      summary: post an answer to a question
+      parameters:
+      - name: questionid
+        in: query
+        description: The question to be answered
+        required: true
+        schema:
+          type: string
+
+      description: Answers a question.
+      operationId: postAnswer
+      requestBody:
+        description: Answer to question
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewAnswer'
+      responses:
+        200:
+          description: answer posted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Answer'
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: questionId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+
+
+
   /comments:
     get:
       summary: Gets all top-level comments for an answer
@@ -130,7 +212,86 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
- 
+                  
+    post:
+      summary: post a comment to an answer
+      parameters:
+      - name: answerId
+        in: query
+        description: The _id of answer for comment
+        required: false
+        schema:
+          type: string
+
+      description: Comment for an answer.
+      operationId: postComment
+      requestBody:
+        description: Comment 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewComment'
+      responses:
+        200:
+          description: comment posted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: answerId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                
+  /reply:
+    post:
+      summary: post a reply to a comment
+      parameters:
+      - name: commentId
+        in: query
+        description: The _id of coment for reply
+        required: false
+        schema:
+          type: string
+
+      description: Reply for a comment.
+      operationId: postReply
+      requestBody:
+        description: reply 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewComment'
+      responses:
+        200:
+          description: reply posted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: commentId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+
 components:
   schemas:
     Space:
@@ -172,7 +333,7 @@ components:
     Answer:
       required:
       - _id
-      - body
+      - answerText
       - createdBy
       - createdOn
       type: object
@@ -181,7 +342,7 @@ components:
           type: string
         spaceId:
           type: string
-        body:
+        answerText:
           type: string
         createdOn:
           type: string
@@ -197,11 +358,21 @@ components:
             properties:
               replies:
                 $ref: '#/components/schemas/Comment'
+    NewAnswer:
+      required:
+      - userId
+      - body
+      properties:
+        userId:
+          type: string
+        answerText:
+          type: string
+                
     Comment:
       required:
       - _id
       - answerId
-      - body
+      - commentText
       - createdBy
       - createdOn
       type: object
@@ -214,7 +385,7 @@ components:
           type: string
           description: The parent comment is for comment trees.  For first-gen comment,
             the parent is answer, and there is no parent comment.
-        body:
+        commentText:
           type: string
         createdOn:
           type: string
@@ -231,10 +402,20 @@ components:
               replies:
                 $ref: '#/components/schemas/Comment'
 
+    NewComment:
+      required:
+      - userId
+      - questionText
+      properties:
+        userId:
+          type: string
+        commentTex:
+          type: string
+          
     Question:
       required:
       - _id
-      - body
+      - questionText
       - createdBy
       - createdOn
       - spaceId
@@ -244,7 +425,7 @@ components:
           type: string
         spaceId:
           type: string
-        body:
+        questionText:
           type: string
         createdOn:
           type: string
@@ -260,3 +441,20 @@ components:
             properties:
               answers:
                 $ref: '#/components/schemas/Answer'
+    NewQuestion:
+      required:
+      - userId
+      - questionText
+      properties:
+        userId:
+          type: string
+        questionText:
+          type: string
+                
+    ObjectId:
+      required:
+      - _id
+      type: object
+      properties:
+        _id:
+          type: string

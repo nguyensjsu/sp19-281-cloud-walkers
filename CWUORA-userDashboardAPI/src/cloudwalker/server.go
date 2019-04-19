@@ -41,7 +41,7 @@ func NewServer() *negroni.Negroni {
 
 // API Routes
 func initRoutes(mx *mux.Router, formatter *render.Render) {
-	mx.HandleFunc("/home/{userid}", homeHandler(formatter)).Methods("GET")
+	mx.HandleFunc("/home/{spaceid}", homeHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/followspace/{userid}", followedSpaceHandler(formatter)).Methods("POST")
 	mx.HandleFunc("/mongoTest/{spaceid}", mongoTestHandler(formatter)).Methods("GET")
 
@@ -50,8 +50,8 @@ func initRoutes(mx *mux.Router, formatter *render.Render) {
 // API Home Handler
 func homeHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		//params := mux.Vars(req)
-		//var uuid string = params["userid"]
+		params := mux.Vars(req)
+		var spaceid string = params["spaceid"]
 
 		// 1. make request to get space content, send json back
 		//s := "34.217.213.85:3000/msgstore/v1/spaces?depth=0"
@@ -107,13 +107,48 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
         // insert space 
         c := session.DB(mongodb_database).C("space")
         for i := 0; i < len(spaces); i++ {
-
          	c.Insert(spaces[i])
         }
-
         // find id from mongodb, using space id to find question id
+        //convert space id to mongo id
+        bsonObjectID := bson.ObjectIdHex(spaceid)
+
+        var spaceResult bson.M
+		err = c.Find(bson.M{"_id": bsonObjectID}).One(&spaceResult)
+		if err != nil {
+			fmt.Println("findquery panic")
+		}
+
+		fmt.Println("space result", spaceResult)
+
+	    //var title string = spaceResult["title"].(string)
+	    fmt.Println(spaceResult["questions"])
+	    var selectQuestions []map = spaceResult["questions"]
+	   
+	    var qsCount int = len(selectQuestions)
+
+	    fmt.Println("question count", qsCount)
+
+	    // generate frontend json
+	    var response Home
+	    //var resSpace []SpaceAPI
+	    resSpace := make([]SpaceAPI, 1)
+	    resQuestions := make([]QuestionAPI, qsCount)
+	    // add content to resSpace
+	    resSpace[0].Id = spaceResult["_id"].(bson.ObjectId)
+	    resSpace[0].Title = title
+
+	    // add content to resQuestions
+	    for i := 0; i < qsCount; i++ {
+	    	resQuestions[i].Id = selectQuestions[i]["_id"]
+	    }
+
+	    response.SpaceAPIs = resSpace
+	    response.QuestionAPIs = resQuestions
+
 				
-		formatter.JSON(w, http.StatusOK, spaces)
+		//formatter.JSON(w, http.StatusOK, response)
+		formatter.JSON(w, http.StatusOK, spaceResult)
 	}
 }
 

@@ -41,7 +41,7 @@ func NewServer() *negroni.Negroni {
 
 // API Routes
 func initRoutes(mx *mux.Router, formatter *render.Render) {
-	mx.HandleFunc("/home/{spaceid}", homeHandler(formatter)).Methods("GET")
+	mx.HandleFunc("/home", homeHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/followspace/{userid}", followedSpaceHandler(formatter)).Methods("POST")
 	mx.HandleFunc("/mongoTest/{spaceid}", mongoTestHandler(formatter)).Methods("GET")
 
@@ -50,13 +50,10 @@ func initRoutes(mx *mux.Router, formatter *render.Render) {
 // API Home Handler
 func homeHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		params := mux.Vars(req)
-		var spaceid string = params["spaceid"]
-
-		// 1. make request to get space content, send json back
-		//s := "34.217.213.85:3000/msgstore/v1/spaces?depth=0"
-
-		resp, err := http.Get("http://34.217.213.85:3000/msgstore/v1/spaces?depth=1")
+		//params := mux.Vars(req)
+		var spaceid string = "5cb3c8ab78163fa3c9726fb3"
+		/* store all info, fetch data from david and store in mongodb */
+		resp, err := http.Get("http://34.217.213.85:3000/msgstore/v1/spaces?depth=2")
 		if err != nil {
 			log.Fatalln(err)
 		}

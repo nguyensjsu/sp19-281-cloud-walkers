@@ -7,16 +7,16 @@ import (
 
 type userProfile struct {
 	userId          	string    `json:"userId" bson:"userId"`	
-	followedspaces		[]Space    `json:"followedspaces" bson:"followedspaces"`
-	followedquestions   []Question `json:"followedquestions" bson:"followedquestions"`
+	uspaces		        []SpaceAPI  `json:"followedspaces" bson:"followedspaces"`
+	uquestions          []QuestionAPI `json:"followedquestions" bson:"followedquestions"`
 }
 
-type Space struct {
-	SpaceId         string     `json:"spaceId"` 
-	Title			string	`json:"title"`
-	CreatedOn      time.Time `json:"createdOn"`
-	Description		string  `json:"description"`
-}
+// type Space struct {
+// 	SpaceId         string     `json:"spaceId"` 
+// 	Title			string	`json:"title"`
+// 	CreatedOn      time.Time `json:"createdOn"`
+// 	Description		string  `json:"description"`
+// }
 
 type Question struct {
 	QuestionId      string     `json:"questionId"` 
@@ -77,7 +77,7 @@ type SpaceTags struct {
 type QuestionContentAPI struct {
     Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
 	SpaceId 	bson.ObjectId 	`json:"spaceId" bson:"spaceId"`
-    Body 		string 			`json:"body"`
+    Body 		string 			`json:"questionText"`
     CreatedOn 	time.Time 		`json:"createdOn"`
     //CreatedBy 	bson.ObjectId 	`json:"createdBy" bson:"createdBy"`
     CreatedBy 	string	`json:"createdBy" bson:"createdBy"`
@@ -92,6 +92,7 @@ type MongoInfoSpace struct {
 
 type SpaceQuestions struct {
 	Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
+	Body 		string			`json:"questionText"`
 }
 
 var Spaces [] Space

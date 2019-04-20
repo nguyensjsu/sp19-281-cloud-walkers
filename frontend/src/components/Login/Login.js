@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import '../../App.css';
 import axios from 'axios';
-//import cookie from 'react-cookies';
+import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import { userActions } from '../../_actions';
 import { connect } from 'react-redux';
 import backend_host from '../../config';
-import Cookies from 'universal-cookie';
+//import Cookies from 'universal-cookie';
 
 //Define a Login Component
 class Login extends Component {
@@ -61,10 +61,10 @@ class Login extends Component {
                     //console.log("Status Code : ", response.status);
                     //console.log("role:", response.data);
                     if (response.status === 200 && response.data.auth === true) {
-						const cookies = new Cookies();
-						cookies.set('JWT', response.data.token, { path: '/' });
+//						const cookies = new Cookies();
+						cookie.save('JWT', response.data.token, { path: '/' });
 						//console.log(cookies.get('JWT'));
-                        this.props.dispatch(userActions.login_success(email, response.data.role, response.data.user_id));
+                        this.props.dispatch(userActions.login_success(email, response.data.user_id));
                     } /*else {
                         this.props.dispatch(userActions.login_failure(email, "HTTP CODE != 200"));
                     }*/

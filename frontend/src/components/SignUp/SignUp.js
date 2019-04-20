@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import '../../App.css';
 import axios from 'axios';
-//import cookie from 'react-cookies';
+import cookie from 'react-cookies';
 import { Redirect } from 'react-router';
 import { userActions } from '../../_actions';
 import { connect } from 'react-redux';
 import backend_host from '../../config';
-import Cookies from 'universal-cookie';
+//import Cookies from 'universal-cookie';
 
 //Define a Login Component
 class SignUp extends Component {
@@ -18,7 +18,7 @@ class SignUp extends Component {
         this.state = {
             first_name: "",
             last_name: "",
-            role: "",
+//            role: "",
             email: "",
             password: "",
             submitted: false,
@@ -39,7 +39,7 @@ class SignUp extends Component {
         const data = {
             first_name: this.state.first_name,
             last_name: this.state.last_name,
-            role: this.state.role,
+//            role: this.state.role,
             pswd: this.state.password,
             email: this.state.email
         }
@@ -50,7 +50,7 @@ class SignUp extends Component {
         this.props.dispatch(userActions.signup_request(email));
         this.setState({ submitted: true });
 
-        if (data.first_name && data.last_name && data.role && data.pswd && data.email) {
+        if (data.first_name && data.last_name && data.pswd && data.email) {
 
         //set the with credentials to true
         axios.defaults.withCredentials = true;
@@ -61,8 +61,8 @@ class SignUp extends Component {
                 if (response.status === 200 && response.data.auth === true) {
                     //cookie.save('userId', response.data.user_id, { path: '/', expires: "", maxAge: 1000, httpOnly: false });
                     //cookie.save('role', response.data.role, { path: '/', expires: "", maxAge: 1000, httpOnly: false });
-                    const cookies = new Cookies();
-                    cookies.set('JWT', response.data.token, { path: '/' });
+ //                   const cookies = new Cookies();
+                    cookie.save('JWT', response.data.token, { path: '/' });
                     this.props.dispatch(userActions.login_success(email, response.data.role, response.data.user_id));
                 } else {
                     this.props.dispatch(userActions.signup_failure(email, "HTTP CODE != 200"));
@@ -97,19 +97,6 @@ class SignUp extends Component {
                             <div className="panel">
                                 <h2>Sign Up</h2>
                                 <p>Please enter your name, email and password</p>
-                            </div>
-                            <div className={"form-group" + (submitted && !role ? 'has-error' : '')}>
-                                <label className="radio-inline">
-                                    <input onChange={this.handleChange}
-                                        type="radio" name="role" value="student"></input>
-                                    Student</label>
-                                <label className="radio-inline">
-                                    <input onChange={this.handleChange}
-                                        type="radio" name="role" value="faculty"></input>
-                                    Faculty</label>
-                                {submitted && !role &&
-                                    <div className="help-block">User Role is required</div>
-                                }
                             </div>
                             <div className={"form-group" + (submitted && !first_name ? 'has-error' : '')}>
                                 <input onChange={this.handleChange} type="text" class="form-control" name="first_name" placeholder="First Name" required />

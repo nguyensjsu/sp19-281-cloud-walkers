@@ -5,11 +5,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type userProfile struct {
-	userId          	string    `json:"userId" bson:"userId"`	
-	uspaces		        []SpaceAPI  `json:"followedspaces" bson:"followedspaces"`
-	uquestions          []QuestionAPI `json:"followedquestions" bson:"followedquestions"`
-}
+
 
 // type Space struct {
 // 	SpaceId         string     `json:"spaceId"` 
@@ -32,9 +28,15 @@ type Answer struct {
 	Content			string   `json:"content"` 
 }
 
+/******************Frontend Part**************************/
+//home page response type
+type Home struct {
+	SpaceAPIs		[]SpaceAPI `json:"followed_topics"`
+	QuestionAPIs	[]QuestionAPI `json:"my_questions"`
+}
+
 type SpaceAPI struct {
 	Id 				bson.ObjectId 	`json:"_id" bson:"_id"`
-	//SpaceId         string	`json:"id"` 
 	Title			string	`json:"name"`
 }
 
@@ -44,23 +46,17 @@ type QuestionAPI struct {
 	CreatedOn		time.Time  `json:"createdOn"`
 }
 
-//home page response type
-type Home struct {
-	SpaceAPIs		[]SpaceAPI `json:"followed_topics"`
-	QuestionAPIs	[]QuestionAPI `json:"my_questions"`
-}
-
 // get space content from space server
+// type SpaceContentAPI struct {
+// 	Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
+//     Title 		string 			`json:"title"`
+//     CreatedOn 	time.Time 		`json:"createdOn"`
+//     Description string 			`json:"description"`
+//     Tags 		[]SpaceTags 	`json:"tags"`
+// }
+
+/******************David Part**************************/
 type SpaceContentAPI struct {
-	Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
-    Title 		string 			`json:"title"`
-    CreatedOn 	time.Time 		`json:"createdOn"`
-    Description string 			`json:"description"`
-    Tags 		[]SpaceTags 	`json:"tags"`
-    //Questions	[]QuestionContentAPI  `json:"questions"`
-}
-// get Depth1 content from questions server
-type Depth1 struct {
 	Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
     Title 		string 			`json:"title"`
     CreatedOn 	time.Time 		`json:"createdOn"`
@@ -73,27 +69,49 @@ type SpaceTags struct {
 	Tag 		string			`json:"tag"`
 }
 
-// get question content from question server
+// get question content from david
 type QuestionContentAPI struct {
     Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
 	SpaceId 	bson.ObjectId 	`json:"spaceId" bson:"spaceId"`
     Body 		string 			`json:"questionText"`
     CreatedOn 	time.Time 		`json:"createdOn"`
-    //CreatedBy 	bson.ObjectId 	`json:"createdBy" bson:"createdBy"`
+    CreatedBy 	string	`json:"createdBy" bson:"createdBy"`
+    Answers	    []AnswerContentAPI  `json:"answers"`
+}
+
+// get answer content from david
+type AnswerContentAPI struct {
+    Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
+	QuestionId 	bson.ObjectId 	`json:"questionId" bson:"questionId"`
+    Body 		string 			`json:"answerText"`
+    CreatedOn 	time.Time 		`json:"createdOn"`
     CreatedBy 	string	`json:"createdBy" bson:"createdBy"`
 }
+/****************** Mongo Part**************************/
 
-// insert data into mongo struct
-type MongoInfoSpace struct {
+// db.space
+type MSpace struct {
 	Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
 	Title 		string 			`json:"title"`
-	Questions 	[]SpaceQuestions 	`json:"questions"`
+	Questions 	[]MQuestion 	`json:"questions"`
 }
-
-type SpaceQuestions struct {
+// db.question
+type MQuestion struct {
 	Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
 	Body 		string			`json:"questionText"`
+	CreatedOn 	time.Time 		`json:"createdOn"`
+	Answers     []MAnswer		`json:"answers"`
 }
-
-var Spaces [] Space
+// db.answer
+type MAnswer struct {
+	Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
+	Body 		string			`json:"answerText"`
+	CreatedOn 	time.Time 		`json:"createdOn"`
+}
+// db.user
+type MUserProfile struct {
+	userId          	string    `json:"userId" bson:"userId"`	
+	uspaces		        []SpaceAPI  `json:"followedspaces" bson:"followedspaces"`
+	uquestions          []QuestionAPI `json:"followedquestions" bson:"followedquestions"`
+}
 

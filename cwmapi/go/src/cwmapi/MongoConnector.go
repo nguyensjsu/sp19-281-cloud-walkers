@@ -9,7 +9,7 @@ import (
 
 )
 
-var mongodb_server = "localhost"
+var mongodb_server = "54.148.30.107"
 var mongodb_database = "cmpe281"
 var collection_spaces = "spaces"
 var collection_questions = "questions"
@@ -32,24 +32,19 @@ func DbInit(local bool){
 	}
 }
 
-func dialInfo()(*mgo.DialInfo){
-	return &mgo.DialInfo{
-		Addrs:    []string{mongodb_server},
-		Timeout:  30 * time.Second,
-		Database: mongodb_database,
-		Username: db_user,
-		Password: db_pwd,
-	}
+var dialInfo = &mgo.DialInfo{
+	Addrs:    []string{server1, server2, server3},
+	Timeout:  30 * time.Second,
+	Database: "admin",
+	Username: db_user,
+	Password: db_pwd,
 }
 
 
-
-func ping(){
-	_, err := mgo.Dial(mongodb_server)
-	if err != nil {
-		panic(err)
-	}
+func dial() (*mgo.Session, error){
+	return mgo.DialWithInfo(dialInfo)
 }
+
 
 func getOr(filters []string, fieldType string)(bson.M){
 	var query bson.M;
@@ -85,8 +80,16 @@ func getAndFilters(leftSide bson.M, rightSide bson.M)(bson.M){
 	return bson.M{"$and" : []bson.M{leftSide, rightSide}}
 }
 
+
+func ping(){
+	_, err := dial()
+	if err != nil {
+		panic(err)
+	}
+}
+
 func getSpaces (spaceFilter [] string, nestingLevel int) ([] Space){
-	session, err := mgo.Dial(mongodb_server)
+	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
@@ -111,7 +114,7 @@ func getSpaces (spaceFilter [] string, nestingLevel int) ([] Space){
 }
 
 func getQuestions(spaceFilter [] string, questionFilter [] string, nestingLevel int) ([] Question){
-	session, err := mgo.Dial(mongodb_server)
+	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
@@ -140,7 +143,7 @@ func getQuestions(spaceFilter [] string, questionFilter [] string, nestingLevel 
 
 func postQuestion(spaceId bson.ObjectId, newQ NewQuestion)(*Question){
 
-	session, err := mgo.Dial(mongodb_server)
+	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
@@ -161,8 +164,24 @@ func postQuestion(spaceId bson.ObjectId, newQ NewQuestion)(*Question){
 	return &question
 }
 
+
+func putQuestionUpdate(question Question){
+	session, err := dial()
+	if err != nil {
+		panic(err)
+	}
+
+	session.SetMode(mgo.Monotonic, true)
+	c := session.DB(mongodb_database).C(collection_questions)
+
+	err = c.Update(bson.M{"_id" : question.Id}, question )
+	if err != nil {
+		panic(err)
+	}
+}
+
 func getAnswers(questionFilter [] string, answerFilter [] string, nestingLevel int) ([] Answer){
-	session, err := mgo.Dial(mongodb_server)
+	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
@@ -191,7 +210,7 @@ func getAnswers(questionFilter [] string, answerFilter [] string, nestingLevel i
 
 func postAnswer(questionId bson.ObjectId, newA NewAnswer)(*Answer){
 
-	session, err := mgo.Dial(mongodb_server)
+	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
@@ -212,10 +231,25 @@ func postAnswer(questionId bson.ObjectId, newA NewAnswer)(*Answer){
 	return &answer
 }
 
+func putAnswerUpdate(answer Answer){
+	session, err := dial()
+	if err != nil {
+		panic(err)
+	}
+
+	session.SetMode(mgo.Monotonic, true)
+	c := session.DB(mongodb_database).C(collection_answers)
+
+	err = c.Update(bson.M{"_id" : answer.Id}, answer )
+	if err != nil {
+		panic(err)
+	}
+}
+
 
 
 func getComments(answerFilter [] string, commentFilter [] string, nestingLevel int) ([] Comment){
-	session, err := mgo.Dial(mongodb_server)
+	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
@@ -250,7 +284,7 @@ func getComments(answerFilter [] string, commentFilter [] string, nestingLevel i
 
 func getCommentChildren(commentId bson.ObjectId, nestingLevel int ) ([]Comment){
 	var commentRecs []Comment
-	session, err := mgo.Dial(mongodb_server)
+	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
@@ -278,7 +312,7 @@ func getCommentChildren(commentId bson.ObjectId, nestingLevel int ) ([]Comment){
 
 func postComment(answerId bson.ObjectId, newC NewComment)(*Comment){
 
-	session, err := mgo.Dial(mongodb_server)
+	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
@@ -299,10 +333,25 @@ func postComment(answerId bson.ObjectId, newC NewComment)(*Comment){
 	return &comment
 }
 
+func putComentUpdate(comment Comment){
+	session, err := dial()
+	if err != nil {
+		panic(err)
+	}
+
+	session.SetMode(mgo.Monotonic, true)
+	c := session.DB(mongodb_database).C(collection_comments)
+
+
+	err = c.Update(bson.M{"_id" : comment.Id}, comment )
+	if err != nil {
+		panic(err)
+	}
+}
 
 func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewComment)(*Comment){
 
-	session, err := mgo.Dial(mongodb_server)
+	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
@@ -322,3 +371,4 @@ func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewCo
 	}
 	return &comment
 }
+

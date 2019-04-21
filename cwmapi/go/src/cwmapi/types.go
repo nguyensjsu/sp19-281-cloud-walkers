@@ -25,7 +25,7 @@ type Space struct {
 
 	Title string `json:"title"`
 
-	CreatedOn time.Time `json:"createdOn"`
+	CreatedOn time.Time `json:"createdOn" bson:"createdOn"`
 
 	Description string `json:"description"`
 
@@ -42,7 +42,7 @@ type Question struct {
 
 	QuestionText string `json:"questionText" bson:"questionText"`
 
-	CreatedOn time.Time `json:"createdOn"`
+	CreatedOn time.Time `json:"createdOn" bson:"createdOn"`
 
 	CreatedBy string `json:"createdBy" bson:"createdBy"`
 
@@ -60,7 +60,7 @@ type Answer struct {
 	Id  bson.ObjectId `json:"_id" bson:"_id"`
 	QuestionId bson.ObjectId `json:"questionId" bson:"questionId"`
 	AnswerText string `json:"answerText" bson:"answerText"`
-	CreatedOn time.Time `json:"createdOn"`
+	CreatedOn time.Time `json:"createdOn" bson:"createdOn"`
 	CreatedBy string `json:"createdBy"  bson:"createdBy"`
 	Comments []Comment `json:"comments,omitempty"`
 }
@@ -83,7 +83,7 @@ type Comment struct {
 
 	CommentText string `json:"commentText" bson:"commentText"`
 
-	CreatedOn time.Time `json:"createdOn"`
+	CreatedOn time.Time `json:"createdOn" bson:"createdOn"`
 
 	CreatedBy string `json:"createdBy"  bson:"createdBy"`
 
@@ -95,4 +95,9 @@ type NewComment struct {
 	UserId string `json:"userId"`
 
 	CommentText string `json:"commentText,omitempty" bson:"commentText"`
+}
+
+type UpdateObject struct {
+
+	Body string `json:"body,omitempty"`
 }

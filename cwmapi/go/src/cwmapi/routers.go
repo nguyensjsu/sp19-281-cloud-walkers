@@ -56,12 +56,19 @@ var routes = Routes{
 		Ping,
 	},
 
+	Route{
+		"SpacesGet",
+		strings.ToUpper("Get"),
+		"/msgstore/v1/spaces",
+		SpacesGet,
+	},
+
 
 	Route{
-		"QuestionsGet",
+		"GetQuestion",
 		strings.ToUpper("Get"),
 		"/msgstore/v1/questions",
-		QuestionsGet,
+		GetQuestion,
 	},
 
 	{
@@ -71,12 +78,11 @@ var routes = Routes{
 		PostQuestion,
 	},
 
-
-	Route{
-		"SpacesGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/spaces",
-		SpacesGet,
+	{
+		"PutQuestionUpdate",
+		strings.ToUpper("Put"),
+		"/msgstore/v1/questions",
+		PutQuestionUpdate,
 	},
 
 	{
@@ -92,6 +98,13 @@ var routes = Routes{
 		strings.ToUpper("Post"),
 		"/msgstore/v1/answers",
 		PostAnswer,
+	},
+
+	{
+		"PutAnswerUpdate",
+		strings.ToUpper("Put"),
+		"/msgstore/v1/answers",
+		PutAnswerUpdate,
 	},
 
 	{
@@ -114,5 +127,13 @@ var routes = Routes{
 		"/msgstore/v1/reply",
 		PostReply,
 	},
+
+	{
+		"PutCommentUpdate",
+		strings.ToUpper("Put"),
+		"/msgstore/v1/comments",
+		PutCommentUpdate,
+	},
+
 
 }

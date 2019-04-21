@@ -44,8 +44,9 @@ func NewRouter() *mux.Router {
 }
 
 func Ping(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "ping!")
 	ping();
-	fmt.Fprintf(w, "pong!")
+	fmt.Fprintf(w, "pong!\n")
 }
 
 var routes = Routes{

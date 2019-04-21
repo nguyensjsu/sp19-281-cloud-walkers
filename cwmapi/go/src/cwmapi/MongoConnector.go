@@ -6,7 +6,6 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"log"
 	"time"
-
 )
 
 
@@ -23,14 +22,8 @@ var server1 = "52.10.186.169" // set in environment
 var server2 = "54.148.30.107" // set in environment
 var server3 = "54.203.107.100" // set in environment
 
-func DbInit(local bool){
+func DbInit(){
 
-	if(!local){
-		//server1 = os.Getenv("MONGO1")
-		//server2 = os.Getenv("MONGO2")
-		//server3 = os.Getenv("MONGO3")
-		//mongodb_server = server1
-	}
 }
 
 var dialInfo = &mgo.DialInfo{
@@ -43,10 +36,9 @@ var dialInfo = &mgo.DialInfo{
 
 
 func dial() (*mgo.Session, error){
-	//return mgo.DialWithInfo(dialInfo)
-	return mgo.Dial(mongodb_server)
+	return mgo.DialWithInfo(dialInfo)
+	//return mgo.Dial(mongodb_server)
 }
-
 
 func getOr(filters []string, fieldType string)(bson.M){
 	var query bson.M;

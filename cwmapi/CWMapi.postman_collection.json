@@ -21,7 +21,7 @@
 			"response": []
 		},
 		{
-			"name": "Get all spaces",
+			"name": "Get topics",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -36,37 +36,7 @@
 			"response": []
 		},
 		{
-			"name": "Get two spaces",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get one space",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get questions for space",
+			"name": "Get questions",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -112,6 +82,21 @@
 		},
 		{
 			"name": "Post Question",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put question update",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -217,6 +202,66 @@
 		},
 		{
 			"name": "Get one comment",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post comment to answer",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post reply to comment",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put update to comment",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put update to comment Copy",
 			"request": {
 				"method": "GET",
 				"header": [],

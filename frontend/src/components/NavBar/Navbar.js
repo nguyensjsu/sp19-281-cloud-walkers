@@ -87,8 +87,6 @@ class navbar extends Component {
             <AddModal
                 show={this.state.show_add}
                 onHide={modalClose}
-                handleAdd={this.handleAdd}
-                user_name= "Yu Zhao"
             />
             </Navbar>
         )

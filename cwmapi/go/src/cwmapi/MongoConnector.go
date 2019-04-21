@@ -9,7 +9,8 @@ import (
 
 )
 
-var mongodb_server = "54.148.30.107"
+
+var mongodb_server = "localhost"
 var mongodb_database = "cmpe281"
 var collection_spaces = "spaces"
 var collection_questions = "questions"
@@ -42,7 +43,8 @@ var dialInfo = &mgo.DialInfo{
 
 
 func dial() (*mgo.Session, error){
-	return mgo.DialWithInfo(dialInfo)
+	//return mgo.DialWithInfo(dialInfo)
+	return mgo.Dial(mongodb_server)
 }
 
 
@@ -88,37 +90,12 @@ func ping(){
 	}
 }
 
-func getSpaces (spaceFilter [] string, nestingLevel int) ([] Space){
+func getQuestions(questionFilter [] string, nestingLevel int) ([] Question){
 	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
-	session.SetMode(mgo.Monotonic, true)
-	c := session.DB(mongodb_database).C(collection_spaces)
-
-	var query bson.M = getOr(spaceFilter, "_id");
-
-	var spaceRecs []Space
-	err = c.Find(query).All(&spaceRecs)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if(nestingLevel > 0){
-		for i := 0; i < len(spaceRecs); i++ {
-			spaceRecs[i].Questions = getQuestions([]string{spaceRecs[i].Id.Hex()}, []string{}, nestingLevel - 1)
-		}
-	}
-
-	return spaceRecs;
-}
-
-func getQuestions(spaceFilter [] string, questionFilter [] string, nestingLevel int) ([] Question){
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
-	var query bson.M = getAndFilters(getOr(spaceFilter, "spaceId"), getOr(questionFilter, "_id"));
+	var query = getOr(questionFilter, "_id");
 	var questionRecs []Question
 
 
@@ -126,7 +103,7 @@ func getQuestions(spaceFilter [] string, questionFilter [] string, nestingLevel 
 	c := session.DB(mongodb_database).C(collection_questions)
 
 	fmt.Println(query)
-	err = c.Find(query).All(&questionRecs)
+	err = c.Find(getOr(questionFilter, "_id")).All(&questionRecs)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -141,7 +118,7 @@ func getQuestions(spaceFilter [] string, questionFilter [] string, nestingLevel 
 
 }
 
-func postQuestion(spaceId bson.ObjectId, newQ NewQuestion)(*Question){
+func postQuestion(newQ NewQuestion)(*Question){
 
 	session, err := dial()
 	if err != nil {
@@ -155,7 +132,7 @@ func postQuestion(spaceId bson.ObjectId, newQ NewQuestion)(*Question){
 	date := time.Now()
 
 	var question = Question{
-		Id: qid, SpaceId: spaceId, QuestionText: newQ.QuestionText, CreatedOn: date, CreatedBy: newQ.UserId}
+		Id: qid, QuestionText: newQ.QuestionText, CreatedOn: date, CreatedBy: newQ.UserId, Topics: newQ.Topics}
 
 	err = c.Insert(question)
 	if err != nil {

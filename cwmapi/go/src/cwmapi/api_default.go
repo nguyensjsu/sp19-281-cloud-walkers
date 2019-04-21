@@ -18,33 +18,52 @@ import (
 	"net/http"
 )
 
-func SpacesGet(w http.ResponseWriter, r *http.Request) {
-	pp := parseUrl(r.URL)
-	spaceFilter := queryVals(pp.queryParams, "spaceId");
 
-	fmt.Println(spaceFilter)
+// GetTags - All the tags in the system
+func GetTopics(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
 
-	spaces := getSpaces(queryVals(pp.queryParams, "spaceId"), depth(pp))
-	jsonVal, err := json.MarshalIndent(spaces, "", "   ");
+	questions := getQuestions([]string{}, 0);
+	set := make(map[string]Topic)
 
-	if(err != nil){
-		log.Fatal(err);
+	for _, question := range questions{
+		for _, topic := range question.Topics{
+			set[topic.Label] = topic
+		}
 	}
+
+	var topics []Topic
+
+	for k := range set {
+		topics = append(topics, Topic{k})
+	}
+
+	jsonVal, err := json.MarshalIndent(topics, "", "   ");
+
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
+
 }
 
-func GetQuestion(w http.ResponseWriter, r *http.Request) {
+func GetQuestions(w http.ResponseWriter, r *http.Request) {
 	pp := parseUrl(r.URL)
 
-	questions := getQuestions(queryVals(pp.queryParams, "spaceId"), queryVals(pp.queryParams, "questionId"), depth(pp))
+	questions := getQuestions(queryVals(pp.queryParams, "questionId"), depth(pp))
 	jsonVal, err := json.MarshalIndent(questions, "", "   ");
 
 	if(err != nil){
 		log.Fatal(err);
 	}
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 }
@@ -61,20 +80,6 @@ func PostQuestion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pp := parseUrl(r.URL)
-
-	nSpaceId := paramCount(pp.queryParams, "spaceId")
-	if(nSpaceId != 1){
-		http.Error(w, fmt.Sprintf("Only one spaceId is allowed.  %d given", nSpaceId), http.StatusBadRequest)
-		return
-	}
-
-	spaceId := pp.queryParams.Get("spaceId")
-	if(!bson.IsObjectIdHex(spaceId)){
-		http.Error(w, fmt.Sprintf("Invalid spaceId:  %s", spaceId), http.StatusBadRequest)
-		return
-	}
-
 	var newQ NewQuestion
 
 	err = json.Unmarshal(b, &newQ)
@@ -83,14 +88,7 @@ func PostQuestion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	space := getSpaces([]string{spaceId}, 0)
-
-	if(space == nil){
-		http.Error(w, fmt.Sprintf("Invalid spaceId: %s", spaceId), http.StatusNotFound)
-		return
-	}
-
-	question := postQuestion(bson.ObjectIdHex(spaceId), newQ);
+	question := postQuestion(newQ);
 
 	jsonVal, err := json.MarshalIndent(question, "", "   ");
 
@@ -100,6 +98,7 @@ func PostQuestion(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 }
@@ -130,7 +129,7 @@ func PutQuestionUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	questions := getQuestions([]string{}, []string{questionId}, 0)
+	questions := getQuestions([]string{questionId}, 0)
 
 	if(questions == nil){
 		http.Error(w, fmt.Sprintf("No question with answerId (%s) is found.", questionId), http.StatusNotFound)
@@ -157,6 +156,7 @@ func PutQuestionUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 
@@ -173,6 +173,7 @@ func GetAnswers(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err);
 	}
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 }
@@ -210,7 +211,7 @@ func PostAnswer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	question := getQuestions([]string{}, []string{questionId}, 0)
+	question := getQuestions([]string{questionId}, 0)
 
 	if(question == nil){
 		http.Error(w, fmt.Sprintf("Invalid questionId: %s", questionId), http.StatusNotFound)
@@ -228,6 +229,7 @@ func PostAnswer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 
@@ -285,6 +287,7 @@ func PutAnswerUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 
@@ -303,6 +306,7 @@ func GetComments(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err);
 	}
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 }
@@ -359,6 +363,7 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 
@@ -414,6 +419,7 @@ func PostReply(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 
@@ -471,6 +477,7 @@ func PutCommentUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
 }

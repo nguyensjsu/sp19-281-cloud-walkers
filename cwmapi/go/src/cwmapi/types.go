@@ -14,37 +14,22 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type SpaceTags struct {
+type Topic struct {
 
-	Tag string `json:"tag"`
-}
-
-type Space struct {
-
-	Id  bson.ObjectId `json:"_id" bson:"_id"`
-
-	Title string `json:"title"`
-
-	CreatedOn time.Time `json:"createdOn" bson:"createdOn"`
-
-	Description string `json:"description"`
-
-	Tags []SpaceTags `json:"tags"`
-
-	Questions []Question `json:"questions,omitempty"`
+	Label string `json:"label" bson:"label"`
 }
 
 type Question struct {
 
 	Id  bson.ObjectId `json:"_id" bson:"_id"`
 
-	SpaceId bson.ObjectId `json:"spaceId" bson:"spaceId"`
-
 	QuestionText string `json:"questionText" bson:"questionText"`
 
 	CreatedOn time.Time `json:"createdOn" bson:"createdOn"`
 
-	CreatedBy string `json:"createdBy" bson:"createdBy"`
+	CreatedBy string `json:"createdBy"`
+
+	Topics []Topic `json:"topics,omitempty" bson:"topics"`
 
 	Answers []Answer `json:"answers,omitempty"`
 }
@@ -54,7 +39,8 @@ type NewQuestion struct {
 	UserId string `json:"userId"`
 
 	QuestionText string `json:"questionText" bson:"questionText"`
-}
+
+	Topics []Topic `json:"topics,omitempty"`}
 
 type Answer struct {
 	Id  bson.ObjectId `json:"_id" bson:"_id"`

@@ -56,19 +56,18 @@ var routes = Routes{
 		Ping,
 	},
 
-	Route{
-		"SpacesGet",
+	{
+		"GetTopics",
 		strings.ToUpper("Get"),
-		"/msgstore/v1/spaces",
-		SpacesGet,
+		"/msgstore/v1/topics",
+		GetTopics,
 	},
 
-
 	Route{
-		"GetQuestion",
+		"GetQuestions",
 		strings.ToUpper("Get"),
 		"/msgstore/v1/questions",
-		GetQuestion,
+		GetQuestions,
 	},
 
 	{

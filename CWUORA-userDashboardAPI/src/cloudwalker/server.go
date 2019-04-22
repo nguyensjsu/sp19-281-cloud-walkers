@@ -19,6 +19,7 @@ import (
 	"gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
     //"time"
+    //"math/rand"
 )
 
 // MongoDB Config
@@ -94,6 +95,7 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 
  		resSpace := make([]TestTopic, len(topicResult))
  		resQuestions := make([]QuestionAPI, len(questionResult))
+ 		ranQuestions := make([]QuestionAPI, 5)
  		/**
  		    Space id is used for concatenate all space ids 
  		**/
@@ -166,6 +168,29 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 	    /**
 	    	Fetch Random Question data from david using questionId
 	    **/
+		randomQuestion, err := http.Get("http://34.217.213.85:3000/msgstore/v1/questions")
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		bodyRanQuestion, err := ioutil.ReadAll(randomQuestion.Body)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		var qRanContent []QuestionContentAPI
+		json.Unmarshal(bodyRanQuestion, &qRanContent)
+		fmt.Println("qRanContent", qRanContent)
+	    /**
+	    	Question Result
+	    **/
+		for i := 0; i < 5; i++ {
+			ranQuestions[i].Id = qRanContent[i].Id
+			ranQuestions[i].Body = qRanContent[i].Body
+			ranQuestions[i].CreatedOn = qRanContent[i].CreatedOn
+		}
+        response.RandomAPIs = ranQuestions
+
 
 		formatter.JSON(w, http.StatusOK, response)
 	}

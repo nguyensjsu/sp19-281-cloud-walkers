@@ -33,6 +33,7 @@ type Answer struct {
 type Home struct {
 	SpaceAPIs		[]SpaceAPI `json:"followed_topics"`
 	QuestionAPIs	[]QuestionAPI `json:"my_questions"`
+	RandomAPIs		[]QuestionAPI `json:"random_questions"`
 }
 
 type SpaceAPI struct {
@@ -49,6 +50,7 @@ type QuestionAPI struct {
 type HomeTest struct {
 	TestTopic		[]TestTopic `json:"followed_topics"`
 	QuestionAPIs	[]QuestionAPI `json:"my_questions"`
+	RandomAPIs		[]QuestionAPI `json:"random_questions"`
 }
 
 // get space content from space server
@@ -146,4 +148,6 @@ type MUserAnswer struct {
 	UserId          	string   `json:"userId" bson:"userId"`	
 	UAnswers		    string	 `json:"answerId" bson:"answerId"`
 }
+
+/****************** Mongo Part**************************/
 

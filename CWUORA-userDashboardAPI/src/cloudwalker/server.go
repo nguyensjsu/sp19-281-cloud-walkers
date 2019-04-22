@@ -45,6 +45,7 @@ func NewServer() *negroni.Negroni {
 func initRoutes(mx *mux.Router, formatter *render.Render) {
 	mx.HandleFunc("/home", homeHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/userFollow", followHandler(formatter)).Methods("POST")
+	mx.HandleFunc("/userPost", userPostHandler(formatter)).Methods("POST")
 }
 
 // API Home Handler
@@ -187,7 +188,7 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
         defer session.Close()
         session.SetMode(mgo.Monotonic, true)
         us := session.DB(mongodb_database).C("uSpace")
-        //uq := session.DB(mongodb_database).C("uQuestion")
+        uq := session.DB(mongodb_database).C("uFQuestion")
 		/**
 			Get Post body
 		**/        
@@ -213,11 +214,69 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 			topic.Uspaces = followId 
 			us.Insert(topic)
 		}
+
+		if action == "quesiton" {
+			var question MUserFQuestion
+			question.UserId = userId
+			question.FollowedQ = followId 
+			uq.Insert(question)
+		}
         
 		formatter.JSON(w, http.StatusOK, "success")
 	}
 }
 
+
+// API Post content Handler
+func userPostHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		/**
+			Mongo server setup
+		**/
+		session, err := mgo.Dial(mongodb_server)
+        if err != nil {
+                fmt.Println("mongoserver panic")
+        }
+        defer session.Close()
+        session.SetMode(mgo.Monotonic, true)
+        uq := session.DB(mongodb_database).C("uQuestion")
+        ua := session.DB(mongodb_database).C("uAnswer")
+		/**
+			Get Post body
+		**/        
+        body, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println(body)
+
+		var postResult PostContent
+		json.Unmarshal(body, &postResult)
+
+		/**
+			Hard code userid for testing
+		**/   
+		var userId = "888888"
+		var action = postResult.Action
+		var postId = postResult.Id
+
+		if action == "question" {
+			var question MUserQuestion
+			question.UserId = userId
+			question.Uquestions = postId 
+			us.Insert(question)
+		}
+
+		if action == "answer" {
+			var answer MUserAnswer
+			answer.UserId = userId
+			answer.UAnswers = postId 
+			ua.Insert(answer)
+		}
+        
+		formatter.JSON(w, http.StatusOK, "success")
+	}
+}
 /****
 /home
 

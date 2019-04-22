@@ -44,8 +44,9 @@ func NewRouter() *mux.Router {
 }
 
 func Ping(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "ping!")
 	ping();
-	fmt.Fprintf(w, "pong!")
+	fmt.Fprintf(w, "pong!\n")
 }
 
 var routes = Routes{
@@ -56,88 +57,82 @@ var routes = Routes{
 		Ping,
 	},
 
-	Route{
-		"ObjectidsGet",
+	{
+		"GetTopics",
 		strings.ToUpper("Get"),
-		"/msgstore/v1/objectids",
-		ObjectidsGet,
+		"/msgstore/v1/topics",
+		GetTopics,
 	},
 
 	Route{
-		"ObjectidsGetSpaces",
+		"GetQuestions",
 		strings.ToUpper("Get"),
-		"/msgstore/v1/objectids/spaces",
-		ObjectidsGet,
-	},
-
-	Route{
-		"ObjectidsGetQuestions",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/objectids/questions/{spaceId}",
-		ObjectidsGet,
-	},
-
-	Route{
-		"ObjectidsGetAnswers",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/objectids/answers/{questionId}",
-		ObjectidsGet,
-	},
-
-	Route{
-		"QuestionQuestionIdGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/question/{questionId}",
-		QuestionQuestionIdGet,
-	},
-
-	Route{
-		"QuestionsSpaceIdGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/questions/{spaceId}",
-		QuestionsSpaceIdGet,
-	},
-
-	Route{
-		"SpaceSpaceIdGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/space/{spaceId}",
-		SpaceSpaceIdGet,
-	},
-
-	Route{
-		"SpacesGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/spaces",
-		SpacesGet,
+		"/msgstore/v1/questions",
+		GetQuestions,
 	},
 
 	{
-		"AnswerAnswerIdGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/answer/{answerId}",
-		AnswerAnswerIdGet,
+		"PostQuestion",
+		strings.ToUpper("Post"),
+		"/msgstore/v1/questions",
+		PostQuestion,
 	},
 
 	{
-		"AnswersQuestionIdGet",
-		strings.ToUpper("Get"),
-		"/msgstore/v1/answers/{questionId}",
-		AnswersQuestionIdGet,
+		"PutQuestionUpdate",
+		strings.ToUpper("Put"),
+		"/msgstore/v1/questions",
+		PutQuestionUpdate,
 	},
 
 	{
-		"CommentCommentIdGet",
+		"GetAnswers",
 		strings.ToUpper("Get"),
-		"/msgstore/v1/comment/{commentId}",
-		CommentCommentIdGet,
+		"/msgstore/v1/answers",
+		GetAnswers,
+	},
+
+
+	{
+		"PostAnswer",
+		strings.ToUpper("Post"),
+		"/msgstore/v1/answers",
+		PostAnswer,
 	},
 
 	{
-		"CommentsAnswerIdGet",
+		"PutAnswerUpdate",
+		strings.ToUpper("Put"),
+		"/msgstore/v1/answers",
+		PutAnswerUpdate,
+	},
+
+	{
+		"GetComments",
 		strings.ToUpper("Get"),
-		"/msgstore/v1/comments/{answerId}",
-		CommentsAnswerIdGet,
+		"/msgstore/v1/comments",
+		GetComments,
+	},
+
+	{
+		"PostComment",
+		strings.ToUpper("Post"),
+		"/msgstore/v1/comments",
+		PostComment,
+	},
+
+	{
+		"PostReply",
+		strings.ToUpper("Post"),
+		"/msgstore/v1/reply",
+		PostReply,
+	},
+
+	{
+		"PutCommentUpdate",
+		strings.ToUpper("Put"),
+		"/msgstore/v1/comments",
+		PutCommentUpdate,
 	},
 
 

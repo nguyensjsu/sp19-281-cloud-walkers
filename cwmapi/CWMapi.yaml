@@ -6,59 +6,44 @@ info:
 servers:
 - url: http://34.208.28.95:3000/msgstore/v1
 paths:
-  /spaces:
+                  
+
+  /topics:
     get:
-      summary: Gets all spaces
-      description: Returns a list containing all spaces.
+      summary: All the topics in the system
+      
+      operationId: getTopics    
       responses:
         200:
-          description: A list of spaces
+          description: Array of topics
           content:
             '*/*':
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Space'
-  /space/{spaceId}:
+                  $ref: '#/components/schemas/Topic'
+
+         
+
+  
+  /questions:
     get:
-      summary: Gets all spaces
-      description: Returns a list containing all spaces.
+      summary: Gets 0 or more questions based on query
       parameters:
-      - name: spaceId
-        in: path
-        description: Object ID of the space to get.
-        required: true
-        schema:
-          type: string
-      - name: depth
+      - name: questionId
         in: query
-        description: 0 = no nesting, 1 = 1st order nesting, etc.  -1 for all levels.
+        description: One or more (comma-separated) question _id as a filter for questions.  If empty, all questions will be retrieved
         required: false
         schema:
-          type: integer      
-      responses:
-        200:
-          description: One Space
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Space'
-  /questions/{spaceId}:
-    get:
-      summary: Gets all questions for a space
-      parameters:
-      - name: spaceId
-        in: path
-        description: Object ID of the space to get questions.
-        required: true
-        schema:
           type: string
+
       - name: depth
         in: query
         description: 0 = no nesting, 1 = 1st order nesting, etc.  -1 for all levels.
         required: false
         schema:
           type: integer
+      operationId: getQuestions    
       responses:
         200:
           description: A list of questions for a space
@@ -68,37 +53,96 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Question'
-  /question/{questionId}:
-    get:
-      summary: Gets one question
+
+                  
+
+    post:
+      summary: post a question 
+      description: Adds a new question to a space.
+      operationId: postQuestion
+      requestBody:
+        description: Question to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewQuestion'
+      responses:
+        200:
+          description: question posted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: spaceId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+
+    put:
+      summary: update a question 
       parameters:
       - name: questionId
-        in: path
-        description: Object ID of the question.
+        in: query
+        description: The _id of question to update
         required: true
         schema:
           type: string
-      - name: depth
-        in: query
-        description: 0 = no nesting, 1 = 1st order nesting, etc.  -1 for all levels.
-        required: false
-        schema:
-          type: integer 
+
+      description: Updated question.
+      operationId: putQuestionUpdate
+      requestBody:
+        description: Quesdtion Update 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateObject'
+              
       responses:
         200:
-          description: A question
+          description: Update has been applied
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: '#/components/schemas/Question'
-  /answers/{questionId}:
+                $ref: '#/components/schemas/Answer'
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: commentId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+
+
+
+  /answers:
     get:
-      summary: Gets all answers for a question
+      summary: Gets one or more answers
       parameters:
       - name: questionId
-        in: path
-        description: Object ID of the question to get answers.
+        in: query
+        description: one or more (coma-separated) question _id.  If set, only answers from specified questioId(s) will be returned
         required: true
+        schema:
+          type: string
+      - name: answerId
+        in: query
+        description: One or more (comma-separated) answer _id as a filter for answers, for each question to get.  If empty, all answers will be retrieved, based on the value if questionId
+        required: false
         schema:
           type: string
       - name: depth
@@ -107,6 +151,7 @@ paths:
         required: false
         schema:
           type: integer
+      operationId: getAnswer
       responses:
         200:
           description: A list of answers for a question
@@ -116,37 +161,99 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Answer'
-  /answer/{answerId}:
-    get:
-      summary: Gets one answer
+
+    post:
+      summary: post an answer to a question
       parameters:
-      - name: answerId
-        in: path
-        description: Object ID of the answer.
+      - name: questionid
+        in: query
+        description: The question to be answered
         required: true
         schema:
           type: string
-      - name: depth
-        in: query
-        description: 0 = no nesting, 1 = 1st order nesting, etc.  -1 for all levels.
-        required: false
-        schema:
-          type: integer
+
+      description: Answers a question.
+      operationId: postAnswer
+      requestBody:
+        description: Answer to question
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewAnswer'
       responses:
         200:
-          description: An answer
+          description: answer posted
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/Answer'
-  /comments/{answerId}:
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: questionId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+    put:
+      summary: update an answer 
+      parameters:
+      - name: answerId
+        in: query
+        description: The _id of answer to update
+        required: true
+        schema:
+          type: string
+
+      description: Updated answer.
+      operationId: putAnswerUpdate
+      requestBody:
+        description: Answer udpate text 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateObject'
+              
+      responses:
+        200:
+          description: Update has been applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Answer'
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: commentId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /comments:
     get:
       summary: Gets all top-level comments for an answer
       parameters:
       - name: answerId
-        in: path
-        description: Object ID of the answer to get comments.
+        in: query
+        description: one or more (coma-separated) answer _id.  If set, only comments from specified answer(s) will be returned
         required: true
+        schema:
+          type: string
+      - name: commentId
+        in: query
+        description: One or more (comma-separated) comment _id as a filter for comments to get.  If empty, all commments will be retrieved, based on the value of answerId
+        required: false
         schema:
           type: string
       - name: depth
@@ -155,101 +262,220 @@ paths:
         required: false
         schema:
           type: integer
+      operationId: getComments
       responses:
         200:
-          description: A list of coments for an answer
+          description: A list of comments for an answer
           content:
             '*/*':
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
-  /comment/{commentId}:
-    get:
-      summary: Gets one answer
+                  
+    post:
+      summary: post a comment to an answer
+      parameters:
+      - name: answerId
+        in: query
+        description: The _id of answer for comment
+        required: false
+        schema:
+          type: string
+
+      description: Comment for an answer.
+      operationId: postComment
+      requestBody:
+        description: Comment 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewComment'
+      responses:
+        200:
+          description: comment posted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: answerId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+  
+    put:
+      summary: update a comment or reply
       parameters:
       - name: commentId
-        in: path
-        description: Object ID of the coment.
+        in: query
+        description: The _id of comment to update
         required: true
         schema:
           type: string
-      - name: depth
-        in: query
-        description: 0 = no nesting, 1 = 1st order nesting, etc.  -1 for all levels.
-        required: false
-        schema:
-          type: integer
+
+      description: Reply for a comment.
+      operationId: putCommentUpdate
+      requestBody:
+        description: Comment update text 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateObject'
+              
       responses:
         200:
-          description: A comment
+          description: Update has been applied
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/Comment'
-  /objectid:
-    get:
-      summary: gets new object ids
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: commentId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+
+                
+  /reply:
+    post:
+      summary: post a reply to a comment
+      parameters:
+      - name: commentId
+        in: query
+        description: The _id of comment for reply
+        required: true
+        schema:
+          type: string
+
+      description: Reply for a comment.
+      operationId: postReply
+      requestBody:
+        description: reply 
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewComment'
       responses:
         200:
-          description: new object ids
+          description: reply posted
           content:
-            '*/*':
+            application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ObjectId'
+                $ref: '#/components/schemas/Comment'
+        400:
+          description: invalid format, for example, bad ObjectId or incorrect schema
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: commentId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+
 components:
   schemas:
-    Space:
+  
+    Topic:
       required:
-      - _id
-      - createdOn
-      - description
-      - title
-      type: object
+      - "label"
       properties:
-        _id:
-          type: string
-        title:
-          type: string
-        createdOn:
-          type: string
-          format: date-time
-        description:
-          type: string
-        tags:
-          type: array
-          items:
-            required:
-            - tag
-            type: object
-            properties:
-              tag:
-                type: string
-        questions:
-          type: array
-          items:
-            required:
-            - questions
-            type: object
-            properties:
-              questions:
-                $ref: '#/components/schemas/Question'
-        
-    Answer:
+        label:
+          type: "string"
+
+          
+    Question:
       required:
       - _id
-      - body
+      - questionText
       - createdBy
       - createdOn
+      - spaceId
       type: object
       properties:
         _id:
           type: string
         spaceId:
           type: string
-        body:
+        questionText:
+          type: string
+        createdOn:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        topics:
+          type: array
+          items:
+            required:
+            - topics
+            type: object
+            properties:
+              topics:
+                $ref: '#/components/schemas/Topic'
+
+        answers:
+          type: array
+          items:
+            required:
+            - answers
+            type: object
+            properties:
+              answers:
+                $ref: '#/components/schemas/Answer'
+    NewQuestion:
+      required:
+      - userId
+      - questionText
+      properties:
+        userId:
+          type: string
+        questionText:
+          type: string
+        topics:
+          type: array
+          items:
+            required:
+            - topic
+            type: object
+            properties:
+              topics:
+                $ref: '#/components/schemas/Topic'
+        
+
+    Answer:
+      required:
+      - _id
+      - answerText
+      - createdBy
+      - createdOn
+      type: object
+      properties:
+        _id:
+          type: string
+        questionId:
+          type: string
+        answerText:
           type: string
         createdOn:
           type: string
@@ -265,11 +491,21 @@ components:
             properties:
               replies:
                 $ref: '#/components/schemas/Comment'
+    NewAnswer:
+      required:
+      - userId
+      - body
+      properties:
+        userId:
+          type: string
+        answerText:
+          type: string
+                
     Comment:
       required:
       - _id
       - answerId
-      - body
+      - commentText
       - createdBy
       - createdOn
       type: object
@@ -282,7 +518,7 @@ components:
           type: string
           description: The parent comment is for comment trees.  For first-gen comment,
             the parent is answer, and there is no parent comment.
-        body:
+        commentText:
           type: string
         createdOn:
           type: string
@@ -298,39 +534,21 @@ components:
             properties:
               replies:
                 $ref: '#/components/schemas/Comment'
-    ObjectId:
+
+    NewComment:
+      required:
+      - userId
+      - questionText
+      properties:
+        userId:
+          type: string
+        commentTex:
+          type: string
+                
+    UpdateObject:
       required:
       - _id
       type: object
       properties:
-        _id:
-          type: string
-    Question:
-      required:
-      - _id
-      - body
-      - createdBy
-      - createdOn
-      - spaceId
-      type: object
-      properties:
-        _id:
-          type: string
-        spaceId:
-          type: string
         body:
           type: string
-        createdOn:
-          type: string
-          format: date-time
-        createdBy:
-          type: string
-        answers:
-          type: array
-          items:
-            required:
-            - answers
-            type: object
-            properties:
-              answers:
-                $ref: '#/components/schemas/Answer'

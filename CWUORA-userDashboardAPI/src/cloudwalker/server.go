@@ -86,6 +86,7 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 		if err != nil {
 			fmt.Println("findquery panic")
 		}
+
 		/**
 		    Declare Response struct 
 		**/ 
@@ -106,6 +107,10 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
  		**/
 		var uquestionIds string
 		for i := 0; i < len(questionResult); i++ {
+			if i > 0 { 
+				uquestionIds += "&"
+			}
+			uquestionIds += "questionId="
 			uquestionIds += questionResult[i]["questionId"].(string)
 			fmt.Println("uquestionIds", uquestionIds)			
 		}
@@ -134,7 +139,8 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 	    /**
 	    	Fetch Question data from david using questionId
 	    **/
-		respQuestion, err := http.Get("http://34.217.213.85:3000/msgstore/v1/questions")
+	    var myQuestionUrl = "http://34.217.213.85:3000/msgstore/v1/questions?" + uquestionIds
+		respQuestion, err := http.Get(myQuestionUrl)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -144,19 +150,22 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 			log.Fatalln(err)
 		}
 
-		var qTestContent []QuestionAPI
+		var qTestContent []QuestionContentAPI
 		json.Unmarshal(bodyQuestion, &qTestContent)
 		fmt.Println("qTestContent", qTestContent)
 	    /**
 	    	Question Result
 	    **/
-		for i := 0; i < len(questionResult); i++ {
-			resQuestions[i].Id = qTestContent[0].Id
-			resQuestions[i].Body = qTestContent[0].Body
-			resQuestions[i].CreatedOn = qTestContent[0].CreatedOn
+		for i := 0; i < len(qTestContent); i++ {
+			resQuestions[i].Id = qTestContent[i].Id
+			resQuestions[i].Body = qTestContent[i].Body
+			resQuestions[i].CreatedOn = qTestContent[i].CreatedOn
 		}
         response.QuestionAPIs = resQuestions
 
+	    /**
+	    	Fetch Random Question data from david using questionId
+	    **/
 
 		formatter.JSON(w, http.StatusOK, response)
 	}
@@ -320,6 +329,13 @@ db.uQuestion.insert(
 	{
 		userId: "123456",
 		questionId: "5cb4048478163fa3c9726fe0"
+	}
+);
+
+db.uQuestion.insert(
+	{
+		userId: "123456",
+		questionId: "5cb4048478163fa3c9726fdc"
 	}
 );
 

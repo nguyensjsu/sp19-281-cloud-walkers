@@ -18,6 +18,7 @@ import (
 	//"github.com/satori/go.uuid"
 	"gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
+    "time"
 )
 
 // MongoDB Config
@@ -42,7 +43,7 @@ func NewServer() *negroni.Negroni {
 // API Routes
 func initRoutes(mx *mux.Router, formatter *render.Render) {
 	mx.HandleFunc("/home", homeHandler(formatter)).Methods("GET")
-	mx.HandleFunc("/followspace/{userid}", followedSpaceHandler(formatter)).Methods("POST")
+	mx.HandleFunc("/followspace", followedSpaceHandler(formatter)).Methods("POST")
 	mx.HandleFunc("/mongoTest/{spaceid}", mongoTestHandler(formatter)).Methods("GET")
 
 }
@@ -125,17 +126,24 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 			mspaces = append(mspaces, mspace)
 		}
 
+		/**************** Hard code userID for test ******************************/
+		var userId = "1234567"
+		/****************** Get user space & question id *******************************/
+		var uSpacesId []interface{}
+		var uQuestionId []interface{}
+		u := session.DB(mongodb_database).C("user")
+		var userResult bson.M
+		err = u.Find(bson.M{"userId": userId}).One(&userResult)
+		if err != nil {
+			fmt.Println("findquery panic")
+		}
 
-		// // insert content to mongo
-		
-        // insert space 
-        // c := session.DB(mongodb_database).C("space")
-        // for i := 0; i < len(spaces); i++ {
-        //  	c.Insert(spaces[i])
-        // }
+		uSpacesId = userResult["fspaces"].([]interface{})
+		uQuestionId = userResult["fquestions"].([]interface{})
+
         // // find id from mongodb, using space id to find question id
         // //convert space id to mongo id
-        // bsonObjectID := bson.ObjectIdHex(spaceid)
+        // 
 
   //       var spaceResult bson.M
 		// err = c.Find(bson.M{"_id": bsonObjectID}).One(&spaceResult)
@@ -156,10 +164,43 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 	 //    fmt.Println("result", result["_id"])
 
 	 //    // // generate frontend json
-	 //    var response Home
+	     var response Home
 	 //    //var resSpace []SpaceAPI
-	 //    resSpace := make([]SpaceAPI, 1)
-	 //    resQuestions := make([]QuestionAPI, qsCount)
+	     resSpace := make([]SpaceAPI, len(uSpacesId))
+	     resQuestions := make([]QuestionAPI, len(uQuestionId))
+
+	     /********** Get all followed spaces **********************/
+	     for i := 0; i < len(uSpacesId); i++ {
+	     	var spaceResult bson.M
+	     	var fspaceId = uSpacesId[i].(string)
+	     	bsonObjectID := bson.ObjectIdHex(fspaceId)
+
+	     	s := session.DB(mongodb_database).C("space")
+	     	err = s.Find(bson.M{"_id": bsonObjectID}).One(&spaceResult)
+			if err != nil {
+				fmt.Println("findquery panic")
+			}
+
+			resSpace[i].Id = spaceResult["_id"].(bson.ObjectId)
+	        resSpace[i].Title = spaceResult["title"].(string)
+	     }
+
+	     /********** Get all followed spaces **********************/
+	     for i := 0; i < len(uQuestionId); i++ {
+	     	var spaceResult bson.M
+	     	var qspaceId = uQuestionId[i].(string)
+	     	bsonObjectID := bson.ObjectIdHex(qspaceId)
+
+	     	q := session.DB(mongodb_database).C("question")
+	     	err = q.Find(bson.M{"_id": bsonObjectID}).One(&spaceResult)
+			if err != nil {
+				fmt.Println("findquery panic")
+			}
+
+			resQuestions[i].Id = spaceResult["_id"].(bson.ObjectId)
+	        resQuestions[i].Body = spaceResult["body"].(string)
+	        resQuestions[i].CreatedOn = spaceResult["createdon"].(time.Time)
+	     }
 	 //    // add content to resSpace
 	 //    resSpace[0].Id = spaceResult["_id"].(bson.ObjectId)
 	 //    resSpace[0].Title = spaceResult["title"].(string)
@@ -171,12 +212,11 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 	 //    	resQuestions[i].Id = r["_id"].(bson.ObjectId)
 	 //    }
 
-	 //    response.SpaceAPIs = resSpace
-	 //    response.QuestionAPIs = resQuestions
+	       response.SpaceAPIs = resSpace
+	       response.QuestionAPIs = resQuestions
 
 				
-		formatter.JSON(w, http.StatusOK, mspaces)
-		//formatter.JSON(w, http.StatusOK, spaceResult)
+		formatter.JSON(w, http.StatusOK, response)
 	}
 }
 
@@ -193,24 +233,45 @@ func followedSpaceHandler(formatter *render.Render) http.HandlerFunc {
         }
         defer session.Close()
         session.SetMode(mgo.Monotonic, true)
-        c := session.DB(mongodb_database).C(mongodb_collection)
+        u := session.DB(mongodb_database).C("user")
         // 2. analysis client post body
         //fmt.Println(req.Body)
-        body, err := ioutil.ReadAll(req.Body)
-		if err != nil {
-			log.Fatalln(err)
-		}
+  //       body, err := ioutil.ReadAll(req.Body)
+		// if err != nil {
+		// 	log.Fatalln(err)
+		// }
 
-		fmt.Println("body",body)
+		
+        var userP []MUserProfile
+		var userProfileapis MUserProfile
+		userProfileapis.UserId = "1234567"
+		sid := make([]string, 1)
+		quesid := make([]string, 1)
+		sid[0] = "5cb3c8ab78163fa3c9726fb3"
+		userProfileapis.Uspaces = sid
+		quesid[0] = "5cb4048478163fa3c9726fe0"
+		userProfileapis.Uquestions = quesid
+		
 
-		var spaceapis []SpaceAPI
-		json.Unmarshal(body, &spaceapis)
+		// sid[0] = bson.ObjectIdHex(spaceid)
+		// quesid[0] = bson.ObjectIdHex(qid)
 
-		fmt.Println("spaceapis", spaceapis)
-		fmt.Println("spaceapis[0] title",spaceapis[0].Title)
+		//userProfileapis.uspaces = bson.ObjectIdHex(spaceid)
+		
+		
 
-		// 3. insert into mongo server
-		c.Insert(spaceapis[0])
+		fmt.Println("userProfileapis", userProfileapis)
+		u.Insert(userProfileapis);
+		userP = append(userP, userProfileapis)
+
+		
+
+
+		// fmt.Println("spaceapis", spaceapis)
+		// fmt.Println("spaceapis[0] title",spaceapis[0].Title)
+
+		// // 3. insert into mongo server
+		// c.Insert(spaceapis[0])
 		
   //       var result bson.M
   //       err = c.Find(bson.M{"SerialNumber" : "1234998871109"}).One(&result)
@@ -218,7 +279,7 @@ func followedSpaceHandler(formatter *render.Render) http.HandlerFunc {
   //               log.Fatal(err)
   //       }
         
-		// formatter.JSON(w, http.StatusOK, result)
+		formatter.JSON(w, http.StatusOK, userP)
 	}
 }
 
@@ -298,6 +359,13 @@ db.answer.insert(
 	}
 );
 
+db.user.insert(
+	{
+		userId: "123456",
+		fspaces: ["5cb3c8ab78163fa3c9726fb3"],
+		fquestions: ["5cb4048478163fa3c9726fe0"]
+	}
+);
 
 
 

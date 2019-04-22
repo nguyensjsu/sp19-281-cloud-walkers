@@ -110,8 +110,8 @@ type MAnswer struct {
 }
 // db.user
 type MUserProfile struct {
-	userId          	string    `json:"userId" bson:"userId"`	
-	uspaces		        []SpaceAPI  `json:"followedspaces" bson:"followedspaces"`
-	uquestions          []QuestionAPI `json:"followedquestions" bson:"followedquestions"`
+	UserId          	string    `json:"userId" bson:"userId"`	
+	Uspaces		       []string  `json:"fspaces" bson:"fspaces"`
+	Uquestions         []string `json:"fquestions" bson:"fquestions"`
 }
 

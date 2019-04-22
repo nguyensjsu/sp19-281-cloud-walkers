@@ -149,5 +149,14 @@ type MUserAnswer struct {
 	UAnswers		    string	 `json:"answerId" bson:"answerId"`
 }
 
-/****************** Mongo Part**************************/
+/****************** POST Part**************************/
+type PostFollow struct {
+	Action          	string   `json:"action" bson:"action"`	
+	Id		        string  `json:"id" bson:"id"`
+}
+// db.uFQuestion
+type PostContent struct {
+	Action          	string   `json:"action" bson:"action"`	
+	Id           string  `json:"id" bson:"idP"`
+}
 

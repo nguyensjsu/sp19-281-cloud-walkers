@@ -40,9 +40,11 @@ class SignUp extends Component {
             first_name: this.state.first_name,
             last_name: this.state.last_name,
 //            role: this.state.role,
-            pswd: this.state.password,
+            password: this.state.password,
             email: this.state.email
         }
+
+        console.log('Fire submit button!');
 
         const { email } = this.state;
 
@@ -50,19 +52,19 @@ class SignUp extends Component {
         this.props.dispatch(userActions.signup_request(email));
         this.setState({ submitted: true });
 
-        if (data.first_name && data.last_name && data.pswd && data.email) {
+        if (data.first_name && data.last_name && data.password && data.email) {
 
         //set the with credentials to true
-        axios.defaults.withCredentials = true;
+ //       axios.defaults.withCredentials = true;
         //make a post request with the user data
-        axios.post(backend_host+'/user/signup', data)
+        axios.post(backend_host+'/signup', data)
             .then(response => {
                 console.log("Status Code : ", response.status);
                 if (response.status === 200 && response.data.auth === true) {
                     //cookie.save('userId', response.data.user_id, { path: '/', expires: "", maxAge: 1000, httpOnly: false });
                     //cookie.save('role', response.data.role, { path: '/', expires: "", maxAge: 1000, httpOnly: false });
  //                   const cookies = new Cookies();
-                    cookie.save('JWT', response.data.token, { path: '/' });
+ //                   cookie.save('JWT', response.data.token, { path: '/' });
                     this.props.dispatch(userActions.login_success(email, response.data.role, response.data.user_id));
                 } else {
                     this.props.dispatch(userActions.signup_failure(email, "HTTP CODE != 200"));
@@ -79,12 +81,12 @@ class SignUp extends Component {
 
         const { signup } = this.props;
         const { authentication } = this.props;
-        const { first_name, last_name, role, email, password, submitted } = this.state;
+        const { first_name, last_name, email, password, submitted } = this.state;
 
         let redirectVar = null;
-        console.log(signup);
+//        console.log(signup);
         if (authentication.loggedIn === true) {
-            redirectVar = <Redirect to="/courses" />
+            redirectVar = <Redirect to="/Home" />
         }
 
         return (

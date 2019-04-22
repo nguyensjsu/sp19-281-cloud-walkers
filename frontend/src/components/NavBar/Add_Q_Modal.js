@@ -2,13 +2,15 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import React, { Component } from 'react';
 import AsyncSelect from 'react-select/lib/Async';
 import axios from 'axios';
+import _ from "lodash";
+import { throws } from 'assert';
 
-const options = [
+/*const options = [
 //  { value: 1, label: 'Movies' },
 //  { value: 2, label: 'Food' },
 {label: 'Movies'}
 
-];
+];*/
 /*
 const filterColors = (inputValue) => {
   return options.filter(i =>
@@ -41,6 +43,7 @@ class AddQModal extends Component {
     this.state = {
       user_name: "Yu Zhao",
       selectedTopics: [],
+      options: []
     }
     this.handlePost = this.handlePost.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -58,7 +61,13 @@ class AddQModal extends Component {
   }
 
   componentDidMount(){
-
+    axios.get('http://35.164.157.104:8000/msgstore/v1/topics')
+    .then(response=>{
+      console.log(response.data);
+      this.setState({
+        options: response.data
+      })
+    })
   }
 
   handleSelectChange = (value, { action }) => {
@@ -70,22 +79,20 @@ class AddQModal extends Component {
 
 
  getOptions = inputValue => {
-  axios.get('http://34.217.213.85:3000/msgstore/v1/topics')
-  .then(response=>{
-    console.log(response);
-    return response.json();
-  })
-  .then(json => {
-      return json.data.filter(i=>
-        i.toLowerCase().includes(inputValue.toLowerCase()))
-  }).catch(err => console.log(err))
-  /*
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(filterColors(inputValue));
-    }, 1000);
-  })*/;
-}
+   return axios.get('http://35.164.157.104:8000/msgstore/v1/topics')
+   .then(response=>{
+     console.log(response.data);
+//     this.setState({
+//       options: response.data
+//     })
+     return response.data
+   }).then(options => {
+    const filtered = _.filter(options, o =>
+      _.startsWith(_.toLower(o.label), _.toLower(inputValue))
+    );
+     return filtered.slice(0, 10);
+   })
+  }
 
   render() {
 
@@ -118,9 +125,9 @@ class AddQModal extends Component {
                 isMulti
                 cacheOptions
                 defaultOptions
-                loadOptions={this.getOptions}
+                loadOptions={inputValue => this.getOptions(inputValue)}
                 onChange={this.handleSelectChange}
-                name="select"
+                getOptionValue={option => option.label}
               />
             </Form.Group>
           </Form>

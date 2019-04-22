@@ -46,6 +46,11 @@ type QuestionAPI struct {
 	CreatedOn		time.Time  `json:"createdOn"`
 }
 
+type HomeTest struct {
+	TestTopic		[]TestTopic `json:"followed_topics"`
+	QuestionAPIs	[]QuestionAPI `json:"my_questions"`
+}
+
 // get space content from space server
 // type SpaceContentAPI struct {
 // 	Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
@@ -72,23 +77,25 @@ type SpaceTags struct {
 // get question content from david
 type QuestionContentAPI struct {
     Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
-	SpaceId 	bson.ObjectId 	`json:"spaceId" bson:"spaceId"`
     Body 		string 			`json:"questionText"`
     CreatedOn 	time.Time 		`json:"createdOn"`
-    CreatedBy 	string	`json:"createdBy" bson:"createdBy"`
-    Answers	    []AnswerContentAPI  `json:"answers"`
+    CreatedBy 	string	        `json:"createdBy" bson:"createdBy"`
+    Topics      []TestTopic     `json:"topics"`
 }
 
 // get answer content from david
 type AnswerContentAPI struct {
     Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
-	QuestionId 	bson.ObjectId 	`json:"questionId" bson:"questionId"`
     Body 		string 			`json:"answerText"`
     CreatedOn 	time.Time 		`json:"createdOn"`
-    CreatedBy 	string	`json:"createdBy" bson:"createdBy"`
+    CreatedBy 	string	        `json:"createdBy" bson:"createdBy"`    
 }
-/****************** Mongo Part**************************/
 
+type TestTopic struct {
+	Label	 string  `json:"label" bson:"label"`
+}
+
+/*** Deprecated
 // db.space
 type MSpace struct {
 	Id  		bson.ObjectId 	`json:"_id" bson:"_id"`
@@ -108,10 +115,35 @@ type MAnswer struct {
 	Body 		string			`json:"answerText"`
 	CreatedOn 	time.Time 		`json:"createdOn"`
 }
-// db.user
-type MUserProfile struct {
-	UserId          	string    `json:"userId" bson:"userId"`	
+
+// db.u
+type MUserSpace struct {
+	UserId          	string   `json:"userId" bson:"userId"`	
 	Uspaces		       []string  `json:"fspaces" bson:"fspaces"`
-	Uquestions         []string `json:"fquestions" bson:"fquestions"`
+	Uquestions         []string  `json:"fquestions" bson:"fquestions"`
+	UMquestions		   []string  `json:"myquestions" bson:"myquestions"`
+	UAnswers		   []string	 `json:"manswers" bson:"manswers"`
+}
+*******/
+/****************** Mongo Part**************************/
+// db.uSpace
+type MUserSpace struct {
+	UserId          	string   `json:"userId" bson:"userId"`	
+	Uspaces		        string  `json:"spaceId" bson:"spaceId"`
+}
+// db.uFQuestion
+type MUserFQuestion struct {
+	UserId          	string   `json:"userId" bson:"userId"`	
+	FollowedQ           string  `json:"questionId" bson:"questionId"`
+}
+// db.uQuestion
+type MUserQuestion struct {
+	UserId          	string   `json:"userId" bson:"userId"`	
+	Uquestions          string  `json:"questionId" bson:"questionId"`
+}
+// db.uAnswer
+type MUserAnswer struct {
+	UserId          	string   `json:"userId" bson:"userId"`	
+	UAnswers		    string	 `json:"answerId" bson:"answerId"`
 }
 

@@ -9,8 +9,9 @@ type (
 		ID        bson.ObjectId `json:"id" bson:"_id,omitempty"`
 		Email     string        `json:"email" bson:"email"`
 		Password  string        `json:"password,omitempty" bson:"password"`
+		FirstName	string		`json:"firstname" bson:"firstname"`
+		LastName	string		`json:"lastname" bson:"lastname"`
 		Token     string        `json:"token,omitempty" bson:"-"`
-		Followers []string      `json:"followers,omitempty" bson:"followers,omitempty"`
 	}
 )
 

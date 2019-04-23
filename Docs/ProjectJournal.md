@@ -34,7 +34,10 @@ After discussion on Slake group and meetup after class, we have discussed follow
 * Quesions:
 
 * User Activities:
-* User Authentication:
+* User Authentication: 
+    * Set up the JWT for user 
+    * Set up the MongoDB for user 
+    * Able to give authentication base on tokens
 
 ### To Do List:
 * Yu Zhao:
@@ -45,6 +48,8 @@ After discussion on Slake group and meetup after class, we have discussed follow
 * Yueqiao Zhang:
 
 * Hongzhe Yang:
+    * Match the frontend with correct request format
+    * Get other JWT parts working for the other backend service
 
 * David Ronca:
 
@@ -52,7 +57,7 @@ After discussion on Slake group and meetup after class, we have discussed follow
 ## Week Apr. 22 - Apr. 28
 
 ### Progresses:
-
+ 
 
 
 ### Week Apr.29 - May. 4 

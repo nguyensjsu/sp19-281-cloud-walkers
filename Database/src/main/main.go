@@ -10,10 +10,17 @@ import (
 )
 
 func main() {
+	// echo instance
 	e := echo.New()
+
 	e.Logger.SetLevel(log.ERROR)
+
+	// returns a middleware that logs HTTP requests
 	e.Use(middleware.Logger())
+
+	// return a JWT auth middleware with config
 	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+
 		SigningKey: []byte(handler.Key),
 		Skipper: func(c echo.Context) bool {
 			// Skip authentication for and signup login requests
@@ -31,7 +38,7 @@ func main() {
 	}
 
 	// Create indices
-	if err = db.Copy().DB("twitter").C("users").EnsureIndex(mgo.Index{
+	if err = db.Copy().DB("cw_user").C("users").EnsureIndex(mgo.Index{
 		Key:    []string{"email"},
 		Unique: true,
 	}); err != nil {

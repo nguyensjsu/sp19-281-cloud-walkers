@@ -93,12 +93,12 @@ export class AnswerList extends Component {
     render() {
         let details = null;
         if (this.props.data.length != 0) {
-            details = this.props.data.map(post => {
+            details = this.props.data.map((post, idx) => {
                 return (
-                    <ListGroup.Item>
-                        <ul class="list-unstyled">
-                            <li>{post.answers.createdBy}</li>
-                            <li><small class="text-muted">Answered<Moment fromNow>{post.answers.createdOn}</Moment></small></li>
+                    <ListGroup.Item  key={idx}>
+                        <ul className="list-unstyled">
+                            <li>{post.answers.createdBy} </li>
+                            <li><small className="text-muted">Answered<Moment fromNow>{post.answers.createdOn}</Moment></small></li>
                         </ul>
                         <p>
                             {post.answers.answerText}
@@ -134,12 +134,12 @@ class QuestionPage extends Component {
             <div>
                 <Container>
                     <ListGroup variant="flush">
-                        <ListGroupItem>
+                        <ListGroup.Item>
                             <h4><b>{fake_reponse.questionText}</b></h4>
-                        </ListGroupItem>
+                        </ListGroup.Item>
                     </ListGroup>
 
-                    <AnswerList data={fake_reponse.answers} />
+                    <AnswerList data={fake_reponse.answers}/>
                 </Container>
             </div>
         )

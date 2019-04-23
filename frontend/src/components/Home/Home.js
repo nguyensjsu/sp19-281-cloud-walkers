@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import Sidebar from '../Sidebar/Sidebar';
 import { Container, Col, Card, Button } from 'react-bootstrap';
 import AddModal from '../NavBar/Add_Q_Modal';
-import { throws } from 'assert';
 
 class Home extends Component {
     constructor(props) {

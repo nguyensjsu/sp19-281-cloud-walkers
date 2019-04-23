@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import AsyncSelect from 'react-select/lib/Async';
 import axios from 'axios';
 import _ from "lodash";
-import { throws } from 'assert';
 
 /*const options = [
 //  { value: 1, label: 'Movies' },

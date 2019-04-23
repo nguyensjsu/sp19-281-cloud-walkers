@@ -5,6 +5,8 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"log"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -15,23 +17,55 @@ var collection_spaces = "spaces"
 var collection_questions = "questions"
 var collection_answers = "answers"
 var collection_comments = "comments"
-var db_user = "admin"
-var db_pwd = "query"
+var collection_topics = "topics"
+var db_user string //= "admin"
+var db_pwd string //= "query"
 
-var server1 = "52.10.186.169" // set in environment
-var server2 = "54.148.30.107" // set in environment
-var server3 = "54.203.107.100" // set in environment
+var server1 string // = "52.10.186.169" // set in environment
+var server2 string // = "54.148.30.107" // set in environment
+var server3 string // = "54.203.107.100" // set in environment
+
+var dialInfo = &mgo.DialInfo{}
+
+var topicChan chan Topic
 
 func DbInit(){
+	server1 = os.Getenv("MONGO1")
+	server2 = os.Getenv("MONGO2")
+	server3 = os.Getenv("MONGO3")
+	db_user = os.Getenv("MONGO_ADMIN")
+	db_pwd = os.Getenv("MONGO_PASSWORD")
 
+	if(len(server1) == 0 && len(server2) == 0 && len(server3) == 0){
+		server1 = mongodb_server
+		log.Println("Connected to local host")
+	} else {
+		log.Printf("M1: {%s} M2: {%s} M3: {%s} => Admin: {%s} PWD: {%s}", server1, server2, server3, db_user, db_pwd)
+	}
+
+	dialInfo = &mgo.DialInfo{
+		Addrs:    []string{server1, server2, server3},
+		Timeout:  30 * time.Second,
+		Database: "admin",
+		Username: db_user,
+		Password: db_pwd,
+	}
+
+	topicChan = make(chan Topic, 1000)
+
+	go syncTopics(topicChan)
 }
 
-var dialInfo = &mgo.DialInfo{
-	Addrs:    []string{server1, server2, server3},
-	Timeout:  30 * time.Second,
-	Database: "admin",
-	Username: db_user,
-	Password: db_pwd,
+/**
+	thread to keep topics in sync with question topics (add, but never delete)
+ */
+func syncTopics(topicChan <-chan Topic){
+
+	for topic := range topicChan {
+		if(len(getTopics([]string{topic.Label}, 0)) == 0){
+			updateTopic(topic)
+		}
+	}
 }
 
 
@@ -40,7 +74,7 @@ func dial() (*mgo.Session, error){
 	//return mgo.Dial(mongodb_server)
 }
 
-func getOr(filters []string, fieldType string)(bson.M){
+func getOr_id(filters []string, fieldType string)(bson.M){
 	var query bson.M;
 
 	switch len(filters) {
@@ -64,6 +98,29 @@ func getOr(filters []string, fieldType string)(bson.M){
 	return query
 }
 
+func getAnd_str(filters []string, fieldType string)(bson.M){
+	var query bson.M;
+
+	switch len(filters) {
+
+	case 0:
+
+	case 1:
+		query = bson.M{fieldType: filters[0]}
+	default:
+		andQuery := []bson.M{}
+
+		for _, spaceId := range filters {
+			andQuery = append(andQuery, bson.M{fieldType: spaceId})
+		}
+
+		query = bson.M{"$and": andQuery}
+	}
+
+	return query
+}
+
+
 func getAndFilters(leftSide bson.M, rightSide bson.M)(bson.M){
 	if(leftSide == nil){
 		return rightSide
@@ -74,6 +131,16 @@ func getAndFilters(leftSide bson.M, rightSide bson.M)(bson.M){
 	return bson.M{"$and" : []bson.M{leftSide, rightSide}}
 }
 
+func getOrFilters(leftSide bson.M, rightSide bson.M)(bson.M){
+	if(leftSide == nil){
+		return rightSide
+	} else if (rightSide == nil){
+		return leftSide
+	}
+
+	return bson.M{"or" : []bson.M{leftSide, rightSide}}
+}
+
 
 func ping(){
 	_, err := dial()
@@ -82,12 +149,26 @@ func ping(){
 	}
 }
 
-func getQuestions(questionFilter [] string, nestingLevel int) ([] Question){
+func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel int) ([] Question){
 	session, err := dial()
 	if err != nil {
 		panic(err)
 	}
-	var query = getOr(questionFilter, "_id");
+
+	questionQuery := getOr_id(questionFilter, "_id");
+	var topicQuery bson.M
+
+	for _, topic := range topicFilter {
+		var andQuery []bson.M
+		for _, andTopic := range strings.Split(topic, ","){
+			andQuery = append(andQuery, bson.M{"topics": bson.M{"$elemMatch": bson.M{"label": andTopic}}})
+		}
+		topicQuery = getOrFilters(topicQuery, bson.M{"$and": andQuery})
+	}
+
+	query := getOrFilters(questionQuery, topicQuery)
+
+
 	var questionRecs []Question
 
 
@@ -95,7 +176,7 @@ func getQuestions(questionFilter [] string, nestingLevel int) ([] Question){
 	c := session.DB(mongodb_database).C(collection_questions)
 
 	fmt.Println(query)
-	err = c.Find(getOr(questionFilter, "_id")).All(&questionRecs)
+	err = c.Find(query).All(&questionRecs)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -130,6 +211,10 @@ func postQuestion(newQ NewQuestion)(*Question){
 	if err != nil {
 		panic(err)
 	}
+
+	for _, topic := range question.Topics{
+		topicChan <- topic
+	}
 	return &question
 }
 
@@ -154,7 +239,7 @@ func getAnswers(questionFilter [] string, answerFilter [] string, nestingLevel i
 	if err != nil {
 		panic(err)
 	}
-	var query bson.M = getAndFilters(getOr(questionFilter, "questionId"), getOr(answerFilter, "_id"));
+	var query bson.M = getAndFilters(getOr_id(questionFilter, "questionId"), getOr_id(answerFilter, "_id"));
 	var answerRecs []Answer
 
 	session.SetMode(mgo.Monotonic, true)
@@ -226,11 +311,11 @@ func getComments(answerFilter [] string, commentFilter [] string, nestingLevel i
 	var answerQuery bson.M
 
 	if(len(answerFilter) > 0){
-		answerQuery = getAndFilters(getOr(answerFilter, "answerId"), bson.M{"parentCommentId": nil})
+		answerQuery = getAndFilters(getOr_id(answerFilter, "answerId"), bson.M{"parentCommentId": nil})
 	}
 
 
-	var query bson.M = getAndFilters(answerQuery, getOr(commentFilter, "_id"));
+	var query bson.M = getAndFilters(answerQuery, getOr_id(commentFilter, "_id"));
 	var commentRecs []Comment
 
 	session.SetMode(mgo.Monotonic, true)
@@ -339,5 +424,55 @@ func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewCo
 		panic(err)
 	}
 	return &comment
+}
+
+func getTopics(labelFilters []string, nestingLevel int ) []Topic {
+	session, err := dial()
+	if err != nil {
+		panic(err)
+	}
+
+	var topicRecs []Topic
+
+	var query bson.M
+
+	if(len(labelFilters) == 1){
+		query = bson.M{"label": labelFilters[0]}
+
+	} else{
+		orQuery := []bson.M{}
+
+		for _, label := range labelFilters {
+				orQuery = append(orQuery, bson.M{"label": label})
+
+		}
+	}
+
+	session.SetMode(mgo.Monotonic, true)
+	c := session.DB(mongodb_database).C(collection_topics)
+
+
+	err = c.Find(query).All(&topicRecs)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return topicRecs;
+}
+
+func updateTopic(topic Topic)(Topic){
+	session, err := dial()
+	if err != nil {
+		panic(err)
+	}
+
+	session.SetMode(mgo.Monotonic, true)
+	c := session.DB(mongodb_database).C(collection_topics)
+
+	chg, err := c.Upsert(bson.M{"label" : topic.Label}, topic)
+
+	log.Printf("%s/n", chg)
+
+	return topic
 }
 

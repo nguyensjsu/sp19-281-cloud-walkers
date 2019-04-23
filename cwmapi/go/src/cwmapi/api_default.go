@@ -21,19 +21,10 @@ import (
 
 // GetTags - All the tags in the system
 func GetTopics(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
 
-	questions := getQuestions([]string{}, 0);
+	topics := getTopics([]string{}, 0);
 	set := make(map[string]Topic)
 
-	for _, question := range questions{
-		for _, topic := range question.Topics{
-			set[topic.Label] = topic
-		}
-	}
-
-	var topics []Topic
 
 	for k := range set {
 		topics = append(topics, Topic{k})
@@ -50,13 +41,14 @@ func GetTopics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
+	w.Header().Set("Content-Type","application/json")
 
 }
 
 func GetQuestions(w http.ResponseWriter, r *http.Request) {
 	pp := parseUrl(r.URL)
 
-	questions := getQuestions(queryVals(pp.queryParams, "questionId"), depth(pp))
+	questions := getQuestions(queryVals(pp.queryParams, "questionId"), queryVals(pp.queryParams, "topic"), depth(pp))
 	jsonVal, err := json.MarshalIndent(questions, "", "   ");
 
 	if(err != nil){
@@ -129,7 +121,7 @@ func PutQuestionUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	questions := getQuestions([]string{questionId}, 0)
+	questions := getQuestions([]string{questionId}, []string{}, 0)
 
 	if(questions == nil){
 		http.Error(w, fmt.Sprintf("No question with answerId (%s) is found.", questionId), http.StatusNotFound)
@@ -211,7 +203,7 @@ func PostAnswer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	question := getQuestions([]string{questionId}, 0)
+	question := getQuestions([]string{questionId}, []string{},0)
 
 	if(question == nil){
 		http.Error(w, fmt.Sprintf("Invalid questionId: %s", questionId), http.StatusNotFound)

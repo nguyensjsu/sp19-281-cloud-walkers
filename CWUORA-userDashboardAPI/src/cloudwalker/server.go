@@ -205,7 +205,6 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 		/** Get user ID from JWT, header
 		**/
 		tokenStr := req.Header.Get("User-Agent")
-		fmt.Println("header", header)
 		//var tokenStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ"
 		
         hmacSecretString := "secret"// Value
@@ -223,7 +222,7 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
         // }
 
         fmt.Println("claims", claims)
-        userId := claims["id"]
+        userId := claims["id"].(string)
 
         fmt.Println("decodedUserid", userId)
         fmt.Println("ok", ok)
@@ -239,7 +238,7 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 			us.Insert(topic)
 		}
 
-		if action == "quesiton" {
+		if action == "question" {
 			var question MUserFQuestion
 			question.UserId = userId
 			question.FollowedQ = followId 
@@ -376,7 +375,7 @@ db.uQuestion.insert(
 	}
 );
 
-db.uQuestion.insert(
+db.uFQuestion.insert(
 	{
 		userId: "123456",
 		questionId: "5cb4048478163fa3c9726fdc"

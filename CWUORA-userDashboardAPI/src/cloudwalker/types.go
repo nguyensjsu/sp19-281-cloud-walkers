@@ -142,7 +142,7 @@ type MUserFQuestion struct {
 type MUserQuestion struct {
 	UserId          	string   `json:"userId" bson:"userId"`	
 	Uquestions          string  `json:"questionId" bson:"questionId"`
-}.
+}
 // db.uAnswer
 type MUserAnswer struct {
 	UserId          	string   `json:"userId" bson:"userId"`	
@@ -152,11 +152,15 @@ type MUserAnswer struct {
 /****************** POST Part**************************/
 type PostFollow struct {
 	Action          	string   `json:"action" bson:"action"`	
-	Id		        string  `json:"id" bson:"id"`
+	Id		        	string  `json:"id" bson:"id"`
 }
 // db.uFQuestion
 type PostContent struct {
-	Action          	string   `json:"action" bson:"action"`	
-	Id           string  `json:"id" bson:"id"`
+	Action         string   `json:"action" bson:"action"`	
+	Id             string  `json:"id" bson:"id"`
+}
+
+type Success struct {
+	Success		 bool	`json:"success" bson:"success"`
 }
 

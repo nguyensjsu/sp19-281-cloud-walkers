@@ -18,6 +18,7 @@ import (
 	//"github.com/satori/go.uuid"
 	"gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
+    "github.com/dgrijalva/jwt-go"
     //"time"
     //"math/rand"
 )
@@ -201,10 +202,33 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 		var followResult PostFollow
 		json.Unmarshal(body, &followResult)
 
-		/**
-			Hard code userid for testing
-		**/   
-		var userId = "888888"
+		/** Get user ID from JWT, header
+		**/
+		tokenStr := req.Header.Get("User-Agent")
+		fmt.Println("header", header)
+		//var tokenStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ"
+		
+        hmacSecretString := "secret"// Value
+        hmacSecret := []byte(hmacSecretString)
+        token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+             // check token signing method etc
+             return hmacSecret, nil
+        })
+        claims, ok := token.Claims.(jwt.MapClaims)
+        // ; ok && token.Valid {
+        //     return claims, true
+        // } else {
+        //     log.Printf("Invalid JWT Token")
+        //     return nil, false
+        // }
+
+        fmt.Println("claims", claims)
+        userId := claims["id"]
+
+        fmt.Println("decodedUserid", userId)
+        fmt.Println("ok", ok)
+
+		//var userId = "888888"
 		var action = followResult.Action
 		var followId = followResult.Id
 
@@ -221,8 +245,11 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 			question.FollowedQ = followId 
 			uq.Insert(question)
 		}
-        
-		formatter.JSON(w, http.StatusOK, "success")
+
+		var response Success
+		response.Success = true
+
+		formatter.JSON(w, http.StatusOK, response)
 	}
 }
 
@@ -264,7 +291,7 @@ func userPostHandler(formatter *render.Render) http.HandlerFunc {
 			var question MUserQuestion
 			question.UserId = userId
 			question.Uquestions = postId 
-			us.Insert(question)
+			uq.Insert(question)
 		}
 
 		if action == "answer" {
@@ -273,8 +300,11 @@ func userPostHandler(formatter *render.Render) http.HandlerFunc {
 			answer.UAnswers = postId 
 			ua.Insert(answer)
 		}
+		
+		var response Success
+		response.Success = true
         
-		formatter.JSON(w, http.StatusOK, "success")
+		formatter.JSON(w, http.StatusOK, response)
 	}
 }
 /****

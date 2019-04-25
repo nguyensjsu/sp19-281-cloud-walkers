@@ -4,14 +4,14 @@ function getNextId(){
 
 
 userIds = [
-    "1000000",
-    "1231000",
-    "4200304",
-    "1466220",
-    "9822142",
-    "3112225",
-    "6213498",
-    "7855542"
+    "5cbe464972c9bfd18c02df81",
+    "5cbeb9ae72c9bfdd4416f969",
+    "5cbebb2572c9bfdd80680719",
+    "5cbf42ef199080b5a1c486a2",
+    "5cbf439e199080b5a1c486a3",
+    "5cbf439e199080b5a1c486a4",
+    "5cbf44da199080b5a1c486a5",
+    "5cbf44da199080b5a1c486a6"
 ]
 
 answerIds = [
@@ -49,15 +49,15 @@ repliesToComments = [
 ]
 
 
-for(i = 0; i < 10; i++){
+for(i = 0; i < 8; i++){
     curId = getNextId()
     db.comments.insert
     (
         {
             "_id" : curId,
             "answerId" : answerIds[i],
-            "body" : comments[i],
-            "createdOn" :  new Date(),
+            "commentText" : comments[i],
+            "createdOn" :  new ISODate(),
             "createdBy": userIds[i]
         }
     )
@@ -67,8 +67,8 @@ for(i = 0; i < 10; i++){
             "_id" : getNextId(),
             "answerId" : answerIds[i],
             "parentCommentId" : curId,
-            "body" : repliesToComments[i],
-            "createdOn" :  new Date(),
+            "commentText" : repliesToComments[i],
+            "createdOn" :  new ISODate(),
             "createdBy": userIds[i]
 
         }

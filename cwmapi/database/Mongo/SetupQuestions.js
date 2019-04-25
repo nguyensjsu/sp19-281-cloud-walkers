@@ -7,11 +7,12 @@ var whySoRelatableQ2      = ObjectId("5cb4048478163fa3c9726fe0")
 var travelTipsAndHacksQ1  = ObjectId("5cb4048478163fa3c9726fdd")
 var travelTipsAndHacksQ2  = ObjectId("5cb4048478163fa3c9726fde")
 
-var user1 = "1000000"
-var user2 = "1231000"
-var user3 = "4200304"
-var user4 = "1466220"
-var user5 = "9822142"
+var user1 = "5cbe464972c9bfd18c02df81"
+var user2 = "5cbeb9ae72c9bfdd4416f969"
+var user3 = "5cbebb2572c9bfdd80680719"
+var user4 = "5cbf42ef199080b5a1c486a2"
+var user5 = "5cbf439e199080b5a1c486a3"
+
 
 var realProgrammers     = ObjectId("5cb3c8ab78163fa3c9726fb2")
 var zerosAndOnes        = ObjectId("5cb3c8ab78163fa3c9726fb3")
@@ -23,10 +24,20 @@ db.questions.insert
 (
     {
         "_id" : realProgrammersQ1,
-        "spaceId" : realProgrammers,
-        "body" : "What's the best way to find malloc leaks?",
+        "questionText" : "What's the best way to find malloc leaks?",
         "createdOn" :  new Date(),
-        "createdBy": user1
+        "createdBy": user1,
+        "topics" : [
+            {
+                "label": "Computer Programming",
+            },
+            {
+                "label": "Computer Science",
+            },
+            {
+                "label": "Software Engineering"
+            }
+        ]
     }
 )
 
@@ -34,10 +45,20 @@ db.questions.insert
 (
     {
         "_id" : realProgrammersQ2,
-        "spaceId" : realProgrammers,
-        "body" : "Why would anyone want to allocate and free memory instead of using garbage collection?",
+        "questionText" : "Why would anyone want to allocate and free memory instead of using garbage collection?",
         "createdOn" :  new Date(),
-        "createdBy": user2
+        "createdBy": user2,
+        "topics" : [
+            {
+                "label": "Computer Programming",
+            },
+            {
+                "label": "Computer Science",
+            },
+            {
+                "label": "Software Engineering"
+            }
+        ]
     }
 )
 
@@ -46,10 +67,20 @@ db.questions.insert
 (
     {
         "_id" : zerosAndOnesQ1,
-        "spaceId" : zerosAndOnes,
-        "body" : "Were the compilers of the first programming languages written in machine code?",
+        "questionText" : "Were the compilers of the first programming languages written in machine code?",
         "createdOn" :  new Date(),
-        "createdBy": user3
+        "createdBy": user3,
+        "topics" : [
+            {
+                "label": "Computer Programming",
+            },
+            {
+                "label": "Computer Science",
+            },
+            {
+                "label": "Software Engineering"
+            }
+        ]
     }
 )
 
@@ -58,10 +89,20 @@ db.questions.insert
 (
     {
         "_id" : zerosAndOnesQ2,
-        "spaceId" : zerosAndOnes,
-        "body" : "Big Data is still evolving, After Hadoop industry is focusing on Spark, Now what next after Spark ?",
+        "questionText" : "Big Data is still evolving, After Hadoop industry is focusing on Spark, Now what next after Spark ?",
         "createdOn" :  new Date(),
-        "createdBy": user4
+        "createdBy": user4,
+        "topics" : [
+            {
+                "label": "Computer Programming",
+            },
+            {
+                "label": "Computer Science",
+            },
+            {
+                "label": "Software Engineering"
+            }
+        ]
     }
 )
 
@@ -70,10 +111,20 @@ db.questions.insert
 (
     {
         "_id" : travelTipsAndHacksQ1,
-        "spaceId" : travelTipsAndHacks,
-        "body" : "As someone who lives in the United Kingdom, what is the most ridiculous thing you have witnessed a tourist do?",
+        "questionText" : "As someone who lives in the United Kingdom, what is the most ridiculous thing you have witnessed a tourist do?",
         "createdOn" :  new Date(),
-        "createdBy": user5
+        "createdBy": user5,
+        "topics" : [
+            {
+                "label": "International Travel",
+            },
+            {
+                "label": "Tourism",
+            },
+            {
+                "label": "Visiting and Travel"
+            }
+        ]
     }
 )
 
@@ -81,10 +132,20 @@ db.questions.insert
 (
     {
         "_id" : travelTipsAndHacksQ2,
-        "spaceId" : travelTipsAndHacks,
-        "body" : "Is Iceland an underrated travel destination?",
+        "questionText" : "Is Iceland an underrated travel destination?",
         "createdOn" :  new Date(),
-        "createdBy": user4
+        "createdBy": user4,
+        "topics" : [
+            {
+                "label": "International Travel",
+            },
+            {
+                "label": "Tourism",
+            },
+            {
+                "label": "Visiting and Travel"
+            }
+        ]
     }
 )
 
@@ -94,10 +155,20 @@ db.questions.insert
 (
     {
         "_id" : whySoRelatableQ1,
-        "spaceId" : whySoRelatable,
-        "body" : "What would your reaction be if Quora implemented a rule banning swear words?",
+        "questionText" : "What would your reaction be if Quora implemented a rule banning swear words?",
         "createdOn" :  new Date(),
-        "createdBy": user1
+        "createdBy": user1,
+        "topics" : [
+            {
+                "label": "Education",
+            },
+            {
+                "label": "Life and Living",
+            },
+            {
+                "label": "Students"
+            }
+        ]
     }
 )
 
@@ -105,10 +176,20 @@ db.questions.insert
 (
     {
         "_id" : whySoRelatableQ2,
-        "spaceId" : whySoRelatable,
-        "body" : "What is the single insight that most changed your life?",
+        "questionText" : "What is the single insight that most changed your life?",
         "createdOn" :  new Date(),
-        "createdBy": user4
+        "createdBy": user4,
+        "topics" : [
+            {
+                "label": "Education",
+            },
+            {
+                "label": "Life and Living",
+            },
+            {
+                "label": "Students"
+            }
+        ]
     }
 )
 

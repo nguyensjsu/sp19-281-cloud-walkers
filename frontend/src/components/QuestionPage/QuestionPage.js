@@ -6,7 +6,7 @@ import { userActions } from '../../_actions';
 import { connect } from 'react-redux';
 import './QuestionPage.css';
 import { ListGroup, Container, Badge, ButtonToolbar, Button, Collapse, Card, Form, Col, Row } from 'react-bootstrap';
-import ReactPaginate from 'react-paginate';
+//import ReactPaginate from 'react-paginate';
 import Moment from 'react-moment';
 import PropTypes from 'prop-types';
 import AnswerEditor from '../AnswerEditor/AnswerEditor';

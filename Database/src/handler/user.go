@@ -41,8 +41,7 @@ func (h *Handler) Signup(c echo.Context) (err error) {
 	last_name_s := "\"last_name\""
 	user_id_s := "\"user_id\""
 
-	responsemessage := join("{ ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, ", ",
-		user_id_s, " : ", u.ID.String(), "}")
+	responsemessage := join("{ ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, "}")
 
 	return c.JSON(http.StatusCreated, responsemessage)
 }
@@ -93,8 +92,7 @@ func (h *Handler) Login(c echo.Context) (err error) {
 	user_id_s := "\"user_id\""
 
 	responsemessage := join("{ ", is_aut_s," : true, ", token_s, " : ", u.Token,
-		", ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, ", ",
-		user_id_s, " : ", u.ID.String(), "}")
+		", ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, "}")
 	fmt.Println(responsemessage)
 	return c.JSON(http.StatusOK, responsemessage)
 }

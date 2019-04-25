@@ -22,9 +22,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Topic'
-
-         
-
   
   /questions:
     get:
@@ -32,11 +29,16 @@ paths:
       parameters:
       - name: questionId
         in: query
-        description: One or more (comma-separated) question _id as a filter for questions.  If empty, all questions will be retrieved
+        description: A question _id as a filter for questions.  If empty, all questions will be retrieved.  Multiple questionIds will be treated as 'or'
         required: false
         schema:
           type: string
-
+      - name: topic
+        in: query
+        description: One or more topics to use as a filter for questions.  Multiple comma-separated topics in one parameter will be treated as 'and', and multiple topic parameters will be treated as or.  Thus, topic=a,b&topic=c is understood to be topic = (a&b) | c.
+        required: false
+        schema:
+          type: string
       - name: depth
         in: query
         description: 0 = no nesting, 1 = 1st order nesting, etc.  -1 for all levels.
@@ -398,7 +400,7 @@ components:
   
     Topic:
       required:
-      - "label"
+      - "topic"
       properties:
         label:
           type: "string"
@@ -427,21 +429,12 @@ components:
         topics:
           type: array
           items:
-            required:
-            - topics
-            type: object
-            properties:
-              topics:
-                $ref: '#/components/schemas/Topic'
+              $ref: '#/components/schemas/Topic'
 
         answers:
           type: array
           items:
-            required:
-            - answers
-            type: object
-            properties:
-              answers:
+
                 $ref: '#/components/schemas/Answer'
     NewQuestion:
       required:
@@ -455,12 +448,7 @@ components:
         topics:
           type: array
           items:
-            required:
-            - topic
-            type: object
-            properties:
-              topics:
-                $ref: '#/components/schemas/Topic'
+              $ref: '#/components/schemas/Topic'
         
 
     Answer:

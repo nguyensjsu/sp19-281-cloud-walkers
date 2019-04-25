@@ -1,73 +1,1941 @@
 {
 	"info": {
-		"_postman_id": "ba9ca48c-3b8b-425b-b93e-c7b69f9be341",
-		"name": "CWMapi",
+		"_postman_id": "62f39f25-6cb8-4f57-bea5-2d30dbe4f3b1",
+		"name": "CWMAPI",
+		"description": "Post/read questions, answers, and comments",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "ping",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+			"name": "questions",
+			"item": [
+				{
+					"name": "Gets 0 or more questions, quewry by question Id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/questions?questionId=<string>&depth=<integer>",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"questions"
+							],
+							"query": [
+								{
+									"key": "questionId",
+									"value": "<string>",
+									"description": "One or more (comma-separated) question _id as a filter for questions.  If empty, all questions will be retrieved"
+								},
+								{
+									"key": "depth",
+									"value": "<integer>",
+									"description": "0 = no nesting, 1 = 1st order nesting, etc.  -1 for all levels."
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "A list of questions for a space",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/questions?questionId=<string>&depth=<integer>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "questionId",
+											"value": "<string>"
+										},
+										{
+											"key": "depth",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
 				},
-				"url": {
-					"raw": ""
+				{
+					"name": "Gets 0 or more questions, query by topic",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/questions?questionId=<string>&depth=<integer>",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"questions"
+							],
+							"query": [
+								{
+									"key": "questionId",
+									"value": "<string>",
+									"description": "One or more (comma-separated) question _id as a filter for questions.  If empty, all questions will be retrieved"
+								},
+								{
+									"key": "depth",
+									"value": "<integer>",
+									"description": "0 = no nesting, 1 = 1st order nesting, etc.  -1 for all levels."
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "A list of questions for a space",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/questions?questionId=<string>&depth=<integer>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "questionId",
+											"value": "<string>"
+										},
+										{
+											"key": "depth",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "post a question",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"<string>\",\n    \"questionText\": \"<string>\",\n    \"topics\": [\n        {\n            \"topics\": {\n                \"label\": \"<string>\"\n            }\n        },\n        {\n            \"topics\": {\n                \"label\": \"<string>\"\n            }\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/questions",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"questions"
+							]
+						},
+						"description": "Adds a new question to a space."
+					},
+					"response": [
+						{
+							"name": "question posted",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"questionText\": \"<string>\",\n    \"topics\": [\n        {\n            \"topics\": {\n                \"label\": \"<string>\"\n            }\n        },\n        {\n            \"topics\": {\n                \"label\": \"<string>\"\n            }\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/questions",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"questions"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "null"
+						},
+						{
+							"name": "invalid format, for example, bad ObjectId or incorrect schema",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"questionText\": \"<string>\",\n    \"topics\": [\n        {\n            \"topics\": {\n                \"label\": \"<string>\"\n            }\n        },\n        {\n            \"topics\": {\n                \"label\": \"<string>\"\n            }\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/questions",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"questions"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "spaceId is not found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"questionText\": \"<string>\",\n    \"topics\": [\n        {\n            \"topics\": {\n                \"label\": \"<string>\"\n            }\n        },\n        {\n            \"topics\": {\n                \"label\": \"<string>\"\n            }\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/questions",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"questions"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				},
+				{
+					"name": "update a question",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"body\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/questions?questionId=<string>",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"questions"
+							],
+							"query": [
+								{
+									"key": "questionId",
+									"value": "<string>",
+									"description": "The _id of question to update"
+								}
+							]
+						},
+						"description": "Updated question."
+					},
+					"response": [
+						{
+							"name": "commentId is not found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"body\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/questions?questionId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "questionId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "Update has been applied",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"body\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/questions?questionId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "questionId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "null"
+						},
+						{
+							"name": "invalid format, for example, bad ObjectId or incorrect schema",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"body\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/questions?questionId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"questions"
+									],
+									"query": [
+										{
+											"key": "questionId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get topics",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+			"name": "answers",
+			"item": [
+				{
+					"name": "Gets one or more answers",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/answers?questionId=<string>&answerId=<string>&depth=<integer>",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"answers"
+							],
+							"query": [
+								{
+									"key": "questionId",
+									"value": "<string>",
+									"description": "one or more (coma-separated) question _id.  If set, only answers from specified questioId(s) will be returned"
+								},
+								{
+									"key": "answerId",
+									"value": "<string>",
+									"description": "One or more (comma-separated) answer _id as a filter for answers, for each question to get.  If empty, all answers will be retrieved, based on the value if questionId"
+								},
+								{
+									"key": "depth",
+									"value": "<integer>",
+									"description": "0 = no nesting, 1 = 1st order nesting, etc.  -1 for all levels."
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "A list of answers for a question",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/answers?questionId=<string>&answerId=<string>&depth=<integer>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"answers"
+									],
+									"query": [
+										{
+											"key": "questionId",
+											"value": "<string>"
+										},
+										{
+											"key": "answerId",
+											"value": "<string>"
+										},
+										{
+											"key": "depth",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
 				},
-				"url": {
-					"raw": ""
+				{
+					"name": "post an answer to a question",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"<string>\",\n    \"answerText\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/answers?questionid=<string>",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"answers"
+							],
+							"query": [
+								{
+									"key": "questionid",
+									"value": "<string>",
+									"description": "The question to be answered"
+								}
+							]
+						},
+						"description": "Answers a question."
+					},
+					"response": [
+						{
+							"name": "answer posted",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"answerText\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/answers?questionid=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"answers"
+									],
+									"query": [
+										{
+											"key": "questionid",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "null"
+						},
+						{
+							"name": "questionId is not found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"answerText\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/answers?questionid=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"answers"
+									],
+									"query": [
+										{
+											"key": "questionid",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "invalid format, for example, bad ObjectId or incorrect schema",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"answerText\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/answers?questionid=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"answers"
+									],
+									"query": [
+										{
+											"key": "questionid",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
+				},
+				{
+					"name": "update an answer",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"body\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/answers?answerId=<string>",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"answers"
+							],
+							"query": [
+								{
+									"key": "answerId",
+									"value": "<string>",
+									"description": "The _id of answer to update"
+								}
+							]
+						},
+						"description": "Updated answer."
+					},
+					"response": [
+						{
+							"name": "invalid format, for example, bad ObjectId or incorrect schema",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"body\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/answers?answerId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"answers"
+									],
+									"query": [
+										{
+											"key": "answerId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "commentId is not found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"body\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/answers?answerId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"answers"
+									],
+									"query": [
+										{
+											"key": "answerId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "Update has been applied",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"body\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/answers?answerId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"answers"
+									],
+									"query": [
+										{
+											"key": "answerId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "null"
+						}
+					]
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get questions",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+			"name": "comments",
+			"item": [
+				{
+					"name": "Gets all top-level comments for an answer",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/comments?answerId=<string>&commentId=<string>&depth=<integer>",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "answerId",
+									"value": "<string>",
+									"description": "one or more (coma-separated) answer _id.  If set, only comments from specified answer(s) will be returned"
+								},
+								{
+									"key": "commentId",
+									"value": "<string>",
+									"description": "One or more (comma-separated) comment _id as a filter for comments to get.  If empty, all commments will be retrieved, based on the value of answerId"
+								},
+								{
+									"key": "depth",
+									"value": "<integer>",
+									"description": "0 = no nesting, 1 = 1st order nesting, etc.  -1 for all levels."
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "A list of comments for an answer",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/comments?answerId=<string>&commentId=<string>&depth=<integer>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"comments"
+									],
+									"query": [
+										{
+											"key": "answerId",
+											"value": "<string>"
+										},
+										{
+											"key": "commentId",
+											"value": "<string>"
+										},
+										{
+											"key": "depth",
+											"value": "<integer>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
 				},
-				"url": {
-					"raw": ""
+				{
+					"name": "post a comment to an answer",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"<string>\",\n    \"commentTex\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/comments?answerId=<string>",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "answerId",
+									"value": "<string>",
+									"description": "The _id of answer for comment"
+								}
+							]
+						},
+						"description": "Comment for an answer."
+					},
+					"response": [
+						{
+							"name": "invalid format, for example, bad ObjectId or incorrect schema",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"commentTex\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/comments?answerId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"comments"
+									],
+									"query": [
+										{
+											"key": "answerId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "answerId is not found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"commentTex\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/comments?answerId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"comments"
+									],
+									"query": [
+										{
+											"key": "answerId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "comment posted",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"commentTex\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/comments?answerId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"comments"
+									],
+									"query": [
+										{
+											"key": "answerId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "null"
+						}
+					]
+				},
+				{
+					"name": "update a comment or reply",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"body\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/comments?commentId=<string>",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "commentId",
+									"value": "<string>",
+									"description": "The _id of comment to update"
+								}
+							]
+						},
+						"description": "Reply for a comment."
+					},
+					"response": [
+						{
+							"name": "invalid format, for example, bad ObjectId or incorrect schema",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"body\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/comments?commentId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"comments"
+									],
+									"query": [
+										{
+											"key": "commentId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "commentId is not found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"body\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/comments?commentId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"comments"
+									],
+									"query": [
+										{
+											"key": "commentId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "Update has been applied",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"body\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/comments?commentId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"comments"
+									],
+									"query": [
+										{
+											"key": "commentId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "null"
+						}
+					]
+				},
+				{
+					"name": "post a reply to a comment",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"<string>\",\n    \"commentTex\": \"<string>\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/reply?commentId=<string>",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"reply"
+							],
+							"query": [
+								{
+									"key": "commentId",
+									"value": "<string>",
+									"description": "The _id of comment for reply"
+								}
+							]
+						},
+						"description": "Reply for a comment."
+					},
+					"response": [
+						{
+							"name": "reply posted",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"commentTex\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/reply?commentId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"reply"
+									],
+									"query": [
+										{
+											"key": "commentId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "null"
+						},
+						{
+							"name": "invalid format, for example, bad ObjectId or incorrect schema",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"commentTex\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/reply?commentId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"reply"
+									],
+									"query": [
+										{
+											"key": "commentId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						},
+						{
+							"name": "commentId is not found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\": \"<string>\",\n    \"commentTex\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}/msgstore/v1/reply?commentId=<string>",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}",
+									"path": [
+										"msgstore",
+										"v1",
+										"reply"
+									],
+									"query": [
+										{
+											"key": "commentId",
+											"value": "<string>"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "Text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": "<string>"
+						}
+					]
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get one question",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+			"name": "Kong",
+			"item": [
+				{
+					"name": "Kong Server | Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/status",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": ""
+				{
+					"name": "Kong Server | Add API (Docker)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"goapi\",\n    \"request_path\": \"/cwmapi\",\n    \"strip_request_path\": \"true\",\n    \"preserve_host\": \"true\",\n    \"upstream_url\": \"http://gumball:3000/\"\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/apis",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"apis"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kong Server | List APIs (Docker)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/apis",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"apis"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kong Server | Delete API (Docker)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/apis/cwmapi",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"apis",
+								"cwmapi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kong Server | Get List of API Plugins (Docker)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/apis/cwmapi/plugins",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"apis",
+								"cwmapi",
+								"plugins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kong Server | Remove Plugin from API (Docker)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/apis/cwmapi/plugins/12cc3fd7-c07e-4c3b-bc0f-465e311bf948",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"apis",
+								"cwmapi",
+								"plugins",
+								"12cc3fd7-c07e-4c3b-bc0f-465e311bf948"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kong Server | Plugin Add API Key Auth (Docker)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "key-auth",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/apis/cwmapi/plugins",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"apis",
+								"cwmapi",
+								"plugins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kong Server | Plugin Add File Logger (Docker)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "file-log",
+									"type": "text"
+								},
+								{
+									"key": "config.path",
+									"value": "/tmp/kong.log",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/apis/cwmapi/plugins",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"apis",
+								"cwmapi",
+								"plugins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kong Server | API Client Add (Docker)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "apiclient",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/consumers/",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"consumers",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kong  Server | API Client Add Key (Docker)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5ffe8d9d-5712-4906-848e-5ca995745127",
+								"type": "text/javascript",
+								"exec": [
+									"var response = JSON.parse(responseBody);",
+									"postman.setGlobalVariable(\"api_key\", response.key);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/consumers/apiclient/key-auth",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"consumers",
+								"apiclient",
+								"key-auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kong Server | API Client Delete (Docker)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "apiclient",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/consumers/apiclient",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"consumers",
+								"apiclient"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kong Server | API Clients List (Docker)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}:{{adminport}}/consumers",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{adminport}}",
+							"path": [
+								"consumers"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get two questions",
+			"name": "All the topics in the system",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -75,205 +1943,62 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": ""
+					"raw": "{{host}}:{{port}}/msgstore/v1/topics",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"msgstore",
+						"v1",
+						"topics"
+					]
 				}
 			},
-			"response": []
-		},
+			"response": [
+				{
+					"name": "Array of topics",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/msgstore/v1/topics",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"msgstore",
+								"v1",
+								"topics"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "Text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "*/*"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		}
+	],
+	"variable": [
 		{
-			"name": "Post Question",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Put question update",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get answers for question",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get two answers",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get one answer",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Post answer",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get comments for answer",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get two comments",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get one comment",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Post comment to answer",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Post reply to comment",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Put update to comment",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Put update to comment Copy",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
+			"id": "baseUrl",
+			"key": "baseUrl",
+			"value": "http://34.208.28.95:3000/msgstore/v1",
+			"type": "string"
 		}
 	]
 }

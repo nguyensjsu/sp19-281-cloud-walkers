@@ -2,7 +2,9 @@ package handler
 
 import (
 	"../model"
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -23,14 +25,25 @@ func (h *Handler) Signup(c echo.Context) (err error) {
 		return &echo.HTTPError{Code: http.StatusBadRequest, Message: "invalid email or password"}
 	}
 
+	if u.FirstName == "" || u.LastName == "" {
+		return &echo.HTTPError{Code: http.StatusBadRequest, Message: "No first name or last name"}
+	}
+
 	// Save user
 	db := h.DB.Clone()
 	defer db.Close()
-	if err = db.DB("twitter").C("users").Insert(u); err != nil {
+	if err = db.DB("cw_user").C("users").Insert(u); err != nil {
 		return
 	}
 
-	return c.JSON(http.StatusCreated, u)
+	//Json
+	first_name_s := "\"first_name\""
+	last_name_s := "\"last_name\""
+	user_id_s := "\"user_id\""
+
+	responsemessage := join("{ ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, "}")
+
+	return c.JSON(http.StatusCreated, responsemessage)
 }
 
 func (h *Handler) Login(c echo.Context) (err error) {
@@ -43,12 +56,12 @@ func (h *Handler) Login(c echo.Context) (err error) {
 	// Find user
 	db := h.DB.Clone()
 	defer db.Close()
-	if err = db.DB("twitter").C("users").
+	if err = db.DB("cw_user").C("users").
 		Find(bson.M{"email": u.Email, "password": u.Password}).One(u); err != nil {
 		if err == mgo.ErrNotFound {
 			return &echo.HTTPError{Code: http.StatusUnauthorized, Message: "invalid email or password"}
 		}
-		return
+		return c.JSON(http.StatusCreated, u)
 	}
 
 	//-----
@@ -70,24 +83,18 @@ func (h *Handler) Login(c echo.Context) (err error) {
 	}
 
 	u.Password = "" // Don't send password
-	return c.JSON(http.StatusOK, u)
-}
 
-func (h *Handler) Follow(c echo.Context) (err error) {
-	userID := userIDFromToken(c)
-	id := c.Param("id")
+	//Json
+	is_aut_s := "\"is_auth\""
+	token_s := "\"token\""
+	first_name_s := "\"first_name\""
+	last_name_s := "\"last_name\""
+	user_id_s := "\"user_id\""
 
-	// Add a follower to user
-	db := h.DB.Clone()
-	defer db.Close()
-	if err = db.DB("twitter").C("users").
-		UpdateId(bson.ObjectIdHex(id), bson.M{"$addToSet": bson.M{"followers": userID}}); err != nil {
-		if err == mgo.ErrNotFound {
-			return echo.ErrNotFound
-		}
-	}
-
-	return
+	responsemessage := join("{ ", is_aut_s," : true, ", token_s, " : ", u.Token,
+		", ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, "}")
+	fmt.Println(responsemessage)
+	return c.JSON(http.StatusOK, responsemessage)
 }
 
 func userIDFromToken(c echo.Context) string {
@@ -96,3 +103,10 @@ func userIDFromToken(c echo.Context) string {
 	return claims["id"].(string)
 }
 
+func join(strs ...string) string {
+	var sb strings.Builder
+	for _, str := range strs {
+		sb.WriteString(str)
+	}
+	return sb.String()
+}

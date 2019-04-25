@@ -156,17 +156,17 @@ func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel i
 	}
 
 	questionQuery := getOr_id(questionFilter, "_id");
-	var topicQuery bson.M
+	var topicAndQueries []bson.M
 
 	for _, topic := range topicFilter {
 		var andQuery []bson.M
 		for _, andTopic := range strings.Split(topic, ","){
 			andQuery = append(andQuery, bson.M{"topics": bson.M{"$elemMatch": bson.M{"label": andTopic}}})
 		}
-		topicQuery = getOrFilters(topicQuery, bson.M{"$and": andQuery})
+		topicAndQueries = append(topicAndQueries, bson.M{"$and": andQuery})
 	}
 
-	query := getOrFilters(questionQuery, topicQuery)
+	query := getOrFilters(questionQuery, bson.M{"$or": topicAndQueries})
 
 
 	var questionRecs []Question

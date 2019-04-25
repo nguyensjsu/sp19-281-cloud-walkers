@@ -26,8 +26,7 @@ type Question struct {
 	QuestionText string `json:"questionText" bson:"questionText"`
 
 	CreatedOn time.Time `json:"createdOn" bson:"createdOn"`
-
-	CreatedBy string `json:"createdBy"`
+	CreatedBy string `json:"createdBy"  bson:"createdBy"`
 
 	Topics []Topic `json:"topics,omitempty" bson:"topics"`
 

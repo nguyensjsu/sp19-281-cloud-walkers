@@ -110,7 +110,7 @@ class Home extends Component {
                     <Card>
                     <Card.Body>
                             <Card.Title style={{"font-size": 14, "color": 949494}}>Yu Zhao</Card.Title>
-                            <Button variant="link"  onClick={this.showModal} className="add_q_link">What is your question?</Button>
+                            <Button variant="link" onClick={this.showModal} className="add_q_link">What is your question?</Button>
                         </Card.Body>
                     </Card>
 

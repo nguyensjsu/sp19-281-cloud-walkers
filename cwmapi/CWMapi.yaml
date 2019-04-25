@@ -45,6 +45,19 @@ paths:
         required: false
         schema:
           type: integer
+      - name: start
+        in: query
+        description: Use for pagination.  The first record to retrieve.  default is 0.  If start is provided, length must also be provided or an error
+        required: false
+        schema:
+          type: integer
+      - name: length
+        in: query
+        description: Use for pagination.  The maximum number of records to return. If length is provided, start must also be provided.
+        required: false
+        schema:
+          type: integer
+
       operationId: getQuestions    
       responses:
         200:

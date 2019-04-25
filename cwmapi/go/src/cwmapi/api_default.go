@@ -48,7 +48,22 @@ func GetTopics(w http.ResponseWriter, r *http.Request) {
 func GetQuestions(w http.ResponseWriter, r *http.Request) {
 	pp := parseUrl(r.URL)
 
-	questions := getQuestions(queryVals(pp.queryParams, "questionId"), queryVals(pp.queryParams, "topic"), depth(pp))
+	first := pp.queryParams.Get("first")
+	length := pp.queryParams.Get("length")
+
+	var questions []Question
+
+	if(len(first) > 0 || len(length) > 0) {
+		if (len(first) == 0 || len(length) == 0) {
+			http.Error(w, fmt.Sprintf("Invalid pagination.  Must use both skip and limit"), http.StatusBadRequest)
+			return
+		}
+
+		pagination := Pagination{skip: ToInt(first), limit: ToInt(length)}
+		questions = getQuestions(queryVals(pp.queryParams, "questionId"), queryVals(pp.queryParams, "topic"), depth(pp), &pagination)
+	} else {
+		questions = getQuestions(queryVals(pp.queryParams, "questionId"), queryVals(pp.queryParams, "topic"), depth(pp), nil)
+	}
 	jsonVal, err := json.MarshalIndent(questions, "", "   ");
 
 	if(err != nil){
@@ -121,7 +136,7 @@ func PutQuestionUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	questions := getQuestions([]string{questionId}, []string{}, 0)
+	questions := getQuestions([]string{questionId}, []string{}, 0, nil)
 
 	if(questions == nil){
 		http.Error(w, fmt.Sprintf("No question with answerId (%s) is found.", questionId), http.StatusNotFound)
@@ -203,7 +218,7 @@ func PostAnswer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	question := getQuestions([]string{questionId}, []string{},0)
+	question := getQuestions([]string{questionId}, []string{},0, nil)
 
 	if(question == nil){
 		http.Error(w, fmt.Sprintf("Invalid questionId: %s", questionId), http.StatusNotFound)

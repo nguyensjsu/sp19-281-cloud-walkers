@@ -29,6 +29,11 @@ var dialInfo = &mgo.DialInfo{}
 
 var topicChan chan Topic
 
+type Pagination struct{
+	skip int
+	limit int
+}
+
 func DbInit(){
 	server1 = os.Getenv("MONGO1")
 	server2 = os.Getenv("MONGO2")
@@ -149,7 +154,7 @@ func ping(){
 	}
 }
 
-func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel int) ([] Question){
+func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel int, paginate *Pagination) ([] Question){
 	session, err := dial()
 	if err != nil {
 		panic(err)
@@ -166,17 +171,31 @@ func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel i
 		topicAndQueries = append(topicAndQueries, bson.M{"$and": andQuery})
 	}
 
-	query := getOrFilters(questionQuery, bson.M{"$or": topicAndQueries})
+	var topicOrQuery bson.M
+
+	if(topicOrQuery != nil){
+		topicOrQuery = bson.M{"$or": topicAndQueries}
+	}
+
+	query := getOrFilters(questionQuery, topicOrQuery)
 
 
 	var questionRecs []Question
 
 
 	session.SetMode(mgo.Monotonic, true)
+
 	c := session.DB(mongodb_database).C(collection_questions)
 
 	fmt.Println(query)
-	err = c.Find(query).All(&questionRecs)
+
+	if(paginate != nil){
+		fmt.Println("Paginate: ", paginate)
+		err = c.Find(query).Skip(paginate.skip).Limit(paginate.limit).All(&questionRecs)
+	} else {
+		err = c.Find(query).All(&questionRecs)
+	}
+
 	if err != nil {
 		log.Fatal(err)
 	}

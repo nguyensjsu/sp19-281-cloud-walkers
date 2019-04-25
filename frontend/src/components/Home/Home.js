@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import cookie from 'react-cookies';
 //import { Redirect } from 'react-router';
-//import './Navbar.css';
+import './Home.css';
 import { userActions } from '../../_actions';
 import { connect } from 'react-redux';
 import Sidebar from '../Sidebar/Sidebar';
@@ -109,15 +109,15 @@ class Home extends Component {
                 <Col md={{ span: 8, offset: 3 }} style={{ "margin-top": -45, "margin-left": 160 }}>
                     <Card>
                     <Card.Body>
-                            <Card.Title>Hi, Yu Zhao</Card.Title>
-                            <Button variant="link" onClick={this.showModal}>What is your question?</Button>
+                            <Card.Title style={{"font-size": 14, "color": 949494}}>Yu Zhao</Card.Title>
+                            <Button variant="link"  onClick={this.showModal} className="add_q_link">What is your question?</Button>
                         </Card.Body>
                     </Card>
 
                     <br />
 
                     <Card>
-                        <Card.Header as="h5"><span className="fa fa-question"></span> Questions for You</Card.Header>
+                        <Card.Header as="h6"><span className="fa fa-question"></span> Questions for You</Card.Header>
                     </Card>    
                         {main_panel} </Col>
             </Container>

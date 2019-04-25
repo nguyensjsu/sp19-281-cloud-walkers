@@ -4,10 +4,13 @@ import cookie from 'react-cookies';
 //import { Redirect } from 'react-router';
 import { userActions } from '../../_actions';
 import { connect } from 'react-redux';
-import { ListGroup, Container, ListGroupItem } from 'react-bootstrap';
+import './QuestionPage.css';
+import { ListGroup, Container, Badge, ButtonToolbar, Button, Collapse, Card } from 'react-bootstrap';
 import ReactPaginate from 'react-paginate';
 import Moment from 'react-moment';
 import PropTypes from 'prop-types';
+import AnswerEditor from '../AnswerEditor/AnswerEditor';
+import { throws } from 'assert';
 
 const fake_reponse = {
     "spaceId": "spaceId",
@@ -95,8 +98,9 @@ export class AnswerList extends Component {
         if (this.props.data.length != 0) {
             details = this.props.data.map((post, idx) => {
                 return (
-                    <ListGroup.Item  key={idx}>
+                    <ListGroup.Item key={idx}>
                         <ul className="list-unstyled">
+
                             <li>{post.answers.createdBy} </li>
                             <li><small className="text-muted">Answered<Moment fromNow>{post.answers.createdOn}</Moment></small></li>
                         </ul>
@@ -119,27 +123,110 @@ export class AnswerList extends Component {
     }
 }
 
+export class BadgeGroup extends Component {
+    static propTypes = {
+        data: PropTypes.array.isRequired,
+    };
 
+    render() {
+        let details = null;
+        if (this.props.data.length != 0) {
+            details = this.props.data.map((post, idx) => {
+                return (
+                    <Badge pill variant="light" className='topic_pill' key={idx}>
+                        {post.topics.label}
+                    </Badge>
+
+                )
+            });
+        }
+        else {
+            details = (<div>No Answer Yet</div>)
+        }
+        return (
+            <div >
+                {details}
+            </div>
+        )
+    }
+}
+
+export class AnswerInput extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            answer_string: null
+        }
+    }
+    static propTypes = {
+        onChange: PropTypes.func
+    };
+
+    handleSubmit = (e) =>{
+        e.preventDefault();
+        const data = {
+            body: this.state.answer_string
+        }
+
+        
+
+    }
+
+
+    handleInputChange = (value) => {
+        console.log(value);
+        this.setState({ answer_string: value })
+    }
+
+    render() {
+        return (
+            <AnswerEditor onChange={this.handleInputChange} />
+        )
+    }
+}
 
 class QuestionPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            user_name: "Yu Zhao",
+            answer_input: false,
+            question: null
         }
     }
-
+    componentWillMount(){
+        this.setState({
+            question: fake_reponse
+        })
+    }
     render() {
         return (
             <div>
                 <Container>
                     <ListGroup variant="flush">
                         <ListGroup.Item>
-                            <h4><b>{fake_reponse.questionText}</b></h4>
+                            <BadgeGroup data={this.state.question.topics} />
+                            <h4><b>{this.state.question.questionText}</b></h4>
+                            <ButtonToolbar>
+                                <Button variant="link" onClick={() => this.setState({ answer_input: !this.state.answer_input })}>Answer</Button>
+                                <Button variant="link">Follow</Button>
+                            </ButtonToolbar>
+                            <Collapse in={this.state.answer_input}>
+                                <Card>
+                                    <Card.Header>{this.state.user_name}</Card.Header>
+                                    <Card.Body>
+                                        <AnswerInput q_id={this.state.question._id} />
+                                    </Card.Body>
+                                    <Card.Footer className="text-muted">
+                                        <Button size="sm"> Submit</Button>
+                                    </Card.Footer>
+                                </Card>
+
+                            </Collapse>
                         </ListGroup.Item>
                     </ListGroup>
 
-                    <AnswerList data={fake_reponse.answers}/>
+                    <AnswerList data={this.state.question.answers} />
                 </Container>
             </div>
         )

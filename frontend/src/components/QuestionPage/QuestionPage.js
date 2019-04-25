@@ -31,20 +31,20 @@ const fake_reponse = {
                 "replies": {
                     "answerId": "answerId",
                     "replies": [{}, {}],
-                    "createdBy": "createdBy",
+                    "createdBy": "John Smith",
                     "parentCommentId": "parentCommentId",
                     "_id": "_id",
-                    "commentText": "commentText",
+                    "commentText": "Velit aute mollit ipsum ad dolor consectetur nulla officia culpa adipisicing exercitation fugiat tempor. Voluptate deserunt sit sunt nisi aliqua fugiat proident ea ut. Mollit voluptate reprehenderit occaecat nisi ad non minim tempor sunt voluptate consectetur exercitation id ut nulla. Ea et fugiat aliquip nostrud sunt incididunt consectetur culpa aliquip eiusmod dolor. Anim ad Lorem aliqua in cupidatat nisi enim eu nostrud do aliquip veniam minim.",
                     "createdOn": "2000-01-23T04:56:07.000+00:00"
                 }
             }, {
                 "replies": {
                     "answerId": "answerId",
                     "replies": [{}, {}],
-                    "createdBy": "createdBy",
+                    "createdBy": "Somebody",
                     "parentCommentId": "parentCommentId",
                     "_id": "_id",
-                    "commentText": "commentText",
+                    "commentText": "Here is a comment",
                     "createdOn": "2000-01-23T04:56:07.000+00:00"
                 }
             }],
@@ -99,10 +99,20 @@ export class CommentPanel extends Component {
             comment_text: false,
             show_comments: false,
         }
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
     onChange = (e) => {
         //        console.log(e.target.value)
         this.setState({ 'comment_text': e.target.value })
+    }
+
+    handleSubmit = (e) => {
+        console.log(this.props.data);
+        const data = {
+            commentText: this.state.comment_text,
+            answer_id: this.props.answerId
+        }
+        console.log(data)
     }
     render() {
         const { comment_text } = this.state
@@ -111,10 +121,10 @@ export class CommentPanel extends Component {
         if (this.state.show_comments === true)
             comment_list = this.props.data.map((comment, idx) => {
                 return (
-                    <ListGroup.Item key={idx} style={{ border: 'none' }}>
-                        <ul className="list-unstyled">
-                            <li><small>{comment.replies.createdBy}</small></li>
-                            <li><small>  {comment.replies.commentText} </small> </li>
+                    <ListGroup.Item key={idx} style={{ border: 'none'}}>
+                        <ul className="list-unstyled" style={{'padding': 0, margin: 0}}>
+                            <li style={{'fontWeight': 'bold', 'fontSize':13}}>{comment.replies.createdBy}</li>
+                            <li className = 'comment_body'> {comment.replies.commentText}  </li>
                         </ul>
                     </ListGroup.Item>
                 )
@@ -129,9 +139,10 @@ export class CommentPanel extends Component {
                         <Form.Control style={{ 'margin-left': 12, 'width': 600 }}
                             as="textarea" rows="1" size="sm" type="text" placeholder="Add a comment..."
                             onChange={this.onChange} />
-                        <Button style={{ 'margin-left': 12 }} size="sm" disabled={!comment_text}> Add Comment</Button>
-
-
+                        <Button style={{ 'margin-left': 12 }}
+                            size="sm" disabled={!comment_text}
+                            onClick={this.handleSubmit}>
+                            Add Comment</Button>
                         <Button style={{ 'margin-left': 12 }} size="sm" variant="link" onClick={() => this.setState({ "show_comments": true })}> All </Button>
                     </Form.Group>
                 </Form>
@@ -182,7 +193,7 @@ export class AnswerList extends Component {
                             <Button className="q_page_button pull-right" variant="link" onClick={() => this.handleDownvote(post.answers._id)}>
                                 <span className="fa fa-arrow-down"></span> Downvote</Button>
                         </ButtonToolbar>
-                        <CommentPanel data={post.answers.comments}></CommentPanel>
+                        <CommentPanel data={post.answers.comments} answerId={post.answers._id}></CommentPanel>
                     </ListGroup.Item>
 
                 )

@@ -165,3 +165,7 @@ type Success struct {
 	Success		 bool	`json:"success" bson:"success"`
 }
 
+type FollowSpaceList struct {
+	FollowSpace    []TestTopic  `json:"followed_topics" bson:"followed_topics"`
+}
+

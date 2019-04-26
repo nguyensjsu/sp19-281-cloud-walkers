@@ -21,6 +21,7 @@ import (
     "github.com/dgrijalva/jwt-go"
     //"time"
     //"math/rand"
+    "strings"
 )
 
 // MongoDB Config
@@ -205,7 +206,9 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 
 		/** Get user ID from JWT, header
 		**/
-		tokenStr := req.Header.Get("Authorization")
+		tokenStrWithSpace := req.Header.Get("Authorization")
+		//var tokenStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ"
+		tokenStr := strings.Split(string(tokenStrWithSpace), " ")[1]
 		//var tokenStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ"
 		
         hmacSecretString := "secret"// Value

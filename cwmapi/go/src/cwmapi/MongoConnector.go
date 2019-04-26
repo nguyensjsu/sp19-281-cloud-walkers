@@ -210,7 +210,7 @@ func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel i
 
 }
 
-func postQuestion(newQ NewQuestion)(*Question){
+func postQuestion(newQ NewQuestion, userId string)(*Question){
 
 	session, err := dial()
 	if err != nil {
@@ -224,7 +224,7 @@ func postQuestion(newQ NewQuestion)(*Question){
 	date := time.Now()
 
 	var question = Question{
-		Id: qid, QuestionText: newQ.QuestionText, CreatedOn: date, CreatedBy: newQ.UserId, Topics: newQ.Topics}
+		Id: qid, QuestionText: newQ.QuestionText, CreatedOn: date, CreatedBy: userId, Topics: newQ.Topics}
 
 	err = c.Insert(question)
 	if err != nil {
@@ -281,7 +281,7 @@ func getAnswers(questionFilter [] string, answerFilter [] string, nestingLevel i
 }
 
 
-func postAnswer(questionId bson.ObjectId, newA NewAnswer)(*Answer){
+func postAnswer(questionId bson.ObjectId, newA NewAnswer, userId string)(*Answer){
 
 	session, err := dial()
 	if err != nil {
@@ -295,7 +295,7 @@ func postAnswer(questionId bson.ObjectId, newA NewAnswer)(*Answer){
 	date := time.Now()
 
 	var answer = Answer{
-		Id: aid, QuestionId: questionId, AnswerText: newA.AnswerText, CreatedOn: date, CreatedBy: newA.UserId}
+		Id: aid, QuestionId: questionId, AnswerText: newA.AnswerText, CreatedOn: date, CreatedBy: userId}
 
 	err = c.Insert(answer)
 	if err != nil {
@@ -383,7 +383,7 @@ func getCommentChildren(commentId bson.ObjectId, nestingLevel int ) ([]Comment){
 	return commentRecs
 }
 
-func postComment(answerId bson.ObjectId, newC NewComment)(*Comment){
+func postComment(answerId bson.ObjectId, newC NewComment, userId string)(*Comment){
 
 	session, err := dial()
 	if err != nil {
@@ -397,7 +397,7 @@ func postComment(answerId bson.ObjectId, newC NewComment)(*Comment){
 	date := time.Now()
 
 	var comment = Comment{
-		Id: aid, AnswerId: answerId, CommentText: newC.CommentText, CreatedOn: date, CreatedBy: newC.UserId}
+		Id: aid, AnswerId: answerId, CommentText: newC.CommentText, CreatedOn: date, CreatedBy: userId}
 
 	err = c.Insert(comment)
 	if err != nil {
@@ -422,7 +422,7 @@ func putComentUpdate(comment Comment){
 	}
 }
 
-func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewComment)(*Comment){
+func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewComment, userId string)(*Comment){
 
 	session, err := dial()
 	if err != nil {
@@ -436,7 +436,7 @@ func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewCo
 	date := time.Now()
 
 	var comment = Comment{
-		Id: aid, AnswerId: answerId, ParentCommentId: parentCommentId, CommentText: newC.CommentText, CreatedOn: date, CreatedBy: newC.UserId}
+		Id: aid, AnswerId: answerId, ParentCommentId: parentCommentId, CommentText: newC.CommentText, CreatedOn: date, CreatedBy: userId}
 
 	err = c.Insert(comment)
 	if err != nil {

@@ -47,6 +47,7 @@ func initRoutes(mx *mux.Router, formatter *render.Render) {
 	mx.HandleFunc("/home", homeHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/userFollow", followHandler(formatter)).Methods("POST")
 	mx.HandleFunc("/userPost", userPostHandler(formatter)).Methods("POST")
+	mx.HandleFunc("/userFollow", followHandler(formatter)).Methods("GET")
 }
 
 // API Home Handler
@@ -176,7 +177,7 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 }
 
 
-// API Follow/Unfollow Handler
+// API Follow/Unfollow Handler POST
 func followHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		/**
@@ -204,7 +205,7 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 
 		/** Get user ID from JWT, header
 		**/
-		tokenStr := req.Header.Get("User-Agent")
+		tokenStr := req.Header.Get("Authorization")
 		//var tokenStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ"
 		
         hmacSecretString := "secret"// Value
@@ -230,19 +231,30 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 		//var userId = "888888"
 		var action = followResult.Action
 		var followId = followResult.Id
+		var ifFollow = followResult.Unfollow
 
 		if action == "topic" {
 			var topic MUserSpace
 			topic.UserId = userId
 			topic.Uspaces = followId 
-			us.Insert(topic)
+			if ifFollow == false {
+				us.Insert(topic)
+			} else {
+				us.Remove(topic)
+			}
+			
 		}
 
 		if action == "question" {
 			var question MUserFQuestion
 			question.UserId = userId
 			question.FollowedQ = followId 
-			uq.Insert(question)
+			if ifFollow == false {
+				uq.Insert(question)
+			} else {
+				uq.Remove(question)
+			}
+			
 		}
 
 		var response Success

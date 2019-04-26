@@ -36,11 +36,10 @@ const getOptions = inputValue => {
   });
 }*/
 
-class AddQModal extends Component {
+class TopicModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user_name: "Yu Zhao",
       selectedTopics: [],
       options: []
     }
@@ -106,20 +105,13 @@ class AddQModal extends Component {
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            Add Question
+          What are your interests?
             </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group controlId="exampleForm.ControlTextarea1">
-              <Form.Label>{this.state.user_name} asked</Form.Label>
-              <Form.Text className="text-muted">
-                Start your question with "What", "How", "Why", etc.
-              </Form.Text>
-              <Form.Control as="textarea" rows="3" name="questionText" onChange={this.handleChange} />
-              <Form.Text className="text-muted">
-                Select topics you want to post question to
-              </Form.Text>
+            <Form.Label className="text-muted">Select topics you want to follow</Form.Label>
               <AsyncSelect
                 isMulti
                 cacheOptions
@@ -133,11 +125,11 @@ class AddQModal extends Component {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="light" onClick={this.props.onHide}>Cancel</Button>
-          <Button onClick={this.handlePost}>Add Question</Button>
+          <Button onClick={this.handlePost}>Follow Topics</Button>
         </Modal.Footer>
       </Modal>
     );
   }
 }
 // apply above mapping to Login class
-export default AddQModal
+export default TopicModal

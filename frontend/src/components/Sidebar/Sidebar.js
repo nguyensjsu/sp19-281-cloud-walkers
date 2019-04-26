@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Sidebar.css';
 import { NavLink } from 'react-router-dom';
-import { Nav } from 'react-bootstrap';
+import { Nav} from 'react-bootstrap';
 
 class Sidebar extends Component {
     render() {

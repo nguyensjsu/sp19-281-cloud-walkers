@@ -124,8 +124,8 @@ class TopicModal extends Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="light" onClick={this.props.onHide}>Cancel</Button>
-          <Button onClick={this.handlePost}>Follow Topics</Button>
+          <Button style={{'color': '#949494', 'text-decoration': 'none', 'font-weight': 400}} variant="link" onClick={this.props.onHide}>Not now</Button>
+          <Button onClick={this.handlePost}>Done</Button>
         </Modal.Footer>
       </Modal>
     );

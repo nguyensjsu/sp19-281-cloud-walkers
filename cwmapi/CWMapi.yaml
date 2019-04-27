@@ -10,6 +10,14 @@ paths:
 
   /topics:
     get:
+      parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
+        
       summary: All the topics in the system
       
       operationId: getTopics    
@@ -22,11 +30,23 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Topic'
+        401:
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string          
   
   /questions:
     get:
       summary: Gets 0 or more questions based on query
       parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
       - name: questionId
         in: query
         description: A question _id as a filter for questions.  If empty, all questions will be retrieved.  Multiple questionIds will be treated as 'or'
@@ -74,6 +94,13 @@ paths:
     post:
       summary: post a question 
       description: Adds a new question to a space.
+      parameters: 
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
       operationId: postQuestion
       requestBody:
         description: Question to add
@@ -95,8 +122,14 @@ paths:
             text/plain:
               schema:
                 type: string
+        401:
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
         404:
-          description: spaceId is not found
+          description: questionId is not found
           content:
             text/plain:
               schema:
@@ -105,6 +138,12 @@ paths:
     put:
       summary: update a question 
       parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
       - name: questionId
         in: query
         description: The _id of question to update
@@ -135,6 +174,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        401: 
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
         404:
           description: commentId is not found
           content:
@@ -148,6 +193,12 @@ paths:
     get:
       summary: Gets one or more answers
       parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
       - name: questionId
         in: query
         description: one or more (coma-separated) question _id.  If set, only answers from specified questioId(s) will be returned
@@ -176,10 +227,21 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Answer'
-
+        401:
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
     post:
       summary: post an answer to a question
       parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
       - name: questionid
         in: query
         description: The question to be answered
@@ -209,6 +271,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        401:
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
         404:
           description: questionId is not found
           content:
@@ -218,6 +286,12 @@ paths:
     put:
       summary: update an answer 
       parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
       - name: answerId
         in: query
         description: The _id of answer to update
@@ -248,6 +322,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        401:
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
         404:
           description: commentId is not found
           content:
@@ -259,6 +339,12 @@ paths:
     get:
       summary: Gets all top-level comments for an answer
       parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
       - name: answerId
         in: query
         description: one or more (coma-separated) answer _id.  If set, only comments from specified answer(s) will be returned
@@ -287,10 +373,22 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
+        401:
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
                   
     post:
       summary: post a comment to an answer
       parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
       - name: answerId
         in: query
         description: The _id of answer for comment
@@ -320,6 +418,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        401:
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
         404:
           description: answerId is not found
           content:
@@ -330,6 +434,12 @@ paths:
     put:
       summary: update a comment or reply
       parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
       - name: commentId
         in: query
         description: The _id of comment to update
@@ -360,6 +470,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        401:
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
         404:
           description: commentId is not found
           content:
@@ -372,6 +488,12 @@ paths:
     post:
       summary: post a reply to a comment
       parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
       - name: commentId
         in: query
         description: The _id of comment for reply
@@ -401,6 +523,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        401:
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
         404:
           description: commentId is not found
           content:
@@ -425,20 +553,15 @@ components:
       - questionText
       - createdBy
       - createdOn
-      - spaceId
       type: object
       properties:
         _id:
-          type: string
-        spaceId:
           type: string
         questionText:
           type: string
         createdOn:
           type: string
           format: date-time
-        createdBy:
-          type: string
         topics:
           type: array
           items:
@@ -451,11 +574,8 @@ components:
                 $ref: '#/components/schemas/Answer'
     NewQuestion:
       required:
-      - userId
       - questionText
       properties:
-        userId:
-          type: string
         questionText:
           type: string
         topics:
@@ -481,8 +601,6 @@ components:
         createdOn:
           type: string
           format: date-time
-        createdBy:
-          type: string
         comments:
           type: array
           items:
@@ -494,11 +612,8 @@ components:
                 $ref: '#/components/schemas/Comment'
     NewAnswer:
       required:
-      - userId
       - body
       properties:
-        userId:
-          type: string
         answerText:
           type: string
                 
@@ -524,8 +639,6 @@ components:
         createdOn:
           type: string
           format: date-time
-        createdBy:
-          type: string
         replies:
           type: array
           items:
@@ -538,17 +651,14 @@ components:
 
     NewComment:
       required:
-      - userId
       - questionText
       properties:
-        userId:
-          type: string
         commentTex:
           type: string
                 
     UpdateObject:
       required:
-      - _id
+      - body
       type: object
       properties:
         body:

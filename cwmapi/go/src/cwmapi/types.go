@@ -27,6 +27,7 @@ type Question struct {
 
 	CreatedOn time.Time `json:"createdOn" bson:"createdOn"`
 	CreatedBy string `json:"createdBy"  bson:"createdBy"`
+	DisplayName string `json:"displayName,omitempty" bson:"displayName"`
 
 	Topics []Topic `json:"topics,omitempty" bson:"topics"`
 
@@ -34,8 +35,6 @@ type Question struct {
 }
 
 type NewQuestion struct {
-
-	UserId string `json:"userId"`
 
 	QuestionText string `json:"questionText" bson:"questionText"`
 
@@ -47,12 +46,11 @@ type Answer struct {
 	AnswerText string `json:"answerText" bson:"answerText"`
 	CreatedOn time.Time `json:"createdOn" bson:"createdOn"`
 	CreatedBy string `json:"createdBy"  bson:"createdBy"`
+	DisplayName string `json:"displayName,omitempty" bson:"displayName"`
 	Comments []Comment `json:"comments,omitempty"`
 }
 
 type NewAnswer struct {
-
-	UserId string `json:"userId"`
 
 	AnswerText string `json:"answerText" bson:"answerText"`
 }
@@ -76,8 +74,6 @@ type Comment struct {
 }
 
 type NewComment struct {
-
-	UserId string `json:"userId"`
 
 	CommentText string `json:"commentText,omitempty" bson:"commentText"`
 }

@@ -12,19 +12,71 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
+	"time"
 )
+
+func getUserTokenFromRequest(w http.ResponseWriter, r *http.Request)(string, bool){
+	// validate JWT Token
+	tknStr := r.Header.Get("Authorization")
+
+	if(len(tknStr) == 0){
+		w.WriteHeader(http.StatusUnauthorized)
+	return "", false
+
+	}
+
+	tkn, err := jwt.Parse(tknStr, func(token *jwt.Token) (interface{}, error) {
+		return []byte("secret"), nil
+	})
+
+	if tkn == nil || !tkn.Valid {
+		w.WriteHeader(http.StatusUnauthorized)
+		return "", false
+	}
+
+	claims, valid := tkn.Claims.(jwt.MapClaims)
+
+	if err != nil || !valid{
+		if err == jwt.ErrSignatureInvalid {
+			w.WriteHeader(http.StatusUnauthorized)
+			return "", false
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		return "", false
+	}
+
+	timeout := time.Unix(int64(math.Round(claims["exp"].(float64))), 0)
+
+	if(timeout.Sub(time.Now()) < 0){
+		w.WriteHeader(http.StatusUnauthorized)
+		return "", false
+	}
+
+	fmt.Println("claims", claims)
+
+	return claims["id"].(string), true
+
+}
 
 
 // GetTags - All the tags in the system
 func GetTopics(w http.ResponseWriter, r *http.Request) {
 
+	// is authorized user?
+	_, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
+
 	topics := getTopics([]string{}, 0);
 	set := make(map[string]Topic)
-
 
 	for k := range set {
 		topics = append(topics, Topic{k})
@@ -46,6 +98,14 @@ func GetTopics(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetQuestions(w http.ResponseWriter, r *http.Request) {
+
+	// is authorized user?
+	_, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
+
 	pp := parseUrl(r.URL)
 
 	first := pp.queryParams.Get("first")
@@ -80,6 +140,12 @@ func GetQuestions(w http.ResponseWriter, r *http.Request) {
 func PostQuestion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
+	uid, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
+
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -95,7 +161,7 @@ func PostQuestion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	question := postQuestion(newQ);
+	question := postQuestion(newQ, uid);
 
 	jsonVal, err := json.MarshalIndent(question, "", "   ");
 
@@ -114,6 +180,13 @@ func PostQuestion(w http.ResponseWriter, r *http.Request) {
 // PutQuestionUpdate - update a question
 func PutQuestionUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	// is authorized user?
+	userId, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
 
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -141,6 +214,13 @@ func PutQuestionUpdate(w http.ResponseWriter, r *http.Request) {
 	if(questions == nil){
 		http.Error(w, fmt.Sprintf("No question with answerId (%s) is found.", questionId), http.StatusNotFound)
 		return
+	}
+
+	// only author can edit
+	if(questions[0].CreatedBy != userId){
+		http.Error(w, fmt.Sprintf("Invalid user.  Onlu author can edit."), http.StatusUnauthorized)
+		return
+
 	}
 
 	var uo UpdateObject;
@@ -189,6 +269,13 @@ func GetAnswers(w http.ResponseWriter, r *http.Request) {
 func PostAnswer(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
+	userId, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
+
+
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -226,7 +313,7 @@ func PostAnswer(w http.ResponseWriter, r *http.Request) {
 	}
 
 
-	answer := postAnswer(bson.ObjectIdHex(questionId), newA);
+	answer := postAnswer(bson.ObjectIdHex(questionId), newA, userId);
 
 	jsonVal, err := json.MarshalIndent(answer, "", "   ");
 
@@ -245,6 +332,14 @@ func PostAnswer(w http.ResponseWriter, r *http.Request) {
 // PutAnswerUpdate - update an answer
 func PutAnswerUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	// is authorized user?
+	userId, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
+
 
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -272,6 +367,13 @@ func PutAnswerUpdate(w http.ResponseWriter, r *http.Request) {
 	if(answers == nil){
 		http.Error(w, fmt.Sprintf("No answer with answerId (%s) is found.", answerId), http.StatusNotFound)
 		return
+	}
+
+	// only author can edit
+	if(answers[0].CreatedBy != userId){
+		http.Error(w, fmt.Sprintf("Invalid user.  Onlu author can edit."), http.StatusUnauthorized)
+		return
+
 	}
 
 	var uo UpdateObject;
@@ -323,6 +425,14 @@ func GetComments(w http.ResponseWriter, r *http.Request) {
 func PostComment(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
+	userId, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
+
+
+
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -360,7 +470,7 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 
-	comment := postComment(bson.ObjectIdHex(answerId), newC);
+	comment := postComment(bson.ObjectIdHex(answerId), newC, userId);
 
 	jsonVal, err := json.MarshalIndent(comment, "", "   ");
 
@@ -379,6 +489,14 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 // PostComment - post a comment to an answer
 func PostReply(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	userId, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
+
+
 
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -416,7 +534,7 @@ func PostReply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	comment := postReply(comments[0].AnswerId, bson.ObjectIdHex(commentId), newC);
+	comment := postReply(comments[0].AnswerId, bson.ObjectIdHex(commentId), newC, userId);
 
 	jsonVal, err := json.MarshalIndent(comment, "", "   ");
 
@@ -435,6 +553,14 @@ func PostReply(w http.ResponseWriter, r *http.Request) {
 // PutCommentUpdate - update a comment or reply
 func PutCommentUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	// is authorized user?
+	userId, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
+
 
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -464,6 +590,12 @@ func PutCommentUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// only author can edit
+	if(comments[0].CreatedBy != userId){
+		http.Error(w, fmt.Sprintf("Invalid user.  Onlu author can edit."), http.StatusUnauthorized)
+		return
+
+	}
 	var uo UpdateObject;
 
 	err = json.Unmarshal(b, &uo)

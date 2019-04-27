@@ -22,6 +22,7 @@ import (
     //"time"
     //"math/rand"
     "strings"
+    "github.com/rs/cors"
 )
 
 // MongoDB Config
@@ -36,9 +37,16 @@ func NewServer() *negroni.Negroni {
 	formatter := render.New(render.Options{
 		IndentJSON: true,
 	})
+	corsObj := cors.New(cors.Options{
+        AllowedOrigins: []string{"*"},
+        AllowedMethods: []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
+        AllowedHeaders: []string{"Accept", "content-type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
+    })
+
 	n := negroni.Classic()
 	mx := mux.NewRouter()
 	initRoutes(mx, formatter)
+	n.Use(corsObj)
 	n.UseHandler(mx)
 	return n
 }
@@ -48,7 +56,7 @@ func initRoutes(mx *mux.Router, formatter *render.Render) {
 	mx.HandleFunc("/home", homeHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/userFollow", followHandler(formatter)).Methods("POST")
 	mx.HandleFunc("/userPost", userPostHandler(formatter)).Methods("POST")
-	mx.HandleFunc("/userFollow", followListHandler(formatter)).Methods("GET")
+	mx.HandleFunc("/userFollow", followListHandler(formatter)).Methods("GET", "OPTIONS")
 }
 
 // API Home Handler
@@ -224,6 +232,9 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
         //     log.Printf("Invalid JWT Token")
         //     return nil, false
         // }
+        if ok == false {
+        	http.Error(w, "Not authorized", 401)
+        }
 
         fmt.Println("claims", claims)
         userId := claims["id"].(string)

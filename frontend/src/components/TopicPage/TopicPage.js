@@ -64,7 +64,7 @@ class TopicPage extends Component {
                                 }}>
                                 {q.top_answer.answerText}
                             </Card.Text>
-                            <Card.Link as={NavLink} to={'questions/' + q._id}>more</Card.Link>
+                            <Card.Link as={NavLink} to={'/questions/' + q._id}>more</Card.Link>
                         </Card.Body>
                     </Card>
 

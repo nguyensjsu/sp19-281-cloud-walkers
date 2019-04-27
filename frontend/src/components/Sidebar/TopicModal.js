@@ -27,13 +27,13 @@ const getOptions = inputValue => {
       return json.data.filter(i=>
         i.toLowerCase().includes(inputValue.toLowerCase()))
   }).catch(err => console.log(err))
-*/  
-  /*
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(filterColors(inputValue));
-    }, 1000);
-  });
+*/
+/*
+return new Promise(resolve => {
+  setTimeout(() => {
+    resolve(filterColors(inputValue));
+  }, 1000);
+});
 }*/
 
 class TopicModal extends Component {
@@ -41,7 +41,8 @@ class TopicModal extends Component {
     super(props);
     this.state = {
       selectedTopics: [],
-      options: []
+      options: [],
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ'
     }
     this.handlePost = this.handlePost.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -58,14 +59,19 @@ class TopicModal extends Component {
 
   }
 
-  componentDidMount(){
-    axios.get('http://35.164.157.104:8000/msgstore/v1/topics')
-    .then(response=>{
-      console.log(response.data);
-      this.setState({
-        options: response.data
-      })
+  componentDidMount() {
+    axios.get('http://35.164.157.104:8000/msgstore/v1/topics', {
+      headers:
+      {
+        'Authorization': this.state.token
+      }
     })
+      .then(response => {
+        console.log(response.data);
+        this.setState({
+          options: response.data
+        })
+      })
   }
 
   handleSelectChange = (value, { action }) => {
@@ -76,20 +82,25 @@ class TopicModal extends Component {
   };
 
 
- getOptions = inputValue => {
-   return axios.get('http://35.164.157.104:8000/msgstore/v1/topics')
-   .then(response=>{
-     console.log(response.data);
-//     this.setState({
-//       options: response.data
-//     })
-     return response.data
-   }).then(options => {
-    const filtered = _.filter(options, o =>
-      _.startsWith(_.toLower(o.label), _.toLower(inputValue))
-    );
-     return filtered.slice(0, 10);
-   })
+  getOptions = inputValue => {
+    return axios.get('http://35.164.157.104:8000/msgstore/v1/topics', {
+      headers:
+      {
+        'Authorization': this.state.token
+      }
+    })
+      .then(response => {
+        console.log(response.data);
+        //     this.setState({
+        //       options: response.data
+        //     })
+        return response.data
+      }).then(options => {
+        const filtered = _.filter(options, o =>
+          _.startsWith(_.toLower(o.label), _.toLower(inputValue))
+        );
+        return filtered.slice(0, 10);
+      })
   }
 
   render() {
@@ -105,13 +116,13 @@ class TopicModal extends Component {
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-          What are your interests?
+            What are your interests?
             </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group controlId="exampleForm.ControlTextarea1">
-            <Form.Label className="text-muted">Select topics you want to follow</Form.Label>
+              <Form.Label className="text-muted">Select topics you want to follow</Form.Label>
               <AsyncSelect
                 isMulti
                 cacheOptions
@@ -124,7 +135,7 @@ class TopicModal extends Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button style={{'color': '#949494', 'text-decoration': 'none', 'font-weight': 400}} variant="link" onClick={this.props.onHide}>Not now</Button>
+          <Button style={{ 'color': '#949494', 'text-decoration': 'none', 'fontWeight': 400 }} variant="link" onClick={this.props.onHide}>Not now</Button>
           <Button onClick={this.handlePost}>Done</Button>
         </Modal.Footer>
       </Modal>

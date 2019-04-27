@@ -233,25 +233,32 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 
 		//var userId = "888888"
 		var action = followResult.Action
-		var followId = followResult.Id
-		var ifFollow = followResult.Unfollow
+		
 
-		if action == "topic" {
-			var topic MUserSpace
-			topic.UserId = userId
-			topic.Uspaces = followId 
-			if ifFollow == false {
-				us.Insert(topic)
-			} else {
-				us.Remove(topic)
-			}
+		if action == "topic" {			
+			//topic.Uspaces = followId 
+			var followId = followResult.Id
+			var ifFollow = followResult.Unfollow
 			
+			for i := 0; i < len(followId); i++ {
+				var topic MUserSpace
+				topic.UserId = userId
+				topic.Uspaces = followId[i]
+				if ifFollow == false {
+					us.Insert(topic)
+				} else {
+					us.Remove(topic)
+				}
+			}
 		}
 
 		if action == "question" {
+			var followId = followResult.Id
+			var ifFollow = followResult.Unfollow
+
 			var question MUserFQuestion
 			question.UserId = userId
-			question.FollowedQ = followId 
+			question.FollowedQ = followId[0] 
 			if ifFollow == false {
 				uq.Insert(question)
 			} else {

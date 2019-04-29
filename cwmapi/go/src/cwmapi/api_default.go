@@ -65,6 +65,20 @@ func getUserTokenFromRequest(w http.ResponseWriter, r *http.Request)(string, boo
 
 }
 
+func Ping(w http.ResponseWriter, r *http.Request) {
+	_, ok := getUserTokenFromRequest(w, r)
+
+	if(!ok){
+		return
+	}
+
+	//fmt.Fprintf(w, "ping!")
+	ping();
+	jsonVal, _ := json.Marshal("pong");
+	w.Write(jsonVal)
+	w.WriteHeader(200)
+	//fmt.Fprintf(w, "pong!\n")
+}
 
 // GetTags - All the tags in the system
 func GetTopics(w http.ResponseWriter, r *http.Request) {

@@ -10,7 +10,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/codegangsta/negroni"
 	"github.com/rs/cors"
 	"net/http"
@@ -60,17 +59,6 @@ func NewRouter() *mux.Router {
 	return router
 }
 
-func Ping(w http.ResponseWriter, r *http.Request) {
-	_, ok := getUserTokenFromRequest(w, r)
-
-	if(!ok){
-		return
-	}
-
-	fmt.Fprintf(w, "ping!")
-	ping();
-	fmt.Fprintf(w, "pong!\n")
-}
 
 var routes = Routes{
 	Route{

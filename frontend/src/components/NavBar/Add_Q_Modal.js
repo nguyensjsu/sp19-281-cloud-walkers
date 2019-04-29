@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import AsyncSelect from 'react-select/lib/Async';
 import axios from 'axios';
 import _ from "lodash";
+import {msgstore_apis, david_test_apis} from '../../config';
 
 /*const options = [
 //  { value: 1, label: 'Movies' },
@@ -42,7 +43,8 @@ class AddQModal extends Component {
     this.state = {
       user_name: "Yu Zhao",
       selectedTopics: [],
-      options: []
+      options: [],
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTY2ODI3MzksImlkIjoiNWNjNTIzNjA3MmM5YmYzNDM2ODJiNGIwIn0.2yvfGmvutYPygv_oPbj7QUdiDxVvxbh6o5eHYZ2CBUU'
     }
     this.handlePost = this.handlePost.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -59,14 +61,21 @@ class AddQModal extends Component {
 
   }
 
-  componentDidMount(){
-    axios.get('http://35.164.157.104:8000/msgstore/v1/topics')
+  componentDidMount(){/*
+    axios.get(david_test_apis + '/topics',{
+      headers: {
+        'Authorization': `JWT ${this.state.token}`
+      },
+      params: {
+        excludeFollowed: false
+      }
+    })
     .then(response=>{
       console.log(response.data);
       this.setState({
         options: response.data
       })
-    })
+    })*/
   }
 
   handleSelectChange = (value, { action }) => {
@@ -78,7 +87,14 @@ class AddQModal extends Component {
 
 
  getOptions = inputValue => {
-   return axios.get('http://35.164.157.104:8000/msgstore/v1/topics')
+   return axios.get(david_test_apis + '/topics', {
+    headers: {
+      'Authorization': `JWT ${this.state.token}`
+    },
+     params: {
+       excludeFollowed: false
+     }
+   })
    .then(response=>{
      console.log(response.data);
 //     this.setState({

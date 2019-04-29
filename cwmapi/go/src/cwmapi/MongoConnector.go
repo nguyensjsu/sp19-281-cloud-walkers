@@ -10,6 +10,11 @@ import (
 	"time"
 )
 
+const(
+	filterModeExclude = "exclude" // exclude from query
+	filterModeNormal = "normal"   // normal query, include only the filter vals
+)
+
 
 var mongodb_server = "localhost"
 var mongodb_database = "cmpe281"
@@ -29,7 +34,14 @@ var dialInfo = &mgo.DialInfo{}
 
 var topicChan chan Topic
 
-func DbInit(){
+type Pagination struct{
+	skip int
+	limit int
+}
+
+var mgoSession *mgo.Session
+
+func DbInit()(error){
 	server1 = os.Getenv("MONGO1")
 	server2 = os.Getenv("MONGO2")
 	server3 = os.Getenv("MONGO3")
@@ -51,9 +63,17 @@ func DbInit(){
 		Password: db_pwd,
 	}
 
+	var err error
+	mgoSession, err = _dial()
+	if err != nil {
+		return err
+	}
+
 	topicChan = make(chan Topic, 1000)
 
 	go syncTopics(topicChan)
+
+	return nil
 }
 
 /**
@@ -62,14 +82,14 @@ func DbInit(){
 func syncTopics(topicChan <-chan Topic){
 
 	for topic := range topicChan {
-		if(len(getTopics([]string{topic.Label}, 0)) == 0){
+		if(len(getTopics([]string{topic.Label}, filterModeNormal,0)) == 0){
 			updateTopic(topic)
 		}
 	}
 }
 
 
-func dial() (*mgo.Session, error){
+func _dial() (*mgo.Session, error){
 	return mgo.DialWithInfo(dialInfo)
 	//return mgo.Dial(mongodb_server)
 }
@@ -143,17 +163,12 @@ func getOrFilters(leftSide bson.M, rightSide bson.M)(bson.M){
 
 
 func ping(){
-	_, err := dial()
-	if err != nil {
-		panic(err)
-	}
+	_ = mgoSession.Copy()
 }
 
-func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel int) ([] Question){
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
+func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel int, paginate *Pagination) ([] Question){
+	var err error
+	session := mgoSession.Copy()
 
 	questionQuery := getOr_id(questionFilter, "_id");
 	var topicAndQueries []bson.M
@@ -166,17 +181,30 @@ func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel i
 		topicAndQueries = append(topicAndQueries, bson.M{"$and": andQuery})
 	}
 
-	query := getOrFilters(questionQuery, bson.M{"$or": topicAndQueries})
+	var topicOrQuery bson.M
 
+	if(topicOrQuery != nil){
+		topicOrQuery = bson.M{"$or": topicAndQueries}
+	}
+
+	query := getOrFilters(questionQuery, topicOrQuery)
 
 	var questionRecs []Question
 
 
 	session.SetMode(mgo.Monotonic, true)
+
 	c := session.DB(mongodb_database).C(collection_questions)
 
 	fmt.Println(query)
-	err = c.Find(query).All(&questionRecs)
+
+	if(paginate != nil){
+		fmt.Println("Paginate: ", paginate)
+		err = c.Find(query).Skip(paginate.skip).Limit(paginate.limit).All(&questionRecs)
+	} else {
+		err = c.Find(query).All(&questionRecs)
+	}
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -191,12 +219,10 @@ func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel i
 
 }
 
-func postQuestion(newQ NewQuestion)(*Question){
+func postQuestion(newQ NewQuestion, userId string)(*Question){
 
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
+	var err error
+	session := mgoSession.Copy()
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_questions)
@@ -205,7 +231,7 @@ func postQuestion(newQ NewQuestion)(*Question){
 	date := time.Now()
 
 	var question = Question{
-		Id: qid, QuestionText: newQ.QuestionText, CreatedOn: date, CreatedBy: newQ.UserId, Topics: newQ.Topics}
+		Id: qid, QuestionText: newQ.QuestionText, CreatedOn: date, CreatedBy: userId, Topics: newQ.Topics}
 
 	err = c.Insert(question)
 	if err != nil {
@@ -220,7 +246,8 @@ func postQuestion(newQ NewQuestion)(*Question){
 
 
 func putQuestionUpdate(question Question){
-	session, err := dial()
+	var err error
+	session := mgoSession.Copy()
 	if err != nil {
 		panic(err)
 	}
@@ -235,7 +262,9 @@ func putQuestionUpdate(question Question){
 }
 
 func getAnswers(questionFilter [] string, answerFilter [] string, nestingLevel int) ([] Answer){
-	session, err := dial()
+	var err error
+	session := mgoSession.Copy()
+
 	if err != nil {
 		panic(err)
 	}
@@ -262,9 +291,11 @@ func getAnswers(questionFilter [] string, answerFilter [] string, nestingLevel i
 }
 
 
-func postAnswer(questionId bson.ObjectId, newA NewAnswer)(*Answer){
+func postAnswer(questionId bson.ObjectId, newA NewAnswer, userId string)(*Answer){
 
-	session, err := dial()
+	var err error
+	session := mgoSession.Copy()
+
 	if err != nil {
 		panic(err)
 	}
@@ -276,7 +307,7 @@ func postAnswer(questionId bson.ObjectId, newA NewAnswer)(*Answer){
 	date := time.Now()
 
 	var answer = Answer{
-		Id: aid, QuestionId: questionId, AnswerText: newA.AnswerText, CreatedOn: date, CreatedBy: newA.UserId}
+		Id: aid, QuestionId: questionId, AnswerText: newA.AnswerText, CreatedOn: date, CreatedBy: userId}
 
 	err = c.Insert(answer)
 	if err != nil {
@@ -286,10 +317,9 @@ func postAnswer(questionId bson.ObjectId, newA NewAnswer)(*Answer){
 }
 
 func putAnswerUpdate(answer Answer){
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
+	var err error
+	session := mgoSession.Copy()
+	defer session.Close()
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_answers)
@@ -303,10 +333,9 @@ func putAnswerUpdate(answer Answer){
 
 
 func getComments(answerFilter [] string, commentFilter [] string, nestingLevel int) ([] Comment){
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
+	var err error
+	session := mgoSession.Copy()
+	defer session.Close()
 
 	var answerQuery bson.M
 
@@ -338,10 +367,10 @@ func getComments(answerFilter [] string, commentFilter [] string, nestingLevel i
 
 func getCommentChildren(commentId bson.ObjectId, nestingLevel int ) ([]Comment){
 	var commentRecs []Comment
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
+	var err error
+	session := mgoSession.Copy()
+	defer session.Close()
+
 	var query = bson.M{"parentCommentId": commentId};
 
 	session.SetMode(mgo.Monotonic, true)
@@ -364,12 +393,11 @@ func getCommentChildren(commentId bson.ObjectId, nestingLevel int ) ([]Comment){
 	return commentRecs
 }
 
-func postComment(answerId bson.ObjectId, newC NewComment)(*Comment){
+func postComment(answerId bson.ObjectId, newC NewComment, userId string)(*Comment){
 
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
+	var err error
+	session := mgoSession.Copy()
+	defer session.Close()
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_comments)
@@ -378,7 +406,7 @@ func postComment(answerId bson.ObjectId, newC NewComment)(*Comment){
 	date := time.Now()
 
 	var comment = Comment{
-		Id: aid, AnswerId: answerId, CommentText: newC.CommentText, CreatedOn: date, CreatedBy: newC.UserId}
+		Id: aid, AnswerId: answerId, CommentText: newC.CommentText, CreatedOn: date, CreatedBy: userId}
 
 	err = c.Insert(comment)
 	if err != nil {
@@ -388,10 +416,9 @@ func postComment(answerId bson.ObjectId, newC NewComment)(*Comment){
 }
 
 func putComentUpdate(comment Comment){
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
+	var err error
+	session := mgoSession.Copy()
+	defer session.Close()
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_comments)
@@ -403,12 +430,11 @@ func putComentUpdate(comment Comment){
 	}
 }
 
-func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewComment)(*Comment){
+func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewComment, userId string)(*Comment){
 
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
+	var err error
+	session := mgoSession.Copy()
+	defer session.Close()
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_comments)
@@ -417,7 +443,7 @@ func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewCo
 	date := time.Now()
 
 	var comment = Comment{
-		Id: aid, AnswerId: answerId, ParentCommentId: parentCommentId, CommentText: newC.CommentText, CreatedOn: date, CreatedBy: newC.UserId}
+		Id: aid, AnswerId: answerId, ParentCommentId: parentCommentId, CommentText: newC.CommentText, CreatedOn: date, CreatedBy: userId}
 
 	err = c.Insert(comment)
 	if err != nil {
@@ -426,25 +452,43 @@ func postReply(answerId bson.ObjectId, parentCommentId bson.ObjectId, newC NewCo
 	return &comment
 }
 
-func getTopics(labelFilters []string, nestingLevel int ) []Topic {
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
+func getTopics(labelFilters []string, filterMode string, nestingLevel int ) []Topic {
+	var err error
+	session := mgoSession.Copy()
+	defer session.Close()
 
 	var topicRecs []Topic
 
 	var query bson.M
 
-	if(len(labelFilters) == 1){
-		query = bson.M{"label": labelFilters[0]}
+	switch filterMode {
+	case filterModeExclude:
+		var topicFilters []bson.M
 
-	} else{
-		orQuery := []bson.M{}
+		for _, curTopic := range(labelFilters){
+			topicFilters = append(topicFilters, bson.M{"label": bson.M{"$ne": curTopic}})
+		}
 
-		for _, label := range labelFilters {
+		switch len(topicFilters){
+		case 0:
+			break
+		case 1:
+			query = topicFilters[0]
+		default:
+			query = bson.M{"$and": topicFilters}
+		}
+
+	default:
+		if (len(labelFilters) == 1) {
+			query = bson.M{"label": labelFilters[0]}
+
+		} else {
+			orQuery := []bson.M{}
+
+			for _, label := range labelFilters {
 				orQuery = append(orQuery, bson.M{"label": label})
 
+			}
 		}
 	}
 
@@ -461,15 +505,13 @@ func getTopics(labelFilters []string, nestingLevel int ) []Topic {
 }
 
 func updateTopic(topic Topic)(Topic){
-	session, err := dial()
-	if err != nil {
-		panic(err)
-	}
+	session := mgoSession.Copy()
+	defer session.Close()
 
 	session.SetMode(mgo.Monotonic, true)
 	c := session.DB(mongodb_database).C(collection_topics)
 
-	chg, err := c.Upsert(bson.M{"label" : topic.Label}, topic)
+	chg, _ := c.Upsert(bson.M{"label" : topic.Label}, topic)
 
 	log.Printf("%s/n", chg)
 

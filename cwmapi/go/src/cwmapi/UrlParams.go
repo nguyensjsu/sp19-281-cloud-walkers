@@ -12,12 +12,9 @@ type parseInfo struct{
 	queryParams url.Values
 }
 
-func toInt(s string) (int){
+func ToInt(s string) (int){
 	i, _ := strconv.Atoi(s)
 
-	if(i < 0){
-		i = 100
-	}
 	return i
 }
 
@@ -25,7 +22,10 @@ func depth(pp parseInfo)(int){
 	d, ex := pp.queryParams["depth"]
 
 	if(ex == true){
-		return toInt(d[0]);
+		ret := ToInt(d[0])
+		if(ret < 0){
+			ret = 10000
+		}
 	}
 	return 0;
 }

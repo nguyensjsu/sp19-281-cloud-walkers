@@ -21,6 +21,8 @@ import (
     "github.com/dgrijalva/jwt-go"
     //"time"
     //"math/rand"
+    "strings"
+    "github.com/rs/cors"
 )
 
 // MongoDB Config
@@ -35,9 +37,20 @@ func NewServer() *negroni.Negroni {
 	formatter := render.New(render.Options{
 		IndentJSON: true,
 	})
+	/**
+		Fixed cors problem. Source from stackoverflow
+		https://stackoverflow.com/questions/40985920/making-golang-gorilla-cors-handler-work
+	**/ 
+	corsObj := cors.New(cors.Options{
+        AllowedOrigins: []string{"*"},
+        AllowedMethods: []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
+        AllowedHeaders: []string{"Accept", "content-type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
+    })
+
 	n := negroni.Classic()
 	mx := mux.NewRouter()
 	initRoutes(mx, formatter)
+	n.Use(corsObj)
 	n.UseHandler(mx)
 	return n
 }
@@ -47,6 +60,7 @@ func initRoutes(mx *mux.Router, formatter *render.Render) {
 	mx.HandleFunc("/home", homeHandler(formatter)).Methods("GET")
 	mx.HandleFunc("/userFollow", followHandler(formatter)).Methods("POST")
 	mx.HandleFunc("/userPost", userPostHandler(formatter)).Methods("POST")
+	mx.HandleFunc("/userFollow", followListHandler(formatter)).Methods("GET", "OPTIONS")
 }
 
 // API Home Handler
@@ -176,7 +190,7 @@ func homeHandler(formatter *render.Render) http.HandlerFunc {
 }
 
 
-// API Follow/Unfollow Handler
+// API Follow/Unfollow Handler POST
 func followHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		/**
@@ -204,7 +218,9 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 
 		/** Get user ID from JWT, header
 		**/
-		tokenStr := req.Header.Get("User-Agent")
+		tokenStrWithSpace := req.Header.Get("Authorization")
+		//var tokenStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ"
+		tokenStr := strings.Split(string(tokenStrWithSpace), " ")[1]
 		//var tokenStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ"
 		
         hmacSecretString := "secret"// Value
@@ -214,41 +230,58 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
              return hmacSecret, nil
         })
         claims, ok := token.Claims.(jwt.MapClaims)
-        // ; ok && token.Valid {
-        //     return claims, true
-        // } else {
-        //     log.Printf("Invalid JWT Token")
-        //     return nil, false
-        // }
+        if ok && token.Valid {
 
-        fmt.Println("claims", claims)
-        userId := claims["id"].(string)
+        	fmt.Println("claims", claims)
+	        userId := claims["id"].(string)
 
-        fmt.Println("decodedUserid", userId)
-        fmt.Println("ok", ok)
+	        fmt.Println("decodedUserid", userId)
+	        fmt.Println("ok", ok)
 
-		//var userId = "888888"
-		var action = followResult.Action
-		var followId = followResult.Id
+			//var userId = "888888"
+			var action = followResult.Action
+			
 
-		if action == "topic" {
-			var topic MUserSpace
-			topic.UserId = userId
-			topic.Uspaces = followId 
-			us.Insert(topic)
-		}
+			if action == "topic" {			
+				//topic.Uspaces = followId 
+				var followId = followResult.Id
+				var ifFollow = followResult.Unfollow
+				
+				for i := 0; i < len(followId); i++ {
+					var topic MUserSpace
+					topic.UserId = userId
+					topic.Uspaces = followId[i]
+					if ifFollow == false {
+						us.Insert(topic)
+					} else {
+						us.Remove(topic)
+					}
+				}
+			}
 
-		if action == "question" {
-			var question MUserFQuestion
-			question.UserId = userId
-			question.FollowedQ = followId 
-			uq.Insert(question)
-		}
+			if action == "question" {
+				var followId = followResult.Id
+				var ifFollow = followResult.Unfollow
 
-		var response Success
-		response.Success = true
+				var question MUserFQuestion
+				question.UserId = userId
+				question.FollowedQ = followId[0] 
+				if ifFollow == false {
+					uq.Insert(question)
+				} else {
+					uq.Remove(question)
+				}
+			}
 
-		formatter.JSON(w, http.StatusOK, response)
+			var response Success
+			response.Success = true
+
+			formatter.JSON(w, http.StatusOK, response)
+           
+        } else {
+            log.Printf("Invalid JWT Token")
+            http.Error(w, "Not authorized", 401)  
+        }
 	}
 }
 
@@ -259,6 +292,7 @@ func userPostHandler(formatter *render.Render) http.HandlerFunc {
 		/**
 			Mongo server setup
 		**/
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		session, err := mgo.Dial(mongodb_server)
         if err != nil {
                 fmt.Println("mongoserver panic")
@@ -278,35 +312,116 @@ func userPostHandler(formatter *render.Render) http.HandlerFunc {
 
 		var postResult PostContent
 		json.Unmarshal(body, &postResult)
+	    /** 
+        	GET JWT token and decode JWT token
+        **/
+		tokenStrWithSpace := req.Header.Get("Authorization")
+		//var tokenStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ"
+		tokenStr := strings.Split(string(tokenStrWithSpace), " ")[1]
+        hmacSecretString := "secret"// Value
+        hmacSecret := []byte(hmacSecretString)
+        token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+             // check token signing method etc
+             return hmacSecret, nil
+        })
+        claims, ok := token.Claims.(jwt.MapClaims)
 
-		/**
-			Hard code userid for testing
-		**/   
-		var userId = "888888"
-		var action = postResult.Action
-		var postId = postResult.Id
+        if ok && token.Valid {
 
-		if action == "question" {
-			var question MUserQuestion
-			question.UserId = userId
-			question.Uquestions = postId 
-			uq.Insert(question)
-		}
+            fmt.Println("claims", claims)
+	        userId := claims["id"].(string)
 
-		if action == "answer" {
-			var answer MUserAnswer
-			answer.UserId = userId
-			answer.UAnswers = postId 
-			ua.Insert(answer)
-		}
-		
-		var response Success
-		response.Success = true
-        
-		formatter.JSON(w, http.StatusOK, response)
+	        fmt.Println("decodedUserid", userId)
+	        fmt.Println("ok", ok)
+			var action = postResult.Action
+			var postId = postResult.Id
+
+			if action == "question" {
+				var question MUserQuestion
+				question.UserId = userId
+				question.Uquestions = postId 
+				uq.Insert(question)
+			}
+
+			if action == "answer" {
+				var answer MUserAnswer
+				answer.UserId = userId
+				answer.UAnswers = postId 
+				ua.Insert(answer)
+			}
+			
+			var response Success
+			response.Success = true
+	        
+			formatter.JSON(w, http.StatusOK, response)
+
+        } else {
+            log.Printf("Invalid JWT Token")
+            http.Error(w, "Not authorized", 401)
+        }
 	}
 }
-/****
+
+// API User Follow GET content Handler
+func followListHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		/**
+			Mongo server setup
+		**/
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		session, err := mgo.Dial(mongodb_server)
+        if err != nil {
+                fmt.Println("mongoserver panic")
+        }
+        defer session.Close()
+        session.SetMode(mgo.Monotonic, true)
+        us := session.DB(mongodb_database).C("uSpace")
+        /** 
+        	GET JWT token and decode JWT token
+        **/
+		tokenStrWithSpace := req.Header.Get("Authorization")
+		//var tokenStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ"
+		tokenStr := strings.Split(string(tokenStrWithSpace), " ")[1]
+        hmacSecretString := "secret"// Value
+        hmacSecret := []byte(hmacSecretString)
+        token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+             // check token signing method etc
+             return hmacSecret, nil
+        })
+        claims, ok := token.Claims.(jwt.MapClaims)
+
+        if ok && token.Valid {
+	          
+	        fmt.Println("claims", claims)
+	        userId := claims["id"].(string)
+
+	        fmt.Println("decodedUserid", userId)
+
+	        /** 
+	        	Get user followed topics from Mongo
+	        **/
+	        var spaceResult []bson.M
+			err = us.Find(bson.M{"userId": userId}).All(&spaceResult)
+			if err != nil {
+				fmt.Println("findquery panic")
+			}
+
+	        var response FollowSpaceList
+			resSpace := make([]TestTopic, len(spaceResult))
+
+			for i := 0; i < len(spaceResult); i++ {
+				resSpace[i].Label = spaceResult[i]["spaceId"].(string)		
+			}
+			response.FollowSpace = resSpace
+	        formatter.JSON(w, http.StatusOK, response)
+
+        } else {
+            log.Printf("Invalid JWT Token")
+            http.Error(w, "Not authorized", 401)
+        }
+	}
+}
+/*
 /home
 
 db.space.insert(
@@ -363,8 +478,14 @@ db.user.insert(
 
 db.uSpace.insert(
 	{
-		userId: "123456",
+		userId: "5cc000a972c9bfff107581e1",
 		spaceId: "Tourism"
+	}
+);
+db.uSpace.insert(
+	{
+		userId: "5cc000a972c9bfff107581e1",
+		spaceId: "Student"
 	}
 );
 

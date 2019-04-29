@@ -25,7 +25,7 @@ After discussion on Slake group and meetup after class, we have discussed follow
 * Achitechture Design of Quora Application
 * Dependency between backend GO APIs
 
-### Progresses:
+### Progress:
 * ReactJS: 
     * [API Doc](https://docs.google.com/spreadsheets/d/1M4RdDfX2pyHF5RVmjj8jFG7bgsPhhCXzO-LWUfgFXt8/edit?usp=sharing ) (for Frontend-Backend communication only, include Method, API Endpoint, request params/body schema, and response schema)
     * UI Design
@@ -52,11 +52,22 @@ After discussion on Slake group and meetup after class, we have discussed follow
     * Get other JWT parts working for the other backend service
 
 * David Ronca:
+	* cwmapi (Cwoura Message API) is the message store (topics, questions, answers, and comments)
+	* After some back-and-forth, we decided to use MongoDB for messages.  The primary reason was the thought that a CP database would be better for this task, and that additional scale could be achieved through sharding.  Since the top-level association is at the question, the questionId would be a natural place to shard the Cwoura message data).
+	* cwmapi is written Golang, using the MGO adaptor.
 
 
 ## Week Apr. 22 - Apr. 28
 
-### Progresses:
+### Progress:
+
+*CWMAPI
+
+	* The initial data model was not correct, as questions were tied to spaces.  We decided to drop the "Space" feature altogether, and make questions top-level.
+	* Addeds support for topics as a free-form tag to questions.  That is, topics can be created freely when posting a question.
+	* Added query for questions by topic.
+	* Moved from Docker Mongo, to 3-node cluser.
+	* Added Kong gateway.
  
 
 

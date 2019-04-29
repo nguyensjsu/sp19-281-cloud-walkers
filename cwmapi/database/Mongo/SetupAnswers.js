@@ -11,15 +11,15 @@ answerIds = [
 ]
 
 
-function getNextId(iidx){
+function getNextId(idx){
     return answerIds[idx]
 }
 
-var user1 = "1000000"
-var user2 = "1231000"
-var user3 = "4200304"
-var user4 = "1466220"
-var user5 = "9822142"
+var user1 = "5cbe464972c9bfd18c02df81"
+var user2 = "5cbeb9ae72c9bfdd4416f969"
+var user3 = "5cbebb2572c9bfdd80680719"
+var user4 = "5cbf42ef199080b5a1c486a2"
+var user5 = "5cbf439e199080b5a1c486a3"
 
 var realProgrammersQ1     = ObjectId("5cb4048478163fa3c9726fd9")
 var realProgrammersQ2     = ObjectId("5cb4048478163fa3c9726fda")
@@ -36,7 +36,7 @@ db.answers.insert
     {
         "_id" : getNextId(0),
         "questionId" : realProgrammersQ1,
-        "body" : "The best option is to use a 3rd-party heap analysis tool such as SmartHeap?",
+        "answerText" : "The best option is to use a 3rd-party heap analysis tool such as SmartHeap?",
         "createdOn" :  new Date(),
         "createdBy": user5
     }
@@ -47,7 +47,7 @@ db.answers.insert
     {
         "_id" : getNextId(1),
         "questionId" : realProgrammersQ2,
-        "body" : "Garbage collection comes at a cost of efficiency and performance.  For time-citical applications, " +
+        "answerText" : "Garbage collection comes at a cost of efficiency and performance.  For time-citical applications, " +
             "carefully planed memory management is needed. ",
         "createdOn" :  new Date(),
         "createdBy": user3
@@ -60,7 +60,7 @@ db.answers.insert
     {
         "_id" : getNextId(2),
         "questionId" : zerosAndOnesQ1,
-        "body" : "Well, no, actually! They were written in Assembly Language.\n" +
+        "answerText" : "Well, no, actually! They were written in Assembly Language.\n" +
             "\n" +
             "Now, for the non-computer folks out there, the basic definition of an Assembly Language is that it " +
             "translates the instructions on a one to one basis into a machine code.\n" +
@@ -89,7 +89,7 @@ db.answers.insert
     {
         "_id" : getNextId(3),
         "questionId" : zerosAndOnesQ2,
-        "body" : "well, the next big thing after Apache Spark is Apache Flink. However, to prove this point we can see " +
+        "answerText" : "well, the next big thing after Apache Spark is Apache Flink. However, to prove this point we can see " +
             "the comparison between Spark and Flink. As there are limitations of Apache Spark, industries have started " +
             "shifting to Apache Flink– 4G of Big Data, because Flink generally overcomes the limitations of Apache Spark",
         "createdOn" :  new Date(),
@@ -103,7 +103,7 @@ db.answers.insert
     {
         "_id" : getNextId(4),
         "questionId" : travelTipsAndHacksQ1,
-        "body" : "When I was a student at Salford University I met a group of American exchange students from Detroit.\n" +
+        "answerText" : "When I was a student at Salford University I met a group of American exchange students from Detroit.\n" +
             "\n" +
             "They wanted to see as much of the U.K. as they could whilst over here and one of the trips they booked was a " +
             "coach tour around North Wales. Excitement started to grow when I told them Wales is another country, separate " +
@@ -130,7 +130,7 @@ db.answers.insert
     {
         "_id" : getNextId(5),
         "questionId" : travelTipsAndHacksQ2,
-        "body" : "I don’t think it’s underrated. I would say it is “rated” for all the wrong reasons. People come here " +
+        "answerText" : "I don’t think it’s underrated. I would say it is “rated” for all the wrong reasons. People come here " +
             "for Iceland’s nature under the claim that it is unique and unspoilt. The truth is that Iceland is a land " +
             "that was laid waste by man more than a 1000 years ago and has not recovered since. The lack of " +
             "distinguishable technological elements such as roads, wires and antennas give the impression that the land " +
@@ -148,7 +148,7 @@ db.answers.insert
     {
         "_id" : getNextId(6),
         "questionId" : whySoRelatableQ1,
-        "body" : "Gosh darn diddly dang, are you serious? (Sorry to disappoint, but this will not be followed by a " +
+        "answerText" : "Gosh darn diddly dang, are you serious? (Sorry to disappoint, but this will not be followed by a " +
             "present tense verb beginning with “F,” nor its gerund form, nor its four-letter noun taking wing, nor….)\n" +
             "\n" +
             "I am more of a private purveyor of cussing (alone and “closed company,”) and like a sailor, I can. But as " +
@@ -178,7 +178,7 @@ db.answers.insert
     {
         "_id" : getNextId(7),
         "questionId" : whySoRelatableQ2,
-        "body" : "In 7th grade (or was it 8th?) I first really recognized the beauty of the ordinary. It was the play " +
+        "answerText" : "In 7th grade (or was it 8th?) I first really recognized the beauty of the ordinary. It was the play " +
             "\“Our Town\” by Thornton Wilder; I had been assigned to read it for school. In that play, Emily dies, but i" +
             "s given the opportunity to return home, for one day. The other dead strongly advise her not to go. When she " +
             "insists, they tell her, they plead with her, to just pick a random, ordinary day. But she doesn't take their " +

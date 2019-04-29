@@ -152,7 +152,8 @@ type MUserAnswer struct {
 /****************** POST Part**************************/
 type PostFollow struct {
 	Action          	string   `json:"action" bson:"action"`	
-	Id		        	string  `json:"id" bson:"id"`
+	Id		        	[]string  `json:"ids" bson:"ids"`
+	Unfollow			bool	`json:"unfollow" bson:"unfollow"`
 }
 // db.uFQuestion
 type PostContent struct {
@@ -162,5 +163,9 @@ type PostContent struct {
 
 type Success struct {
 	Success		 bool	`json:"success" bson:"success"`
+}
+
+type FollowSpaceList struct {
+	FollowSpace    []TestTopic  `json:"followed_topics" bson:"followed_topics"`
 }
 

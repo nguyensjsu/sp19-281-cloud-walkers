@@ -20,7 +20,7 @@
 
 - [x] SideBar 
 - [ ] UserFeed
-- [ ] Follow More Topics Modal
+- [x] Follow More Topics Modal
 
 
 #### Topic Page

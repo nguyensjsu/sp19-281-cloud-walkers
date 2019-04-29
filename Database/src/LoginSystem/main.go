@@ -1,7 +1,7 @@
 package main
 
 import (
-	"../handler"
+	"../LoginSystem/handler"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -40,7 +40,7 @@ func main() {
 	}))
 
 	// Database connection
-	db, err := mgo.Dial("localhost")
+	db, err := mgo.Dial("10.0.0.233")
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
@@ -61,6 +61,6 @@ func main() {
 	e.POST("/login", h.Login)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":3001"))
 }
 

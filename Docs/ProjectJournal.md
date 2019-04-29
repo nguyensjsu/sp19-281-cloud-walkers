@@ -77,7 +77,9 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 	* Added Kong gateway.
  
 * User Authorization:
-
+    * Fixed CORS error 
+    * Added Mongo Cluster
+    * Moved to AWS with Load Balancer
 * User Activity:
 
 * Frontend (ReactJS):

@@ -27,22 +27,22 @@ const getOptions = inputValue => {
       return json.data.filter(i=>
         i.toLowerCase().includes(inputValue.toLowerCase()))
   }).catch(err => console.log(err))
-*/  
-  /*
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(filterColors(inputValue));
-    }, 1000);
-  });
+*/
+/*
+return new Promise(resolve => {
+  setTimeout(() => {
+    resolve(filterColors(inputValue));
+  }, 1000);
+});
 }*/
 
-class AddQModal extends Component {
+class TopicModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user_name: "Yu Zhao",
       selectedTopics: [],
-      options: []
+      options: [],
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ'
     }
     this.handlePost = this.handlePost.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -59,14 +59,19 @@ class AddQModal extends Component {
 
   }
 
-  componentDidMount(){
-    axios.get('http://35.164.157.104:8000/msgstore/v1/topics')
-    .then(response=>{
-      console.log(response.data);
-      this.setState({
-        options: response.data
-      })
+  componentDidMount() {
+    axios.get('http://35.164.157.104:8000/msgstore/v1/topics', {
+      headers:
+      {
+        'Authorization': this.state.token
+      }
     })
+      .then(response => {
+        console.log(response.data);
+        this.setState({
+          options: response.data
+        })
+      })
   }
 
   handleSelectChange = (value, { action }) => {
@@ -77,20 +82,25 @@ class AddQModal extends Component {
   };
 
 
- getOptions = inputValue => {
-   return axios.get('http://35.164.157.104:8000/msgstore/v1/topics')
-   .then(response=>{
-     console.log(response.data);
-//     this.setState({
-//       options: response.data
-//     })
-     return response.data
-   }).then(options => {
-    const filtered = _.filter(options, o =>
-      _.startsWith(_.toLower(o.label), _.toLower(inputValue))
-    );
-     return filtered.slice(0, 10);
-   })
+  getOptions = inputValue => {
+    return axios.get('http://35.164.157.104:8000/msgstore/v1/topics', {
+      headers:
+      {
+        'Authorization': this.state.token
+      }
+    })
+      .then(response => {
+        console.log(response.data);
+        //     this.setState({
+        //       options: response.data
+        //     })
+        return response.data
+      }).then(options => {
+        const filtered = _.filter(options, o =>
+          _.startsWith(_.toLower(o.label), _.toLower(inputValue))
+        );
+        return filtered.slice(0, 10);
+      })
   }
 
   render() {
@@ -106,20 +116,13 @@ class AddQModal extends Component {
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            Add Question
+            What are your interests?
             </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group controlId="exampleForm.ControlTextarea1">
-              <Form.Label>{this.state.user_name} asked</Form.Label>
-              <Form.Text className="text-muted">
-                Start your question with "What", "How", "Why", etc.
-              </Form.Text>
-              <Form.Control as="textarea" rows="3" name="questionText" onChange={this.handleChange} />
-              <Form.Text className="text-muted">
-                Select topics you want to post question to
-              </Form.Text>
+              <Form.Label className="text-muted">Select topics you want to follow</Form.Label>
               <AsyncSelect
                 isMulti
                 cacheOptions
@@ -132,12 +135,12 @@ class AddQModal extends Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="light" onClick={this.props.onHide}>Cancel</Button>
-          <Button onClick={this.handlePost}>Add Question</Button>
+          <Button style={{ 'color': '#949494', 'text-decoration': 'none', 'fontWeight': 400 }} variant="link" onClick={this.props.onHide}>Not now</Button>
+          <Button onClick={this.handlePost}>Done</Button>
         </Modal.Footer>
       </Modal>
     );
   }
 }
 // apply above mapping to Login class
-export default AddQModal
+export default TopicModal

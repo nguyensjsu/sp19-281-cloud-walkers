@@ -6,27 +6,35 @@ import './Home.css';
 import { userActions } from '../../_actions';
 import { connect } from 'react-redux';
 import Sidebar from '../Sidebar/Sidebar';
-import { Container, Col, Card, Button } from 'react-bootstrap';
+import { Container, Col, Card, Button, Row } from 'react-bootstrap';
 import AddModal from '../NavBar/Add_Q_Modal';
+import TopicModal from '../Sidebar/TopicModal';
 
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
             sidebar_links: [],
-            questions: [], 
-            show_add: false
+            questions: [],
+            show_add: false,
+            user_name: 'Yu Zhao'
         }
         this.showModal = this.showModal.bind(this);
     }
 
-    showModal= (e) => {
+    showModal = (e) => {
         e.preventDefault();
         this.setState({
             show_add: true,
         })
     }
 
+    selectTopics = (e) => {
+        e.preventDefault();
+        this.setState({
+            show_topics: true
+        })
+    }
     componentDidMount() {
         const sidebar_links = [
             { name: "Movies", url: "topics/1" },
@@ -78,7 +86,7 @@ class Home extends Component {
                                 }}>
                                 {q.top_answer.answerText}
                             </Card.Text>
-                            <Card.Link as={NavLink} to={'questions/'+q._id}>more</Card.Link>
+                            <Card.Link as={NavLink} to={'questions/' + q._id}>more</Card.Link>
                         </Card.Body>
                     </Card>
 
@@ -92,38 +100,49 @@ class Home extends Component {
                 </div>
             )
         }
-        let modalClose = () => this.setState({show_add : false});
+        let modal_Q_Close = () => this.setState({ show_add: false });
+        let modal_T_Close = () => this.setState({ show_topics: false });
 
         return (
 
-            <Container fluid>
+            <div>
                 <AddModal
-                show={this.state.show_add}
-                onHide={modalClose}
-                handleAdd={this.handleAdd}
-                user_name= "Yu Zhao"
-            />
-                <Col xs={3} style={{ "margin-top": 50 }}>
-                    <Sidebar links={this.state.sidebar_links} />
-                </Col>
-                <Col md={{ span: 8, offset: 3 }} style={{ "margin-top": -45, "margin-left": 160 }}>
-                    <Card>
-                    <Card.Body>
-                            <Card.Title style={{"font-size": 14, "color": 949494}}>Yu Zhao</Card.Title>
-                            <Button variant="link" onClick={this.showModal} className="add_q_link">What is your question?</Button>
-                        </Card.Body>
-                    </Card>
+                    show={this.state.show_add}
+                    onHide={modal_Q_Close}
+                    user_name={this.state.user_name}
+                />
 
-                    <br />
+                <TopicModal
+                    show={this.state.show_topics}
+                    onHide={modal_T_Close}
+                />
+                {/*}
+                <Container>
+                    <Row style={{ "margin-top": 50 }}>
+                        <Col md='auto'>
+                            <Sidebar links={this.state.sidebar_links} />
+                            <Button style={{ 'text-decoration': 'none', "font-size": 14, "line-height": 10 }} variant="link" onClick={this.selectTopics}>Follow More</Button>
+                        </Col>
+                        <Col> */}
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title style={{ "font-size": 14, "color": 949494 }}>{'Hi, ' + this.state.user_name}</Card.Title>
+                                    <Button variant="link" onClick={this.showModal} style={{ 'text-decoration': 'none' }} className="add_q_link">What is your question?</Button>
+                                </Card.Body>
+                            </Card>
 
-                    <Card>
-                        <Card.Header as="h6"><span className="fa fa-question"></span> Questions for You</Card.Header>
-                    </Card>    
-                        {main_panel} </Col>
-            </Container>
-                )
-            }
-        }
-        
-const mapStateToProps = ({authentication}) => ({authentication});
+                            <br />
+
+                            <Card>
+                                <Card.Header as="h6"><span className="fa fa-question"></span> Questions for You</Card.Header>
+                            </Card>
+                            {main_panel} {/* </Col>
+                    </Row>
+                </Container>*/}
+            </div>
+        )
+    }
+}
+
+const mapStateToProps = ({ authentication }) => ({ authentication });
 export default connect(mapStateToProps)(Home);

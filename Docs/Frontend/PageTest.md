@@ -5,7 +5,8 @@
 
 - [ ] NavBar
 - [x] Add Question Modal
-<span style="color:red">*to do: DisplayName*</span>
+
+*to do: DisplayName*
  
 
 #### Login Page
@@ -23,6 +24,7 @@
 - [x] SideBar 
 - [ ] UserFeed
 - [x] Follow More Topics Modal
+
 *to do: get topic excludes user followed ones*
 
 

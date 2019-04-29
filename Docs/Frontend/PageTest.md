@@ -1,25 +1,34 @@
 ## Frontend Page/Component Clearlist
 (communicate with real backend)
 
-* Navigation Bar
+#### Navigation Bar
+
 - [ ] NavBar
 - [ ] Add Question Modal
 
-* Login Page
+#### Login Page
+
 - [ ] Login
 
-* Signup Page
+
+#### Signup Page
+
 - [ ] SignUp
 
-* Home Page
+
+#### Home Page
+
 - [x] SideBar 
 - [ ] UserFeed
 - [ ] Follow More Topics Modal
 
-* Topic Page
+
+#### Topic Page
 - [ ] TopicPage
 
-* Question Page
+
+**Question Page**
+
 - [ ] NadgeGroup
 - [ ] AnswerInput
 - [ ] QuestionPage

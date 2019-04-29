@@ -2,6 +2,7 @@ package main
 
 import (
 	"../handler"
+	"net/http"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -17,6 +18,13 @@ func main() {
 
 	// returns a middleware that logs HTTP requests
 	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{http.MethodGet,http.MethodPut,http.MethodPost,http.MethodDelete},
+		AllowHeaders: []string{"Accept", "content-type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
+	}))
 
 	// return a JWT auth middleware with config
 	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{

@@ -41,7 +41,7 @@ After discussion on Slake group and meetup after class, we have discussed follow
 
 ### To Do List:
 * Yu Zhao:
-    * Work on Question Page (allow "follow question/topic, answer question functionalities)
+    * Work on Question Page (allow "follow question/topic, answer question functionalities) and Topic Page
     * Tune communication between Frontend and Backend
     * Test all individual microservices through frontend
 
@@ -59,9 +59,16 @@ After discussion on Slake group and meetup after class, we have discussed follow
 
 ## Week Apr. 22 - Apr. 28
 
+One of road blocker we have this week is the CORS error for browser preflight request. 
+The typical error message frontend received is like:
+```
+Access to XMLHttpRequest at ‘http://35.164.157.104:8000/msgstore/v1/topics?excludeFollowed=false’ from origin ’http://localhost:3000' has been blocked by CORS policy: Request header field authorization is not allowed by Access-Control-Allow-Headers in preflight response.
+```
+By import `cors` package in Go backend, now we are able to pass `Authorization` header in our request from frontend.
+
 ### Progress:
 
-*CWMAPI
+* CWMAPI (David Ronca):
 
 	* The initial data model was not correct, as questions were tied to spaces.  We decided to drop the "Space" feature altogether, and make questions top-level.
 	* Addeds support for topics as a free-form tag to questions.  That is, topics can be created freely when posting a question.
@@ -69,6 +76,29 @@ After discussion on Slake group and meetup after class, we have discussed follow
 	* Moved from Docker Mongo, to 3-node cluser.
 	* Added Kong gateway.
  
+* User Authorization:
 
+* User Activity:
 
-### Week Apr.29 - May. 4 
+* Frontend (ReactJS):
+	* Finished all frontend main pages (`/Home`,`/topics/{topic_name}`, `/questions/{question_id}`, `/login`,`/signup`) and all components included in thest pages. 
+	* Assist Backend APIs to solve CORS error for browser preflight request
+	* Start to wrap frontend up
+
+### To Do List:
+
+* David Ronca:
+
+* Hongzhe Yang:
+
+* Yu Zhao:
+    * Continue the work to tune communication between Frontend and Backend
+    * Test all individual microservices through frontend
+    * Setup static server for Frontend and scale it up
+
+* Yueqiao Zhang:
+
+## Week Apr.29 - May. 4 
+
+### Progress:
+

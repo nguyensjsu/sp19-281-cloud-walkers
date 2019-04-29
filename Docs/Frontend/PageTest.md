@@ -29,7 +29,7 @@
 
 **Question Page**
 
-- [ ] NadgeGroup
+- [ ] BadgeGroup
 - [ ] AnswerInput
 - [ ] QuestionPage
 - [ ] AnswerList

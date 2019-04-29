@@ -11,6 +11,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/codegangsta/negroni"
+	"github.com/rs/cors"
 	"net/http"
 	"strings"
 
@@ -25,6 +27,21 @@ type Route struct {
 }
 
 type Routes []Route
+
+func NewServer() *negroni.Negroni {
+
+	corsObj := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
+		AllowedHeaders: []string{"Accept", "content-type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
+	})
+
+	n := negroni.Classic()
+	mx := NewRouter()
+	n.Use(corsObj)
+	n.UseHandler(mx)
+	return n
+}
 
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
@@ -44,6 +61,12 @@ func NewRouter() *mux.Router {
 }
 
 func Ping(w http.ResponseWriter, r *http.Request) {
+	_, ok := getUserTokenFromRequest(w, r)
+
+	if(!ok){
+		return
+	}
+
 	fmt.Fprintf(w, "ping!")
 	ping();
 	fmt.Fprintf(w, "pong!\n")

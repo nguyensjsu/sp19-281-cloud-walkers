@@ -16,9 +16,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"io/ioutil"
 	"log"
-	"math"
 	"net/http"
-	"time"
+	"strings"
 )
 
 func getUserTokenFromRequest(w http.ResponseWriter, r *http.Request)(string, bool){
@@ -26,17 +25,25 @@ func getUserTokenFromRequest(w http.ResponseWriter, r *http.Request)(string, boo
 	tknStr := r.Header.Get("Authorization")
 
 	if(len(tknStr) == 0){
-		w.WriteHeader(http.StatusUnauthorized)
+		http.Error(w, "JWT User token required", http.StatusUnauthorized)
 	return "", false
 
 	}
 
-	tkn, err := jwt.Parse(tknStr, func(token *jwt.Token) (interface{}, error) {
+	tokens := strings.Split(tknStr, " ")
+
+	if(len(tokens) != 2){
+		http.Error(w, "Expected type JWT not found", http.StatusUnauthorized)
+		return "", false
+
+	}
+
+	tkn, err := jwt.Parse(tokens[1], func(token *jwt.Token) (interface{}, error) {
 		return []byte("secret"), nil
 	})
 
 	if tkn == nil || !tkn.Valid {
-		w.WriteHeader(http.StatusUnauthorized)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return "", false
 	}
 
@@ -44,21 +51,15 @@ func getUserTokenFromRequest(w http.ResponseWriter, r *http.Request)(string, boo
 
 	if err != nil || !valid{
 		if err == jwt.ErrSignatureInvalid {
-			w.WriteHeader(http.StatusUnauthorized)
+			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return "", false
 		}
 		w.WriteHeader(http.StatusBadRequest)
 		return "", false
 	}
 
-	timeout := time.Unix(int64(math.Round(claims["exp"].(float64))), 0)
 
-	if(timeout.Sub(time.Now()) < 0){
-		w.WriteHeader(http.StatusUnauthorized)
-		return "", false
-	}
-
-	fmt.Println("claims", claims)
+	//fmt.Println("claims", claims)
 
 	return claims["id"].(string), true
 
@@ -69,13 +70,27 @@ func getUserTokenFromRequest(w http.ResponseWriter, r *http.Request)(string, boo
 func GetTopics(w http.ResponseWriter, r *http.Request) {
 
 	// is authorized user?
-	_, success := getUserTokenFromRequest(w, r)
+
+	userId, success := getUserTokenFromRequest(w, r)
 
 	if(!success){
 		return;
 	}
 
-	topics := getTopics([]string{}, 0);
+	pp := parseUrl(r.URL)
+	filterMode := filterModeNormal
+
+	_, needFavs := pp.queryParams["excludeFollowed"]
+	var favorites []string
+
+	if(needFavs ){
+		// need to get favorites
+
+		favorites = getUserFollows(userId)
+		filterMode = filterModeExclude
+	}
+
+	topics := getTopics(favorites, filterMode,0);
 	set := make(map[string]Topic)
 
 	for k := range set {

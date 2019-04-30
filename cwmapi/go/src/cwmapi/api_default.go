@@ -20,13 +20,15 @@ import (
 	"strings"
 )
 
-func getUserTokenFromRequest(w http.ResponseWriter, r *http.Request)(string, bool){
-	// validate JWT Token
+// OK, this is obviously a no-no for real code.  Never put password in code
+const jwtToken = "secret"
+
+func getUserToken(w http.ResponseWriter, r *http.Request)(string, bool){
 	tknStr := r.Header.Get("Authorization")
 
 	if(len(tknStr) == 0){
 		http.Error(w, "JWT User token required", http.StatusUnauthorized)
-	return "", false
+		return "", false
 
 	}
 
@@ -38,8 +40,20 @@ func getUserTokenFromRequest(w http.ResponseWriter, r *http.Request)(string, boo
 
 	}
 
-	tkn, err := jwt.Parse(tokens[1], func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
+	return tokens[1], true
+}
+
+func getUserTokenFromRequest(w http.ResponseWriter, r *http.Request)(string, bool){
+	// validate JWT Token
+
+	tokenStr, ok := getUserToken(w, r)
+
+	if(!ok){
+		return "", false
+	}
+
+	tkn, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		return []byte(jwtToken), nil
 	})
 
 	if tkn == nil || !tkn.Valid {
@@ -100,8 +114,15 @@ func GetTopics(w http.ResponseWriter, r *http.Request) {
 	if(needFavs ){
 		// need to get favorites
 
-		favorites = getUserFollows(userId)
+		userToken, _ := getUserToken(w, r)
+		var err error
+		favorites, err = getUserFollows(userId, userToken)
+		if(err != nil){
+			http.Error(w, err.Error(), 500)
+			return
+		}
 		filterMode = filterModeExclude
+		log.Println("favorites: ", favorites)
 	}
 
 	topics := getTopics(favorites, filterMode,0);

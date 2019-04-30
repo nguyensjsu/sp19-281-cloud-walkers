@@ -205,6 +205,10 @@ func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel i
 		err = c.Find(query).All(&questionRecs)
 	}
 
+	for i := 0; i < len(questionRecs); i++ {
+		questionRecs[i].DisplayName = questionRecs[i].CreatedBy
+	}
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -278,6 +282,10 @@ func getAnswers(questionFilter [] string, answerFilter [] string, nestingLevel i
 	err = c.Find(query).All(&answerRecs)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	for i := 0; i < len(answerRecs); i++ {
+		answerRecs[i].DisplayName = answerRecs[i].CreatedBy
 	}
 
 	if(nestingLevel > 0){
@@ -354,6 +362,10 @@ func getComments(answerFilter [] string, commentFilter [] string, nestingLevel i
 	err = c.Find(query).All(&commentRecs)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	for i := 0; i < len(commentRecs); i++ {
+		commentRecs[i].DisplayName = commentRecs[i].CreatedBy
 	}
 
 	if(nestingLevel > 0){

@@ -25,7 +25,7 @@
 - [ ] UserFeed
 - [x] Follow More Topics Modal
 
-*to do: get topic excludes user followed ones*
+~~*to do: get topic excludes user followed ones*~~
 
 
 #### Topic Page

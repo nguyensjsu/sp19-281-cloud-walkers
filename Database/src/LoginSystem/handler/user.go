@@ -89,7 +89,7 @@ func (h *Handler) Login(c echo.Context) (err error) {
 	token_s := "\"token\""
 	first_name_s := "\"first_name\""
 	last_name_s := "\"last_name\""
-	user_id_s := "\"user_id\""
+
 
 	responsemessage := join("{ ", is_aut_s," : true, ", token_s, " : ", u.Token,
 		", ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, "}")

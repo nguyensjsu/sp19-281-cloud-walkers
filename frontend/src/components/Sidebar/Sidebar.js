@@ -5,14 +5,15 @@ import { Nav, Button } from 'react-bootstrap';
 import TopicModal from './TopicModal';
 import axios from 'axios';
 import cookie from 'react-cookies';
-import { user_tracking_apis } from '../../config'
+import { user_tracking_apis, backend_host } from '../../config'
 
 class Sidebar extends Component {
     constructor(props) {
         super(props);
         this.state = {
             sidebar_links: [],
-            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTYzNDYxODEsImlkIjoiNWNjMDAwYTk3MmM5YmZmZjEwNzU4MWUxIn0.r_T2oKqsmK6PjHZ-lZQROD3u1gAOd3uxjRwLrk8LanQ'
+            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTY2ODI3MzksImlkIjoiNWNjNTIzNjA3MmM5YmYzNDM2ODJiNGIwIn0.2yvfGmvutYPygv_oPbj7QUdiDxVvxbh6o5eHYZ2CBUU'
+            //token: cookie.load('JWT')
         }
     }
 
@@ -54,9 +55,9 @@ class Sidebar extends Component {
     }
 
     render() {
-        let sidebar_body = this.state.sidebar_links.map(link => {
+        let sidebar_body = this.state.sidebar_links.map((link,idx) => {
             return (
-                <Nav.Link className="sidebar" as={NavLink} to={'/topics/' + link.label}>{link.label}</Nav.Link>
+                <Nav.Link key={idx} className="sidebar" as={NavLink} to={'/topics/' + link.label}>{link.label}</Nav.Link>
             )
         });
         let modal_T_Close = () => this.setState({ show_topics: false });

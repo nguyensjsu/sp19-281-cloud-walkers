@@ -105,8 +105,8 @@ class TopicPage extends Component {
                     <Card.Body  style={{ "font-size": 20, "color": '#666', 'fontWeight': 'bold'}}>
                         {this.state.topic }
                         <br/>
-                        <Button variant="link" onClick={this.handleFollow} disabled={this.state.followed}>
-                        <span className="fa fa-plus-square"></span> {this.state.followed ? 'Followed' : 'Follow'}</Button>
+                        <Button variant="link" onClick={this.handleFollow} disabled>
+                        <span className="fa fa-plus-square"></span> Followed</Button>
                     </Card.Body>
                 </Card>
 

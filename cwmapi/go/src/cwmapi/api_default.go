@@ -161,6 +161,8 @@ func GetQuestions(w http.ResponseWriter, r *http.Request) {
 	first := pp.queryParams.Get("first")
 	length := pp.queryParams.Get("length")
 
+	topAnswer := booleanVal(pp, "topAnswer", false)
+
 	var questions []Question
 
 	if(len(first) > 0 || len(length) > 0) {
@@ -170,9 +172,13 @@ func GetQuestions(w http.ResponseWriter, r *http.Request) {
 		}
 
 		pagination := Pagination{skip: ToInt(first), limit: ToInt(length)}
-		questions = getQuestions(queryVals(pp.queryParams, "questionId"), queryVals(pp.queryParams, "topic"), depth(pp), &pagination)
+		questions = getQuestions(
+			queryVals(pp.queryParams, "questionId"), queryVals(pp.queryParams, "topic"),
+			intVal(pp, "depth", 0), &pagination, topAnswer)
 	} else {
-		questions = getQuestions(queryVals(pp.queryParams, "questionId"), queryVals(pp.queryParams, "topic"), depth(pp), nil)
+		questions = getQuestions(
+			queryVals(pp.queryParams, "questionId"),
+			queryVals(pp.queryParams, "topic"), intVal(pp, "depth", 0), nil, topAnswer)
 	}
 	jsonVal, err := json.MarshalIndent(questions, "", "   ");
 
@@ -259,7 +265,7 @@ func PutQuestionUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	questions := getQuestions([]string{questionId}, []string{}, 0, nil)
+	questions := getQuestions([]string{questionId}, []string{}, 0, nil, false)
 
 	if(questions == nil){
 		http.Error(w, fmt.Sprintf("No question with answerId (%s) is found.", questionId), http.StatusNotFound)
@@ -303,7 +309,9 @@ func PutQuestionUpdate(w http.ResponseWriter, r *http.Request) {
 func GetAnswers(w http.ResponseWriter, r *http.Request) {
 	pp := parseUrl(r.URL)
 
-	answers := getAnswers(queryVals(pp.queryParams, "questionId") ,queryVals(pp.queryParams, "answerId"), depth(pp))
+	answers := getAnswers(
+		queryVals(pp.queryParams, "questionId") ,
+		queryVals(pp.queryParams, "answerId"), intVal(pp, "depth", 0))
 	jsonVal, err := json.MarshalIndent(answers, "", "   ");
 
 	if(err != nil){
@@ -355,7 +363,7 @@ func PostAnswer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	question := getQuestions([]string{questionId}, []string{},0, nil)
+	question := getQuestions([]string{questionId}, []string{},0, nil, false)
 
 	if(question == nil){
 		http.Error(w, fmt.Sprintf("Invalid questionId: %s", questionId), http.StatusNotFound)
@@ -458,7 +466,9 @@ func GetComments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	pp := parseUrl(r.URL)
 
-	comments := getComments(queryVals(pp.queryParams, "answerId"), queryVals(pp.queryParams, "commentId"), depth(pp))
+	comments := getComments(
+		queryVals(pp.queryParams, "answerId"),
+		queryVals(pp.queryParams, "commentId"), intVal(pp, "depth", 0))
 	jsonVal, err := json.MarshalIndent(comments, "", "   ");
 
 	if(err != nil){
@@ -669,6 +679,22 @@ func PutCommentUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonVal);
+}
+
+// FlushCache - clear any caching for specific user.  Sent anytime a user makes a change, such as following/unfollowing a topic
+func FlushCache(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	// is authorized user?
+	userId, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
+
+	flushCacheForUser(userId)
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 

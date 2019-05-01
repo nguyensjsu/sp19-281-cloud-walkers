@@ -16,7 +16,7 @@ After discussion, we have decided to implement a "clone" of Quora.com.
 * Yu Zhao: Frontend design and implementation
 * Yueqiao Zhang: User Activities API
 * Hongzhe Yang: User Authentication API
-* David Ronca: Questions API
+* David Ronca: Messaging API (CWMAPI)
 
 ## Week Apr. 14 - Apr. 21
 
@@ -82,6 +82,8 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 	* Added query for questions by topic.
 	* Moved from Docker Mongo, to 3-node cluser.
 	* Added Kong gateway.
+	* Added support for JWT user token authentication
+	* Added topic query option to exclude followed topics.
  
 * User Authorization:
     * Fixed CORS error 
@@ -102,6 +104,10 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 ### To Do List:
 
 * David Ronca:
+	* Shard MongoDB based on _id
+	* Add GET userfeed api.
+	* Add load balancer
+	* Fix CORS issue
 
 * Hongzhe Yang:
 
@@ -119,6 +125,8 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 ### Progress:
 
 * CWMAPI (David Ronca):
+	* Added new API GET /userfeed, which will return questions that have topic tags that the user is following.
+	* The Kong gateway was blocking CORS, so disabled for now.  Will need to re-enable after solving the CORS issue.
 
 * User Authorization:
 

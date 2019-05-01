@@ -8,12 +8,18 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
+
+var userActivityServerAddr = "http://34.222.10.95:3000"
 
 var userFollowsCache, _ = bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
 
 
+func flushCacheForUser(userId string){
+	userFollowsCache.Delete(userId)
+}
 
 func getUserFollows(userId string, userToken string) ([]string, error){
 
@@ -33,9 +39,13 @@ func getUserFollows(userId string, userToken string) ([]string, error){
 	// this is where we will call out to server
 	ret = []string{}
 
+	if(userActivityServerAddr == ""){
+		userActivityServerAddr = os.Getenv("USER_ACTIVITY_SERVER")
+	}
+
 	client := &http.Client{}
 
-	req, err := http.NewRequest("GET", "http://34.222.10.95:3000/userFollow", nil)
+	req, err := http.NewRequest("GET", userActivityServerAddr + "/userFollow", nil)
 	if err != nil {
 		return []string{}, err
 	}
@@ -67,7 +77,7 @@ func getUserFollows(userId string, userToken string) ([]string, error){
 		ret = append(ret, topic.Label)
 	}
 
-/*
+
 	if(userFollowsCache != nil){
 		buffer := &bytes.Buffer{}
 
@@ -77,7 +87,6 @@ func getUserFollows(userId string, userToken string) ([]string, error){
 
 	}
 
- */
 
 	return ret, nil
 }

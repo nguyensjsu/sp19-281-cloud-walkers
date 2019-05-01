@@ -7,17 +7,35 @@ import { userActions } from '../../_actions';
 import { connect } from 'react-redux';
 import Sidebar from '../Sidebar/Sidebar';
 import { Container, Col, Card, Button, Row } from 'react-bootstrap';
+import axios from 'axios';
+import { msgstore_apis, david_test_apis, user_tracking_apis } from '../../config';
 
 class TopicPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
             questions: [],
-            user_name: 'Yu Zhao'
+            user_name: 'Yu Zhao',
+            topic: this.props.match.params.topic,
+            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTY5NDg3NDksImlkIjoiNWNjOTMyN2VmMzYzOTMwMDAxZDkzMzIxIn0.1PyIZ9tVZCH9ihiF8KHTv8McvGlAwhBHor8GGPd7QKc'
         }
     }
 
     componentDidMount() {
+        axios.get(david_test_apis + '/questions', {
+            headers: {
+                'Authorization': `JWT ${this.state.token}`
+            },
+            params: {
+                topic: this.state.topic,
+                depth: 0
+            }
+        }).then(response => {
+            console.log(response.data);
+
+        }).catch(error => {
+            console.log(error);
+        })
 
         const questions = [
             {
@@ -83,12 +101,21 @@ class TopicPage extends Component {
         return (
 
             <div>
+                <Card>
+                    <Card.Body  style={{ "font-size": 20, "color": '#666', 'fontWeight': 'bold'}}>
+                        {this.state.topic }
+                        <br/>
+                        <Button variant="link" onClick={this.handleFollow} disabled={this.state.followed}>
+                        <span className="fa fa-plus-square"></span> {this.state.followed ? 'Followed' : 'Follow'}</Button>
+                    </Card.Body>
+                </Card>
 
-                <Col>
+                <br />
 
-                    {main_panel}
-                </Col>
-            </div>
+
+                {main_panel}
+
+            </div >
         )
     }
 }

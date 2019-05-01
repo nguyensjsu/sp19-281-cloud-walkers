@@ -9,6 +9,8 @@ import Sidebar from '../Sidebar/Sidebar';
 import { Container, Col, Card, Button, Row } from 'react-bootstrap';
 import AddModal from '../NavBar/Add_Q_Modal';
 import TopicModal from '../Sidebar/TopicModal';
+import axios from 'axios';
+import { msgstore_apis, david_test_apis, user_tracking_apis } from '../../config';
 
 class Home extends Component {
     constructor(props) {
@@ -17,7 +19,8 @@ class Home extends Component {
             sidebar_links: [],
             questions: [],
             show_add: false,
-            user_name: 'Yu Zhao'
+            user_name: 'Yu Zhao',
+            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTY5NDg3NDksImlkIjoiNWNjOTMyN2VmMzYzOTMwMDAxZDkzMzIxIn0.1PyIZ9tVZCH9ihiF8KHTv8McvGlAwhBHor8GGPd7QKc'
         }
         this.showModal = this.showModal.bind(this);
     }
@@ -29,6 +32,12 @@ class Home extends Component {
         })
     }
 
+    afterAdd = () => {
+        this.setState({
+            show_add: false
+        })
+    }
+
     selectTopics = (e) => {
         e.preventDefault();
         this.setState({
@@ -36,15 +45,25 @@ class Home extends Component {
         })
     }
     componentDidMount() {
-        const sidebar_links = [
-            { name: "Movies", url: "topics/1" },
-            { name: "Food", url: "topics/2" }
-        ];
+        axios.get(david_test_apis + '/questions', {
+            headers: {
+                'Authorization': `JWT ${this.state.token}`
+            },
+            params: {
+                topAnswer: true,
+                depth: 1
+            }
+        }).then(response => {
+            console.log(response);
+            
+        }).catch(error => {
+            console.log(error);
+        })
 
         const questions = [
             {
-                "questionText": "questionText1",
-                "_id": 123,
+                "questionText": "Just need  a post to test Frontend",
+                "_id": '5cc78a2f71b80f00016d4285',
                 "top_answer":
                 {
                     answerText: 'AnswerText1',
@@ -63,7 +82,7 @@ class Home extends Component {
             }
         ];
         this.setState({
-            sidebar_links: sidebar_links,
+//            sidebar_links: sidebar_links,
             questions: questions
         });
     }
@@ -101,7 +120,6 @@ class Home extends Component {
             )
         }
         let modal_Q_Close = () => this.setState({ show_add: false });
-        let modal_T_Close = () => this.setState({ show_topics: false });
 
         return (
 
@@ -110,11 +128,8 @@ class Home extends Component {
                     show={this.state.show_add}
                     onHide={modal_Q_Close}
                     user_name={this.state.user_name}
-                />
+                    after_add={this.after_add}
 
-                <TopicModal
-                    show={this.state.show_topics}
-                    onHide={modal_T_Close}
                 />
                 {/*}
                 <Container>

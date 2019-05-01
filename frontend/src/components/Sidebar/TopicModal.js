@@ -3,39 +3,7 @@ import React, { Component } from 'react';
 import AsyncSelect from 'react-select/lib/Async';
 import axios from 'axios';
 import _ from "lodash";
-import {msgstore_apis, david_test_apis} from '../../config';
-
-/*const options = [
-//  { value: 1, label: 'Movies' },
-//  { value: 2, label: 'Food' },
-{label: 'Movies'}
-
-];*/
-/*
-const filterColors = (inputValue) => {
-  return options.filter(i =>
-    i.label.toLowerCase().includes(inputValue.toLowerCase())
-  );
-};
-
-const getOptions = inputValue => {
-  axios.get('http://34.217.213.85:3000/msgstore/v1/topics')
-  .then(response=>{
-    console.log(response);
-    return response.json();
-  })
-  .then(json => {
-      return json.data.filter(i=>
-        i.toLowerCase().includes(inputValue.toLowerCase()))
-  }).catch(err => console.log(err))
-*/
-/*
-return new Promise(resolve => {
-  setTimeout(() => {
-    resolve(filterColors(inputValue));
-  }, 1000);
-});
-}*/
+import {msgstore_apis, david_test_apis, user_tracking_apis} from '../../config';
 
 class TopicModal extends Component {
   constructor(props) {
@@ -43,7 +11,7 @@ class TopicModal extends Component {
     this.state = {
       selectedTopics: [],
       options: [],
-      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTY2ODI3MzksImlkIjoiNWNjNTIzNjA3MmM5YmYzNDM2ODJiNGIwIn0.2yvfGmvutYPygv_oPbj7QUdiDxVvxbh6o5eHYZ2CBUU'
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTY5NDg3NDksImlkIjoiNWNjOTMyN2VmMzYzOTMwMDAxZDkzMzIxIn0.1PyIZ9tVZCH9ihiF8KHTv8McvGlAwhBHor8GGPd7QKc'
     }
     this.handlePost = this.handlePost.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -55,25 +23,33 @@ class TopicModal extends Component {
     console.log(e.target.name, e.target.value);
   }
 
-
   handlePost = (e) => {
+    e.preventDefault();
+    const ids = this.state.selectedTopics.map(topic => 
+        topic.label
+    );
+    console.log(ids);
+    const data = {
+      action: 'topic',
+      ids: ids,
+      unfollow: false
+    }
+    console.log(data);
+
+    axios.post(user_tracking_apis + '/userFollow', data, {
+      headers: {
+        'Authorization': `JWT ${this.state.token}`
+      }
+    }).then(response => {
+       this.props.update_sidebar(response.data.followed_topics);
+    }).catch(error => {
+      console.log(error);
+    }); 
 
   }
 
   componentDidMount() {
-    /*
-    axios.get('http://35.164.157.104:8000/msgstore/v1/topics', {
-      headers:
-      {
-        'Authorization': this.state.token
-      }
-    })
-      .then(response => {
-        console.log(response.data);
-        this.setState({
-          options: response.data
-        })
-      })*/
+
   }
 
   handleSelectChange = (value, { action }) => {
@@ -89,8 +65,8 @@ class TopicModal extends Component {
       headers: {
         'Authorization': `JWT ${this.state.token}`
       },
-       params: {
-         excludeFollowed: false
+      params: {
+        excludeFollowed: true
        }
      })
       .then(response => {
@@ -139,7 +115,7 @@ class TopicModal extends Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button style={{ 'color': '#949494', 'text-decoration': 'none', 'fontWeight': 400 }} variant="link" onClick={this.props.onHide}>Not now</Button>
+          <Button style={{ 'color': '#949494', 'text-decoration': 'none', 'fontWeight': 400}} variant="link" onClick={this.props.onHide}>Not now</Button>
           <Button onClick={this.handlePost}>Done</Button>
         </Modal.Footer>
       </Modal>

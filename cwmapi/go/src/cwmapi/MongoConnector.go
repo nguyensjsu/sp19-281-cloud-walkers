@@ -5,6 +5,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"log"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -166,7 +167,7 @@ func ping(){
 	_ = mgoSession.Copy()
 }
 
-func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel int, paginate *Pagination) ([] Question){
+func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel int, paginate *Pagination, topAnswer bool) ([] Question){
 	var err error
 	session := mgoSession.Copy()
 
@@ -178,16 +179,30 @@ func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel i
 		for _, andTopic := range strings.Split(topic, ","){
 			andQuery = append(andQuery, bson.M{"topics": bson.M{"$elemMatch": bson.M{"label": andTopic}}})
 		}
-		topicAndQueries = append(topicAndQueries, bson.M{"$and": andQuery})
+		switch len(andQuery){
+		case 0:
+			break
+		case 1:
+			topicAndQueries = append(topicAndQueries,  andQuery[0])
+		default:
+			topicAndQueries = append(topicAndQueries, bson.M{"$and": andQuery})
+		}
 	}
 
-	var topicOrQuery bson.M
+	var topicQuery bson.M
 
-	if(topicOrQuery != nil){
-		topicOrQuery = bson.M{"$or": topicAndQueries}
+	switch len(topicAndQueries){
+	case 0:
+		break
+	case 1:
+		topicQuery = topicAndQueries[0]
+	default:
+		topicQuery = bson.M{"$or": topicAndQueries}
 	}
 
-	query := getOrFilters(questionQuery, topicOrQuery)
+	log.Println(topicQuery)
+
+	query := getOrFilters(questionQuery, topicQuery)
 
 	var questionRecs []Question
 
@@ -215,7 +230,16 @@ func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel i
 
 	if(nestingLevel > 0){
 		for i := 0; i < len(questionRecs); i++ {
-			questionRecs[i].Answers = getAnswers([]string{questionRecs[i].Id.Hex()}, []string{}, nestingLevel - 1)
+			answers := getAnswers([]string{questionRecs[i].Id.Hex()}, []string{}, nestingLevel - 1)
+
+			if(topAnswer){
+				// if we had a ranking system, would give highest ranked answer.  Since that is beyond the
+				// scope of this project, just select one answer at random
+				idx := rand.Intn(len(answers) - 1)
+				questionRecs[i].Answers = append(append(questionRecs[i].Answers), answers[idx])
+			} else {
+				questionRecs[i].Answers = answers
+			}
 		}
 	}
 

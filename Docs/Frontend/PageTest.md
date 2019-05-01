@@ -34,9 +34,9 @@
 
 **Question Page**
 
-- [ ] BadgeGroup
-- [ ] AnswerInput
-- [ ] QuestionPage
-- [ ] AnswerList
-- [ ] CommentPanel
+- [x] BadgeGroup
+- [x] AnswerInput
+- [x] QuestionPage
+- [x] AnswerList
+- [x] CommentPanel
 

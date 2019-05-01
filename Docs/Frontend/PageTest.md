@@ -38,5 +38,5 @@
 - [x] AnswerInput
 - [x] QuestionPage
 - [x] AnswerList
-- [ ] CommentPanel
+- [x] CommentPanel
 

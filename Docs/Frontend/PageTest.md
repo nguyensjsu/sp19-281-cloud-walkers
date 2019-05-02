@@ -1,28 +1,42 @@
 ## Frontend Page/Component Clearlist
 (communicate with real backend)
 
-* Navigation Bar
-- [ ] NavBar
-- [ ] Add Question Modal
+#### Navigation Bar
 
-* Login Page
-- [ ] Login
+- [x] NavBar
+- [x] Add Question Modal
 
-* Signup Page
-- [ ] SignUp
+*to do: DisplayName*
+ 
 
-* Home Page
+#### Login Page
+
+- [x] Login
+
+
+#### Signup Page
+
+- [x] SignUp
+
+
+#### Home Page
+
 - [x] SideBar 
-- [ ] UserFeed
-- [ ] Follow More Topics Modal
+- [x] UserFeed
+- [x] Follow More Topics Modal
 
-* Topic Page
-- [ ] TopicPage
+~~*to do: get topic excludes user followed ones*~~
 
-* Question Page
-- [ ] NadgeGroup
-- [ ] AnswerInput
-- [ ] QuestionPage
-- [ ] AnswerList
-- [ ] CommentPanel
+
+#### Topic Page
+- [x] TopicPage
+
+
+**Question Page**
+
+- [x] BadgeGroup
+- [x] AnswerInput
+- [x] QuestionPage
+- [x] AnswerList
+- [x] CommentPanel
 

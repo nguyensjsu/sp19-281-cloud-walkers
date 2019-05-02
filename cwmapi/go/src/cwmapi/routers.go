@@ -145,6 +145,11 @@ var routes = Routes{
 		"/msgstore/v1/comments",
 		PutCommentUpdate,
 	},
-
+	{
+		"putUpdateCache",
+		strings.ToUpper("Put"),
+		"/msgstore/v1/flushcache",
+		FlushCache,
+	},
 
 }

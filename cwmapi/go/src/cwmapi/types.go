@@ -19,6 +19,10 @@ type Topic struct {
 	Label string `json:"label" bson:"label"`
 }
 
+type FollowedTopics struct{
+	FollowedTopics []Topic `json:"followed_topics" bson:"followed_topics"`
+}
+
 type Question struct {
 
 	Id  bson.ObjectId `json:"_id" bson:"_id"`
@@ -69,6 +73,7 @@ type Comment struct {
 	CreatedOn time.Time `json:"createdOn" bson:"createdOn"`
 
 	CreatedBy string `json:"createdBy"  bson:"createdBy"`
+	DisplayName string `json:"displayName,omitempty" bson:"displayName"`
 
 	Replies []Comment `json:"replies,omitempty"`
 }

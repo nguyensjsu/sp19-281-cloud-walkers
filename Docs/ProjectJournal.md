@@ -16,7 +16,7 @@ After discussion, we have decided to implement a "clone" of Quora.com.
 * Yu Zhao: Frontend design and implementation
 * Yueqiao Zhang: User Activities API
 * Hongzhe Yang: User Authentication API
-* David Ronca: Questions API
+* David Ronca: Messaging API (CWMAPI)
 
 ## Week Apr. 14 - Apr. 21
 
@@ -34,6 +34,10 @@ After discussion on Slake group and meetup after class, we have discussed follow
 * Quesions:
 
 * User Activities:
+    * Set up mongoDB for user follow activities
+    * Set up Docker file to build go API
+    * /home, /userFollow API ready
+
 * User Authentication: 
     * Set up the JWT for user 
     * Set up the MongoDB for user 
@@ -41,11 +45,14 @@ After discussion on Slake group and meetup after class, we have discussed follow
 
 ### To Do List:
 * Yu Zhao:
-    * Work on Question Page (allow "follow question/topic, answer question functionalities)
+    * Work on Question Page (allow "follow question/topic, answer question functionalities) and Topic Page
     * Tune communication between Frontend and Backend
     * Test all individual microservices through frontend
 
 * Yueqiao Zhang:
+    * Work with front end and message store service for communication 
+    * Research about MGO adaptor for find, remove and fetch query
+    * Make JWT worked in user activities API
 
 * Hongzhe Yang:
     * Match the frontend with correct request format
@@ -59,16 +66,70 @@ After discussion on Slake group and meetup after class, we have discussed follow
 
 ## Week Apr. 22 - Apr. 28
 
+One of road blocker we have this week is the CORS error for browser preflight request. 
+The typical error message frontend received is like:
+```
+Access to XMLHttpRequest at ‘http://35.164.157.104:8000/msgstore/v1/topics?excludeFollowed=false’ from origin ’http://localhost:3000' has been blocked by CORS policy: Request header field authorization is not allowed by Access-Control-Allow-Headers in preflight response.
+```
+By import `cors` package in Go backend, now we are able to pass `Authorization` header in our request from frontend.
+
 ### Progress:
 
-*CWMAPI
+* CWMAPI (David Ronca):
 
 	* The initial data model was not correct, as questions were tied to spaces.  We decided to drop the "Space" feature altogether, and make questions top-level.
 	* Addeds support for topics as a free-form tag to questions.  That is, topics can be created freely when posting a question.
 	* Added query for questions by topic.
 	* Moved from Docker Mongo, to 3-node cluser.
 	* Added Kong gateway.
+	* Added support for JWT user token authentication
+	* Added topic query option to exclude followed topics.
  
+* User Authorization:
+    * Fixed CORS error 
+    * Added Mongo Cluster
+    * Moved to AWS with Load Balancer
 
+* User Activity:
+    * Finished all other user activity backend APIs
+    * Enable to get userId from JWT token
+    * Fixed CORS error
+    * Uploaded local files to AWS EC2 instance
 
-### Week Apr.29 - May. 4 
+* Frontend (ReactJS):
+	* Finished all frontend main pages (`/Home`,`/topics/{topic_name}`, `/questions/{question_id}`, `/login`,`/signup`) and all components included in thest pages. 
+	* Assist Backend APIs to solve CORS error for browser preflight request
+	* Start to wrap frontend up
+
+### To Do List:
+
+* David Ronca:
+	* Shard MongoDB based on _id
+	* Add GET userfeed api.
+	* Add load balancer
+	* Fix CORS issue
+
+* Hongzhe Yang:
+
+* Yu Zhao:
+    * Continue the work to tune communication between Frontend and Backend
+    * Test all individual microservices through frontend
+    * Setup static server for Frontend and scale it up
+
+* Yueqiao Zhang:
+    * Test backend between Frontend and Backend with JWT token
+    * Update user activites API with Frontend needed
+
+## Week Apr.29 - May. 4 
+
+### Progress:
+
+* CWMAPI (David Ronca):
+	* Added new API GET /userfeed, which will return questions that have topic tags that the user is following.
+	* The Kong gateway was blocking CORS, so disabled for now.  Will need to re-enable after solving the CORS issue.
+
+* User Authorization:
+
+* User Activity:
+
+* Frontend (ReactJS):

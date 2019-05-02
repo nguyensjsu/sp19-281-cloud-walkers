@@ -249,12 +249,14 @@ export class AnswerList extends Component {
                         <p>
                             {renderHTML(post.answerText)}
                         </p>
+                        {/*
                         <ButtonToolbar style={{ 'margin-left': -10 }}>
                             <Button className="q_page_button" variant="link" onClick={() => this.handleUpvote(post.answers._id)}>
                                 <span className="fa fa-arrow-up"></span> Upvote</Button>
                             <Button className="q_page_button pull-right" variant="link" onClick={() => this.handleDownvote(post.answers._id)}>
                                 <span className="fa fa-arrow-down"></span> Downvote</Button>
                         </ButtonToolbar>
+                        */}
                         <CommentPanel answerId={post._id}></CommentPanel>
                     </ListGroup.Item>
 
@@ -335,7 +337,7 @@ class QuestionPage extends Component {
             questionId: this.props.match.params.questionId,
             followed: false,
             answer_string: null,
-            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTY5NDg3NDksImlkIjoiNWNjOTMyN2VmMzYzOTMwMDAxZDkzMzIxIn0.1PyIZ9tVZCH9ihiF8KHTv8McvGlAwhBHor8GGPd7QKc'
+            token: cookie.load('JWT')
         }
         this.handleFollow = this.handleFollow.bind(this);
         this.handleSubmitAnswer = this.handleSubmitAnswer.bind(this);

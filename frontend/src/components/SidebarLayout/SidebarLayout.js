@@ -19,7 +19,7 @@ return(
                             <Sidebar/>
                            {/* <Button style={{ 'text-decoration': 'none', "font-size": 14, "line-height": 10 }} variant="link" onClick={this.selectTopics}>Follow More</Button>*/}
                         </Col>
-                        <Col>
+                        <Col md={9}>
                             <Component {...matchProps} key={Math.random()*10000+1}></Component>
                         </Col>
                     </Row>

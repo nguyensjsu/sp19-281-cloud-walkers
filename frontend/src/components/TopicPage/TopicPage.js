@@ -2,13 +2,17 @@ import React, { Component } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import cookie from 'react-cookies';
 //import { Redirect } from 'react-router';
-//import './Home.css';
+import './TopicPage.css';
 import { userActions } from '../../_actions';
 import { connect } from 'react-redux';
-import Sidebar from '../Sidebar/Sidebar';
 import { Container, Col, Card, Button, Row } from 'react-bootstrap';
 import axios from 'axios';
 import { msgstore_apis, david_test_apis, user_tracking_apis } from '../../config';
+import renderHTML from 'react-render-html';
+import Moment from 'react-moment';
+import { BadgeGroup } from '../QuestionPage/QuestionPage'
+
+var html_truncate = require('html-truncate');
 
 class TopicPage extends Component {
     constructor(props) {
@@ -17,7 +21,7 @@ class TopicPage extends Component {
             questions: [],
             user_name: 'Yu Zhao',
             topic: this.props.match.params.topic,
-            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTY5NDg3NDksImlkIjoiNWNjOTMyN2VmMzYzOTMwMDAxZDkzMzIxIn0.1PyIZ9tVZCH9ihiF8KHTv8McvGlAwhBHor8GGPd7QKc'
+            token: cookie.load('JWT')
         }
     }
 
@@ -28,59 +32,52 @@ class TopicPage extends Component {
             },
             params: {
                 topic: this.state.topic,
-                depth: 0
+                topAnswer: true,
+                depth: 1,
+
             }
         }).then(response => {
             console.log(response.data);
+            this.setState({
+                questions: response.data
+            })
 
         }).catch(error => {
             console.log(error);
         })
-
-        const questions = [
-            {
-                "questionText": "questionText1",
-                "_id": 123,
-                "top_answer":
-                {
-                    answerText: 'AnswerText1',
-                    createdOn: "2000-01-23T04:56:07.000+00:00",
-                    createdBy: "createdBy1"
-                }
-            },
-            {
-                "questionText": "questionText2",
-                "top_answer":
-                {
-                    answerText: 'AnswerText2',
-                    createdOn: "2000-01-23T04:56:07.000+00:00",
-                    createdBy: "createdBy2"
-                }
-            }
-        ];
-        this.setState({
-
-            questions: questions
-        });
     }
 
     render() {
 
         let main_panel = null;
+
         if (this.state.questions.length !== 0) {
             main_panel = this.state.questions.map(q => {
+                let answer = null;
+                if ('answers' in q) {
+                    console.log(html_truncate(q.answers[0].answerText, 3));
+                    answer = (
+                        <div>
+                            <ul className="list-unstyled">
+                                <li>{q.answers[0].displayName} </li>
+                                <li><small className="text-muted">Answered <Moment fromNow>{q.answers[0].createdOn}</Moment></small></li>
+                            </ul>
+                            <p className="comment_truncate">
+                                {renderHTML(html_truncate(q.answers[0].answerText, 150))}
+                            </p>
+                        </div>
+                    )
+                }
+                else {
+                    answer = <p>Be the first to answer this question! </p>
+                }
                 return (
                     <Card>
-                        <Card.Body>
-                            <Card.Title>{q.questionText}</Card.Title>
-                            <Card.Text
-                                style={{
-                                    "overflow": "hidden",
-                                    "text-overflow": "ellipsis",
-                                    "display": "-webkit-box",
-                                    "-webkit-line-clamp": 3
-                                }}>
-                                {q.top_answer.answerText}
+                        <Card.Body >
+                            <BadgeGroup data={q.topics} />
+                            <Card.Title style={{ fontWeight: 'bold' }}>{q.questionText}</Card.Title>
+                            <Card.Text >
+                                {answer}
                             </Card.Text>
                             <Card.Link as={NavLink} to={'/questions/' + q._id}>more</Card.Link>
                         </Card.Body>
@@ -102,20 +99,16 @@ class TopicPage extends Component {
 
             <div>
                 <Card>
-                    <Card.Body  style={{ "font-size": 20, "color": '#666', 'fontWeight': 'bold'}}>
-                        {this.state.topic }
-                        <br/>
+                    <Card.Body style={{ "font-size": 20, "color": '#666', 'fontWeight': 'bold' }}>
+                        {this.state.topic}
+                        <br />
                         <Button variant="link" onClick={this.handleFollow} disabled>
-                        <span className="fa fa-plus-square"></span> Followed</Button>
+                            <span className="fa fa-plus-square"></span> Followed</Button>
                     </Card.Body>
                 </Card>
-
                 <br />
-
-
                 {main_panel}
-
-            </div >
+            </div>
         )
     }
 }

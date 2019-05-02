@@ -3,7 +3,7 @@
 
 #### Navigation Bar
 
-- [ ] NavBar
+- [x] NavBar
 - [x] Add Question Modal
 
 *to do: DisplayName*
@@ -11,25 +11,25 @@
 
 #### Login Page
 
-- [ ] Login
+- [x] Login
 
 
 #### Signup Page
 
-- [ ] SignUp
+- [x] SignUp
 
 
 #### Home Page
 
 - [x] SideBar 
-- [ ] UserFeed
+- [x] UserFeed
 - [x] Follow More Topics Modal
 
 ~~*to do: get topic excludes user followed ones*~~
 
 
 #### Topic Page
-- [ ] TopicPage
+- [x] TopicPage
 
 
 **Question Page**

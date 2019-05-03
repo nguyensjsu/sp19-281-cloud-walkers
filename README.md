@@ -44,5 +44,12 @@ https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/ProjectJou
 -
 
 4. Yueqiao Zhang
+- Implemented User Actitives APIs including /home (Deprecated), POST /userFollow, GET /userFollow, GET /userFeed(Deprecated),
+  POST /userPost in golang and using dockerfile to run the APIs 
+- Implemented MongoDB two shards to store user activities data (used one private subnet instance for config, one private subnet instance for shard1, another one for shard2 and one mongos router)
+- Tested with frontend and fixed issues according to frontend needs
+- Contributed to JWT Token server decode and CORS issues fixed
+- Contributed to project journal and other team docs
+  
 
 

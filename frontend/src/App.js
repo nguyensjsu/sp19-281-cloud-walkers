@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Main from './components/Main';
 import {BrowserRouter} from 'react-router-dom';
-import Navbar from './components/NavBar/Navbar'
+//import Navbar from './components/NavBar/Navbar'
 //App Component
 class App extends Component {
   render() {

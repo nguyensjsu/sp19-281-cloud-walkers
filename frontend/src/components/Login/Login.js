@@ -32,7 +32,7 @@ class Login extends Component {
 
     //submit Login handler to send a request to the node backend
     submitLogin = (e) => {
-        console.log("run login");
+ //       console.log("run login");
         //prevent page from refresh
         e.preventDefault();
 
@@ -52,12 +52,12 @@ class Login extends Component {
             //set the with credentials to true
  //           axios.defaults.withCredentials = true;
 //			axios.defaults.crossDomain = true;
-            console.log("axios.defaults.crossDomain = true");
+//            console.log("axios.defaults.crossDomain = true");
             //make a post request with the user data
             
             axios.post(user_auth_apis +'/login', data)
                 .then(response => {
-                    console.log(response);
+//                    console.log(response);
                     //console.log("Status Code : ", response.status);
                     //console.log("role:", response.data);
                     if (response.status === 200 /*&& response.data.auth === true*/) {

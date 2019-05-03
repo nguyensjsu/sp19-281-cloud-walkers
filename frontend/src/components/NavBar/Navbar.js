@@ -13,11 +13,11 @@ class navbar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            show_add: false
-            
+            show_add: false          
         };
         this.handleLogout = this.handleLogout.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
+        this.afterAdd = this.afterAdd.bind(this);
     }
     //handle logout to destroy the cookie
     handleLogout = () => {
@@ -29,6 +29,7 @@ class navbar extends Component {
         e.preventDefault();
         this.setState({
             show_add: true,
+            user_name: this.props.authentication.first_name + ' ' + this.props.authentication.last_name,
         })
     }
 
@@ -66,11 +67,22 @@ class navbar extends Component {
 
         let modalClose = () => this.setState({show_add : false});
 
+        let addmodal = null;
+        if (this.state.show_add === true) {
+            addmodal = (
+            <AddModal
+                show={this.state.show_add}
+                user_name={this.state.user_name}
+                onHide={modalClose}
+                afteradd={this.afterAdd}
+            />
+        )
+        }
         return (
 
             <Navbar bg="light" expand="md">
                 <Navbar.Brand>
-                    <Link to='/' style={{color: 'red', 'text-decoration': 'none'}}>CWORA</Link>
+                    <Link to='/' style={{color: 'red', 'textDecoration': 'none'}}>CWORA</Link>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
@@ -85,13 +97,8 @@ class navbar extends Component {
                         /*{authentication.loggedIn ? this.handleAdd : null}*/>Add Question</Button>
                 </Navbar.Collapse>
 
+            {addmodal}
 
-            <AddModal
-                show={this.state.show_add}
-                onHide={modalClose}
-                afterAdd={this.afterAdd}
-                user_name={authentication.first_name + ' ' + authentication.last_name}
-            />
             </Navbar>
         )
     }

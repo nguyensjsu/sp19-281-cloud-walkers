@@ -1,0 +1,252 @@
+1083fca Merge branch 'master' of https://github.com/nguyensjsu/sp19-281-cloud-walkers Fri May 3 11:37:17 2019 -0700
+36cefd4 config Fri May 3 11:36:57 2019 -0700
+ frontend/src/config.js | 2 ++
+ 1 file changed, 2 insertions(+)
+
+1746f10 Merge branch 'master' of https://github.com/nguyensjsu/sp19-281-cloud-walkers Thu May 2 23:30:24 2019 -0700
+837a94c config.js Thu May 2 23:29:43 2019 -0700
+ frontend/src/config.js | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+1f9df4a bug fixed Thu May 2 22:48:22 2019 -0700
+ frontend/src/components/Home/Home.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+aa9fb9c kong and warning clear Thu May 2 21:57:20 2019 -0700
+ frontend/src/App.js                                |   2 +-
+ frontend/src/components/Home/Home.js               |  26 ++--
+ frontend/src/components/Login/Login.js             |   6 +-
+ frontend/src/components/NavBar/Add_Q_Modal.js      |  12 +-
+ frontend/src/components/NavBar/Navbar.js           |  25 +--
+ .../src/components/QuestionPage/QuestionPage.js    | 167 +++++++--------------
+ frontend/src/components/Sidebar/Sidebar.js         |  10 +-
+ frontend/src/components/Sidebar/TopicModal.js      |   7 +-
+ .../src/components/SidebarLayout/SidebarLayout.js  |  14 +-
+ frontend/src/components/SignUp/SignUp.js           |  14 +-
+ frontend/src/components/TopicPage/TopicPage.js     |  25 +--
+ frontend/src/config.js                             |   7 +-
+ 12 files changed, 135 insertions(+), 180 deletions(-)
+
+e324dc6 Merge branch 'master' of https://github.com/nguyensjsu/sp19-281-cloud-walkers Wed May 1 22:35:39 2019 -0700
+5b2f51e fix bugs Wed May 1 21:48:50 2019 -0700
+ frontend/package-lock.json                         |  5 ++
+ frontend/package.json                              |  1 +
+ frontend/src/_actions/user.action.js               |  8 +-
+ frontend/src/_reducers/login.reducer.js            |  5 +-
+ frontend/src/_reducers/signup.reducer.js           |  6 +-
+ frontend/src/components/Home/Home.js               | 71 ++++++++++++++---
+ frontend/src/components/Login/Login.js             | 14 ++--
+ frontend/src/components/NavBar/Navbar.js           | 12 +--
+ .../src/components/QuestionPage/QuestionPage.js    |  4 +-
+ frontend/src/components/Sidebar/Sidebar.js         |  4 +-
+ .../src/components/SidebarLayout/SidebarLayout.js  |  2 +-
+ frontend/src/components/SignUp/SignUp.js           | 65 ++++++++--------
+ frontend/src/components/TopicPage/TopicPage.css    |  5 ++
+ frontend/src/components/TopicPage/TopicPage.js     | 91 ++++++++++------------
+ frontend/src/config.js                             |  4 +-
+ 15 files changed, 177 insertions(+), 120 deletions(-)
+
+8fd24b2 follow button Wed May 1 02:18:24 2019 -0700
+ frontend/src/components/TopicPage/TopicPage.js | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+b46eb79 clear question page, fix sidebar routing Wed May 1 02:15:34 2019 -0700
+ frontend/src/components/Home/Home.js               |  41 ++--
+ frontend/src/components/Main.js                    |   3 +-
+ frontend/src/components/NavBar/Add_Q_Modal.js      |  67 ++-----
+ frontend/src/components/NavBar/Navbar.js           |  10 +-
+ .../src/components/QuestionPage/QuestionPage.js    | 223 ++++++++++++++++-----
+ frontend/src/components/Sidebar/Sidebar.js         |  18 +-
+ frontend/src/components/Sidebar/TopicModal.js      |  78 +++----
+ .../src/components/SidebarLayout/SidebarLayout.js  |   6 +-
+ frontend/src/components/TopicPage/TopicPage.js     |  37 +++-
+ 9 files changed, 311 insertions(+), 172 deletions(-)
+
+52a0c6c Page Test Clearlist Mon Apr 29 00:58:07 2019 -0700
+ Docs/Frontend/PageTest.md | 37 ++++++++++++++++++++++++++++---------
+ 1 file changed, 28 insertions(+), 9 deletions(-)
+
+e52962f Merge branch 'master' of https://github.com/nguyensjsu/sp19-281-cloud-walkers Mon Apr 29 00:46:48 2019 -0700
+1babb46 markdown checklist Mon Apr 29 00:46:07 2019 -0700
+ Docs/Frontend/PageTest.md                     |  9 +++++++++
+ frontend/src/components/Login/Login.js        |  8 ++++----
+ frontend/src/components/NavBar/Add_Q_Modal.js | 26 +++++++++++++++++++++-----
+ frontend/src/components/Sidebar/Sidebar.js    |  9 +++++----
+ frontend/src/components/Sidebar/TopicModal.js | 20 ++++++++++++--------
+ frontend/src/config.js                        |  8 ++++++--
+ 6 files changed, 57 insertions(+), 23 deletions(-)
+
+42aa247 Merge branch 'master' of https://github.com/nguyensjsu/sp19-281-cloud-walkers Sun Apr 28 22:30:23 2019 -0700
+8fc753d mongo sharding Sun Apr 28 22:29:54 2019 -0700
+ Docs/MongoSharding/MongoSharding.md | 280 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 280 insertions(+)
+
+d3bfcf8 test sidebar with real backend Fri Apr 26 22:27:33 2019 -0700
+ frontend/src/components/Login/Login.js         |  2 +-
+ frontend/src/components/Main.js                |  4 +-
+ frontend/src/components/Sidebar/Sidebar.js     | 60 ++++++++++++++-------
+ frontend/src/components/Sidebar/TopicModal.js  | 75 +++++++++++++++-----------
+ frontend/src/components/SignUp/SignUp.js       |  2 +-
+ frontend/src/components/TopicPage/TopicPage.js |  2 +-
+ frontend/src/config.js                         |  5 +-
+ 7 files changed, 94 insertions(+), 56 deletions(-)
+
+2a2a1fe fix router and make sidebar reusable Fri Apr 26 01:48:11 2019 -0700
+ frontend/src/App.js                                |  4 +-
+ frontend/src/components/Home/Home.css              |  2 +-
+ frontend/src/components/Home/Home.js               | 41 ++++-----
+ frontend/src/components/Main.js                    | 13 +--
+ frontend/src/components/NavBar/Navbar.js           |  4 +-
+ frontend/src/components/Sidebar/Sidebar.js         | 40 ++++++++-
+ .../src/components/{Home => Sidebar}/TopicModal.js |  4 +-
+ .../src/components/SidebarLayout/SidebarLayout.js  | 35 ++++++++
+ frontend/src/components/TopicPage/TopicPage.js     | 97 ++++++++++++++++++++++
+ 9 files changed, 203 insertions(+), 37 deletions(-)
+
+6c8b67a follow topic page Thu Apr 25 22:57:08 2019 -0700
+ frontend/src/components/Home/Home.js          |  80 +++++++++------
+ frontend/src/components/Home/TopicModal.js    | 135 ++++++++++++++++++++++++++
+ frontend/src/components/NavBar/Add_Q_Modal.js |   2 +-
+ frontend/src/components/Sidebar/Sidebar.js    |   2 +-
+ 4 files changed, 186 insertions(+), 33 deletions(-)
+
+440e356 Merge branch 'master' of https://github.com/nguyensjsu/sp19-281-cloud-walkers Thu Apr 25 00:12:31 2019 -0700
+e13a38f question page Thu Apr 25 00:12:01 2019 -0700
+ frontend/src/components/QuestionPage/QuestionPage.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+e2898f9 question page Wed Apr 24 23:36:13 2019 -0700
+ .../src/components/QuestionPage/QuestionPage.css   | 12 +++++++-
+ .../src/components/QuestionPage/QuestionPage.js    | 35 ++++++++++++++--------
+ 2 files changed, 34 insertions(+), 13 deletions(-)
+
+80830fd comment  thread Wed Apr 24 22:51:05 2019 -0700
+ frontend/package-lock.json                         |  24 +++++
+ frontend/package.json                              |   1 +
+ frontend/src/components/Home/Home.js               |   2 +-
+ .../src/components/QuestionPage/QuestionPage.css   |  40 ++++++-
+ .../src/components/QuestionPage/QuestionPage.js    | 116 ++++++++++++++++++---
+ 5 files changed, 163 insertions(+), 20 deletions(-)
+
+91e3ef2 add answer editor Wed Apr 24 17:17:49 2019 -0700
+ frontend/package-lock.json                         | 96 +++++++++++++++++++++
+ frontend/package.json                              |  1 +
+ .../src/components/AnswerEditor/AnswerEditor.js    | 35 ++++++++
+ frontend/src/components/Home/Home.css              |  6 ++
+ frontend/src/components/Home/Home.js               |  8 +-
+ frontend/src/components/NavBar/Navbar.js           |  2 +-
+ .../src/components/QuestionPage/QuestionPage.css   | 11 +++
+ .../src/components/QuestionPage/QuestionPage.js    | 97 ++++++++++++++++++++--
+ frontend/src/components/Sidebar/Sidebar.css        |  7 ++
+ frontend/src/components/Sidebar/Sidebar.js         |  4 +-
+ frontend/src/config.js                             |  2 +-
+ 11 files changed, 256 insertions(+), 13 deletions(-)
+
+ff9d14f fix warning Tue Apr 23 13:49:06 2019 -0700
+ frontend/src/components/QuestionPage/QuestionPage.js | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+aaef5f4 quesionPage Layout Tue Apr 23 00:55:43 2019 -0700
+ frontend/src/components/Main.js                    |   2 +
+ .../src/components/QuestionPage/QuestionPage.js    | 139 ++++++++++++++++++++-
+ 2 files changed, 136 insertions(+), 5 deletions(-)
+
+3676cfd questionPage Mon Apr 22 23:55:13 2019 -0700
+ frontend/src/components/Home/Home.js               |  1 -
+ frontend/src/components/NavBar/Add_Q_Modal.js      |  1 -
+ .../src/components/QuestionPage/QuestionPage.js    | 22 ++++++++++++++++++++++
+ 3 files changed, 22 insertions(+), 2 deletions(-)
+
+3b48b2a select topic component Mon Apr 22 14:59:19 2019 -0700
+ frontend/package.json                         |  1 +
+ frontend/src/components/NavBar/Add_Q_Modal.js | 49 +++++++++++++++------------
+ frontend/src/components/SignUp/SignUp.js      | 18 +++++-----
+ frontend/src/config.js                        |  2 +-
+ 4 files changed, 40 insertions(+), 30 deletions(-)
+
+a6e38f4 Merge branch 'master' of https://github.com/nguyensjsu/sp19-281-cloud-walkers Sun Apr 21 19:39:11 2019 -0700
+6941024 journal and allow select topic for q Sun Apr 21 19:30:08 2019 -0700
+ Docs/ProjectJournal.md | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
+
+ba16ee5 allow select topics Sat Apr 20 23:35:09 2019 -0700
+ frontend/package-lock.json                    | 171 ++++++++++++++++++++++++++
+ frontend/package.json                         |   1 +
+ frontend/src/components/NavBar/Add_Q_Modal.js |  72 ++++++++++-
+ frontend/src/components/NavBar/Navbar.js      |   2 -
+ 4 files changed, 240 insertions(+), 6 deletions(-)
+
+c5a4034 home page Sat Apr 20 19:36:03 2019 -0700
+ frontend/src/components/Home/Home.js | 131 ++++++++++++++++++++++++++++-------
+ 1 file changed, 105 insertions(+), 26 deletions(-)
+
+c75122b add post/home page/sidebar Sat Apr 20 18:25:18 2019 -0700
+ frontend/public/index.html                    |   1 +
+ frontend/src/components/Home/Home.js          |  51 +++++++++++++
+ frontend/src/components/NavBar/Add_Q_Modal.js |  65 +++++++++--------
+ frontend/src/components/NavBar/Navbar.js      | 100 +++++++++++---------------
+ frontend/src/components/Sidebar/Sidebar.css   |  44 ++++++++++++
+ frontend/src/components/Sidebar/Sidebar.js    |  22 ++++++
+ 6 files changed, 195 insertions(+), 88 deletions(-)
+
+47f86b0 React-bootstrap Redux Sat Apr 20 15:00:04 2019 -0700
+ frontend/package-lock.json                    | 88 ++++++++++++++++++++++++
+ frontend/package.json                         |  3 +
+ frontend/public/index.html                    | 21 ++++++
+ frontend/src/_actions/index.js                |  1 +
+ frontend/src/_actions/user.action.js          | 24 +++++++
+ frontend/src/_constant/index.js               |  1 +
+ frontend/src/_constant/user.constant.js       | 12 ++++
+ frontend/src/_reducers/index.js               | 12 ++++
+ frontend/src/_reducers/login.reducer.js       | 32 +++++++++
+ frontend/src/_reducers/signup.reducer.js      | 27 ++++++++
+ frontend/src/components/Home/Home.js          |  0
+ frontend/src/components/Login/Login.js        | 10 +--
+ frontend/src/components/Main.js               | 67 ++----------------
+ frontend/src/components/NavBar/Add_Q_Modal.js | 31 +++++++++
+ frontend/src/components/NavBar/Navbar.js      | 97 ++++++++++++++++++---------
+ frontend/src/components/SignUp/SignUp.js      | 27 ++------
+ 16 files changed, 332 insertions(+), 121 deletions(-)
+
+4f29dfc Merge branch 'master' of https://github.com/nguyensjsu/sp19-281-cloud-walkers Thu Apr 18 00:44:25 2019 -0700
+21202d9 login/SignUp/Navbar Thu Apr 18 00:41:43 2019 -0700
+ frontend/package-lock.json                         | 361 +++++++++++++++++++++
+ frontend/package.json                              |  10 +-
+ frontend/src/App.css                               | 101 ++++--
+ frontend/src/App.js                                |  31 +-
+ frontend/src/App.test.js                           |   9 -
+ frontend/src/components/Login/Login.js             | 141 ++++++++
+ frontend/src/components/Main.js                    |  88 +++++
+ frontend/src/components/NavBar/Navbar.js           |  88 +++++
+ frontend/src/components/SignUp/SignUp.js           | 150 +++++++++
+ frontend/src/config.js                             |   3 +
+ frontend/src/index.css                             |  17 +-
+ frontend/src/index.js                              |  26 +-
+ frontend/src/logo.svg                              |   7 -
+ .../{serviceWorker.js => registerServiceWorker.js} |  62 ++--
+ 14 files changed, 976 insertions(+), 118 deletions(-)
+
+b83c581 journal Wed Apr 17 21:21:57 2019 -0700
+ ProjectJournal.md | 1 +
+ 1 file changed, 1 insertion(+)
+
+4073484 init react Wed Apr 17 21:14:56 2019 -0700
+ frontend/.gitignore           |    23 +
+ frontend/README.md            |    68 +
+ frontend/package-lock.json    | 16577 ++++++++++++++++++++++++++++++++++++++++
+ frontend/package.json         |    25 +
+ frontend/public/favicon.ico   |   Bin 0 -> 3870 bytes
+ frontend/public/index.html    |    41 +
+ frontend/public/manifest.json |    15 +
+ frontend/src/App.css          |    33 +
+ frontend/src/App.js           |    28 +
+ frontend/src/App.test.js      |     9 +
+ frontend/src/index.css        |    14 +
+ frontend/src/index.js         |    12 +
+ frontend/src/logo.svg         |     7 +
+ frontend/src/serviceWorker.js |   135 +
+ 14 files changed, 16987 insertions(+)
+
+4a2c340 init Wed Apr 17 19:39:10 2019 -0700
+ README.md | 1 +
+ 1 file changed, 1 insertion(+)

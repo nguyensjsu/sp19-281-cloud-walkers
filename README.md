@@ -3,7 +3,7 @@
 # Team Members
 * [David Ronca](https://github.com/)
 * [Yu Zhao](https://github.com/yarns-backyard)
-  - Something wrong with my github email link, all my commits from Mac are not correctly linked to my github account. You could find those commits with author "Yu Zhao" in commit history or insights.
+  - Something wrong with my github email link, all my commits from Mac are not correctly linked to my github account. You could find those commits with author "Yu Zhao" in commit history, insights/pulse or [git log](https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/frontend/gitlog_YuZhao.log).
   
 * [Hongzhe Yang](https://github.com/)
 * [Janet(Yueqiao)Zhang](https://github.com/treetree0211)

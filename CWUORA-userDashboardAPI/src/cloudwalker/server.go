@@ -257,6 +257,25 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 						us.Remove(topic)
 					}
 				}
+
+				/** 
+	        	Get user followed topics from Mongo
+		        **/
+		        var spaceResult []bson.M
+				err = us.Find(bson.M{"userId": userId}).All(&spaceResult)
+				if err != nil {
+					fmt.Println("findquery panic")
+				}
+
+		        var response FollowSpaceList
+				resSpace := make([]TestTopic, len(spaceResult))
+
+				for i := 0; i < len(spaceResult); i++ {
+					resSpace[i].Label = spaceResult[i]["spaceId"].(string)		
+				}
+				response.FollowSpace = resSpace
+		        formatter.JSON(w, http.StatusOK, response)
+
 			}
 
 			if action == "question" {
@@ -271,12 +290,14 @@ func followHandler(formatter *render.Render) http.HandlerFunc {
 				} else {
 					uq.Remove(question)
 				}
+
+				var response Success
+				response.Success = true
+
+				formatter.JSON(w, http.StatusOK, response)
 			}
 
-			var response Success
-			response.Success = true
-
-			formatter.JSON(w, http.StatusOK, response)
+			
            
         } else {
             log.Printf("Invalid JWT Token")

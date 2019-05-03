@@ -130,6 +130,12 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 
 * User Authorization:
 
-* User Activity:
+* User Activity:    
+    * Updated GET /userFollow API response json 
+    * Added MongoDB two shards for user activity database
+    * Fixed small errors for docker run and other frontend needs 
 
 * Frontend (ReactJS):
+  - Finished Frontend test with working APIs ([checklist](https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/Frontend/PageTest.md))  
+  - Setup a Kong API gateway for backend APIs
+  - Scale frontend server and add a loadbalancer 

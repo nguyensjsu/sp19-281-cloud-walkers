@@ -2,7 +2,9 @@
 # Architecture
 # Team Members
 * [David Ronca](https://github.com/)
-* [Yu Zhao](https://github.com/)
+* [Yu Zhao](https://github.com/yarns-backyard)
+  - Something wrong with my github email link, all my commits from Mac are not correctly linked to my github account. You could find those commits with author "Yu Zhao" in commit history or insights.
+  
 * [Hongzhe Yang](https://github.com/)
 * [Janet(Yueqiao)Zhang](https://github.com/treetree0211)
 
@@ -31,8 +33,11 @@ https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/ProjectJou
 -
 
 2. Yu Zhao
--
--
+- Application design and [API Doc](https://docs.google.com/spreadsheets/d/1M4RdDfX2pyHF5RVmjj8jFG7bgsPhhCXzO-LWUfgFXt8/edit?usp=sharing )
+- Frontend (ReactJS) implementation and test ([checklist](https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/Frontend/PageTest.md))
+- Scale out static Frontend server on AWS and set up Kong API Gateway for all backend microservices
+- Assist backend to set up sharded Mongo Cluster
+- Collaborate with team members to solve CORS browser preflight error
 
 3. Hongzhe Yang
 -

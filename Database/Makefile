@@ -1,6 +1,7 @@
 clean:
-	docker stop loginsystem
-	docker rm loginsystem
+	sudo docker stop userprofile
+	sudo docker rm userprofile
+	sudo docker rmi userprofile
 
 gopath:
 	GOPATH=$(PWD)
@@ -8,20 +9,30 @@ gopath:
 start: 
 	sudo systemctl start docker
 
+network:
+	sudo docker network create --driver bridge cloudwalker
+
 build:
-	docker build -t loginsystem-app .
+	sudo docker build -t userprofile .
 
 run:
-	docker run -d  --name loginsystem -p 3001:3001 \
-       	 	-e "MONGO1=127.0.0.1" \
-        	# -e "MONGO2=54.148.30.107" \
-        	# -e "MONGO3=54.203.107.100" \
-		-e "MONGO_ADMIN=admin" \
-		-e "MONGO_PASSWORD=query" \
-		loginsystem-app
+	sudo docker run --name userprofile --network cloudwalker -p 3001:3001 -td userprofile
+
+mongo:
+	sudo docker run --name mongodb --network cloudwalker -p 27017:27017 -d mongo:3.7
 
 test-ping:
 	curl localhost:3001/ping
+
+
+
+
+
+
+
+
+
+
 
 
 

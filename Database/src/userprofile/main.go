@@ -1,13 +1,23 @@
 package main
 
 import (
-	"../LoginSystem/handler"
 	"net/http"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/log"
 	"gopkg.in/mgo.v2"
+)
+
+//type (
+//	Handler struct {
+//		DB *mgo.Session
+//	}
+//)
+
+const (
+	// Key (Should come from somewhere else).
+	Key = "secret"
 )
 
 func main() {
@@ -29,7 +39,7 @@ func main() {
 	// return a JWT auth middleware with config
 	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 
-		SigningKey: []byte(handler.Key),
+		SigningKey: []byte(Key),
 		Skipper: func(c echo.Context) bool {
 			// Skip authentication for and signup login requests
 			if c.Path() == "/login" || c.Path() == "/signup" {
@@ -40,7 +50,7 @@ func main() {
 	}))
 
 	// Database connection
-	db, err := mgo.Dial("10.0.0.233")
+	db, err := mgo.Dial("127.0.0.1:27017")
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
@@ -53,8 +63,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Initialize handler
-	h := &handler.Handler{DB: db}
+	//Initialize handler
+	h := &Handler{DB: db}
+
+	//var h *Handler
+	//h.DB = db
 
 	// Routes
 	e.POST("/signup", h.Signup)

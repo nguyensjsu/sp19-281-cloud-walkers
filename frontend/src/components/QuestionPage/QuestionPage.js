@@ -7,10 +7,12 @@ import { connect } from 'react-redux';
 import './QuestionPage.css';
 import { ListGroup, Container, Badge, ButtonToolbar, Button, Collapse, Card, Form, Col, Row } from 'react-bootstrap';
 //import ReactPaginate from 'react-paginate';
+import axios from 'axios';
 import Moment from 'react-moment';
 import PropTypes from 'prop-types';
 import AnswerEditor from '../AnswerEditor/AnswerEditor';
-import renderHTML from 'react-render-html'
+import renderHTML from 'react-render-html';
+import { msgstore_apis, david_test_apis, user_tracking_apis } from '../../config';
 
 const fake_reponse = {
     "spaceId": "spaceId",
@@ -89,17 +91,17 @@ const fake_reponse = {
 }
 
 export class CommentPanel extends Component {
-    static propTypes = {
-        data: PropTypes.array.isRequired,
-    };
 
     constructor(props) {
         super(props);
         this.state = {
-            comment_text: false,
+            comment_text: null,
             show_comments: false,
+            comments: [],
+            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTY5NDg3NDksImlkIjoiNWNjOTMyN2VmMzYzOTMwMDAxZDkzMzIxIn0.1PyIZ9tVZCH9ihiF8KHTv8McvGlAwhBHor8GGPd7QKc'
         }
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.reload_comments = this.reload_comments.bind(this);
     }
     onChange = (e) => {
         //        console.log(e.target.value)
@@ -107,28 +109,87 @@ export class CommentPanel extends Component {
     }
 
     handleSubmit = (e) => {
+        e.preventDefault();
         console.log(this.props.data);
         const data = {
             commentText: this.state.comment_text,
-            answer_id: this.props.answerId
-        }
-        console.log(data)
+        };
+        axios.post(david_test_apis + '/comments', data, {
+            headers: {
+                'Authorization': `JWT ${this.state.token}`
+            },
+            params: {
+                answerId: this.props.answerId
+            }
+        }).then(response => {
+            this.reload_comments();
+        }).catch(error => {
+            console.log(error);
+        })
+
     }
+
+    reload_comments = () => {
+        axios.get(david_test_apis + '/comments', {
+            headers: {
+                'Authorization': `JWT ${this.state.token}`
+            },
+            params: {
+                answerId: this.props.answerId,
+                depth: 0
+            }
+        }).then(response => {
+                this.setState({
+                    comments: response.data,
+                    show_comments: true,
+                    comment_text: ""
+                })
+        }).catch(error => {
+            console.log(error);
+        })
+
+    }
+    showComments = (e) => {
+        e.preventDefault();
+        axios.get(david_test_apis + '/comments', {
+            headers: {
+                'Authorization': `JWT ${this.state.token}`
+            },
+            params: {
+                answerId: this.props.answerId,
+                depth: 0
+            }
+        }).then(response => {
+            this.setState({
+                'show_comments': true,
+                'comments': response.data
+            })
+        }).catch(error => {
+            console.log(error);
+        })
+    }
+
     render() {
         const { comment_text } = this.state
 
         let comment_list = null;
         if (this.state.show_comments === true)
-            comment_list = this.props.data.map((comment, idx) => {
+            comment_list = this.state.comments.map((comment, idx) => {
                 return (
-                    <ListGroup.Item key={idx} style={{ border: 'none'}}>
-                        <ul className="list-unstyled" style={{'padding': 0, margin: 0}}>
-                            <li style={{'fontWeight': 'bold', 'fontSize':13}}>{comment.replies.createdBy}</li>
-                            <li className = 'comment_body'> {comment.replies.commentText}  </li>
+                    <ListGroup.Item key={idx} style={{ border: 'none' }}>
+                        <ul className="list-unstyled" style={{ 'padding': 0, margin: 0 }}>
+                            <li style={{ 'fontWeight': 'bold', 'fontSize': 13 }}>{comment.displayName}</li>
+                            <li className='comment_body'> {comment.commentText}  </li>
                         </ul>
                     </ListGroup.Item>
                 )
             });
+
+        let close_comments = null;
+        if (this.state.show_comments === true){
+            close_comments =  <Button style={{ 'margin-left': 12 }} size="sm" variant="link" onClick={()=>this.setState({show_comments: false})}> Close </Button>
+        }
+
         return (
             <div className="threaded_comments">
                 <Form inline>
@@ -138,12 +199,13 @@ export class CommentPanel extends Component {
                         </Button>
                         <Form.Control style={{ 'margin-left': 12, 'width': 600 }}
                             as="textarea" rows="1" size="sm" type="text" placeholder="Add a comment..."
-                            onChange={this.onChange} />
+                            onChange={this.onChange} value={this.state.comment_text} />
                         <Button style={{ 'margin-left': 12 }}
                             size="sm" disabled={!comment_text}
                             onClick={this.handleSubmit}>
                             Add Comment</Button>
-                        <Button style={{ 'margin-left': 12 }} size="sm" variant="link" onClick={() => this.setState({ "show_comments": true })}> All </Button>
+                        <Button style={{ 'margin-left': 12 }} size="sm" variant="link" onClick={this.showComments}> All </Button>
+                        {close_comments}
                     </Form.Group>
                 </Form>
                 <Collapse in={this.state.show_comments}>
@@ -181,26 +243,28 @@ export class AnswerList extends Component {
                 return (
                     <ListGroup.Item key={idx}>
                         <ul className="list-unstyled">
-                            <li>{post.answers.createdBy} </li>
-                            <li><small className="text-muted">Answered<Moment fromNow>{post.answers.createdOn}</Moment></small></li>
+                            <li>{post.displayName} </li>
+                            <li><small className="text-muted">Answered <Moment fromNow>{post.createdOn}</Moment></small></li>
                         </ul>
                         <p>
-                            {renderHTML(post.answers.answerText)}
+                            {renderHTML(post.answerText)}
                         </p>
+                        {/*
                         <ButtonToolbar style={{ 'margin-left': -10 }}>
                             <Button className="q_page_button" variant="link" onClick={() => this.handleUpvote(post.answers._id)}>
                                 <span className="fa fa-arrow-up"></span> Upvote</Button>
                             <Button className="q_page_button pull-right" variant="link" onClick={() => this.handleDownvote(post.answers._id)}>
                                 <span className="fa fa-arrow-down"></span> Downvote</Button>
                         </ButtonToolbar>
-                        <CommentPanel data={post.answers.comments} answerId={post.answers._id}></CommentPanel>
+                        */}
+                        <CommentPanel answerId={post._id}></CommentPanel>
                     </ListGroup.Item>
 
                 )
             });
         }
         else {
-            details = (<div>No Answer Yet</div>)
+            details = (<ListGroup.Item><div>No Answer Yet</div></ListGroup.Item>)
         }
         return (
             <ListGroup variant="flush">
@@ -217,11 +281,12 @@ export class BadgeGroup extends Component {
 
     render() {
         let details = null;
-        if (this.props.data.length != 0) {
+
+        if (this.props.data.length !== 0) {
             details = this.props.data.map((post, idx) => {
                 return (
                     <Badge pill variant="light" className='topic_pill' key={idx}>
-                        {post.topics.label}
+                        {post.label}
                     </Badge>
 
                 )
@@ -249,17 +314,10 @@ export class AnswerInput extends Component {
         onChange: PropTypes.func
     };
 
-    handleSubmit = (e) => {
-        e.preventDefault();
-        const data = {
-            body: this.state.answer_string
-        }
-    }
-
-
     handleInputChange = (value) => {
-        console.log(value);
-        this.setState({ answer_string: value })
+        //       console.log(value);
+        this.props.onChange(value);
+        //       this.setState({ answer_string: value })
     }
 
     render() {
@@ -275,51 +333,128 @@ class QuestionPage extends Component {
         this.state = {
             user_name: "Yu Zhao",
             answer_input: false,
-            question: null
+            question: {},
+            questionId: this.props.match.params.questionId,
+            followed: false,
+            answer_string: null,
+            token: cookie.load('JWT')
         }
         this.handleFollow = this.handleFollow.bind(this);
+        this.handleSubmitAnswer = this.handleSubmitAnswer.bind(this);
     }
-    componentWillMount() {
-        this.setState({
-            question: fake_reponse
+
+    componentDidMount() {
+        axios.get(david_test_apis + '/questions', {
+            headers: {
+                'Authorization': `JWT ${this.state.token}`
+            },
+            params: {
+                questionId: this.state.questionId,
+                depth: 1
+            }
+        }).then(response => {
+            console.log(response.data)
+            this.setState({
+                question: response.data[0]
+            })
         })
     }
 
     handleFollow() {
-        return (
-            console.log("follow this question")
-        )
+        console.log("follow this question");
+
+        const data = {
+            action: 'question',
+            ids: [this.state.questionId],
+            unfollow: false
+        }
+        console.log(data);
+
+        axios.post(user_tracking_apis + '/userFollow', data, {
+            headers: {
+                'Authorization': `JWT ${this.state.token}`
+            }
+        }).then(response => {
+            console.log(response);
+            this.setState({
+                followed: true
+            })
+        }).catch(error => {
+            console.log(error);
+        });
+
     }
 
+    handleSubmitAnswer = (e) => {
+        e.preventDefault();
+        const data = {
+            answerText: this.state.answer_string,
+        };
+        console.log(data);
+
+        axios.post(david_test_apis + '/answers', data, {
+            headers: {
+                'Authorization': `JWT ${this.state.token}`
+            },
+            params: {
+                'questionId': this.state.questionId
+            }
+        }).then(response => {
+            console.log(response.data);
+            this.setState({ answer_input: false });
+            this.componentDidMount();
+        })
+
+    };
+
+
+
+
+    handleInput = (value) => {
+        console.log(value);
+        this.setState({ answer_string: value }, () => {
+            console.log(this.state.answer_string)
+        })
+    };
+
     render() {
+        //    console.log(this.state.question);
+        let BadgeGroup_data = [];
+        if ('topics' in this.state.question) {
+            BadgeGroup_data = this.state.question.topics;
+        }
+        let AnswerList_data = [];
+        if ('answers' in this.state.question) {
+            AnswerList_data = this.state.question.answers;
+        }
         return (
             <div>
                 <Container>
                     <ListGroup variant="flush">
                         <ListGroup.Item>
-                            <BadgeGroup data={this.state.question.topics} />
+                            <BadgeGroup data={BadgeGroup_data} />
                             <h4><b>{this.state.question.questionText}</b></h4>
                             <ButtonToolbar style={{ 'margin-left': -10 }}>
                                 <Button className="q_page_button" variant="link" onClick={() => this.setState({ answer_input: !this.state.answer_input })}>
                                     <span className="fa fa-edit"></span> Answer</Button>
-                                <Button className="q_page_button" variant="link" onClick={this.handleFollow}>
-                                    <span className="fa fa-plus-square"></span> Follow</Button>
+                                <Button className="q_page_button" variant="link" onClick={this.handleFollow} disabled={this.state.followed}>
+                                    <span className="fa fa-plus-square"></span> {this.state.followed ? 'Followed' : 'Follow'}</Button>
                             </ButtonToolbar>
                             <Collapse in={this.state.answer_input}>
                                 <Card>
                                     <Card.Header>{this.state.user_name}</Card.Header>
                                     <Card.Body>
-                                        <AnswerInput q_id={this.state.question._id} />
+                                        <AnswerInput q_id={this.state.question._id} onChange={this.handleInput} />
                                     </Card.Body>
                                     <Card.Footer className="text-muted">
-                                        <Button size="sm"> Submit</Button>
+                                        <Button size="sm" onClick={this.handleSubmitAnswer}> Submit</Button>
                                     </Card.Footer>
                                 </Card>
                             </Collapse>
                         </ListGroup.Item>
                     </ListGroup>
 
-                    <AnswerList data={this.state.question.answers} />
+                    <AnswerList data={AnswerList_data} />
                 </Container>
             </div >
         )

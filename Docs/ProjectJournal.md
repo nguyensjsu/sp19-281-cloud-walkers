@@ -57,6 +57,7 @@ After discussion on Slake group and meetup after class, we have discussed follow
 * Hongzhe Yang:
     * Match the frontend with correct request format
     * Get other JWT parts working for the other backend service
+    * Add user log information stored as login response in a new collection
 
 * David Ronca:
 	* cwmapi (Cwoura Message API) is the message store (topics, questions, answers, and comments)
@@ -110,6 +111,9 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 	* Fix CORS issue
 
 * Hongzhe Yang:
+    * Add MongoDB sharding on the database
+    * Add the user login information stored in the database
+    * Add Load Balancer in front of the application
 
 * Yu Zhao:
     * Continue the work to tune communication between Frontend and Backend
@@ -129,6 +133,9 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 	* The Kong gateway was blocking CORS, so disabled for now.  Will need to re-enable after solving the CORS issue.
 
 * User Authorization:
+    * Updated the token to contain first name and last name
+    * Updated the login process with information stored 
+    * Finish the deployment on AWS 
 
 * User Activity:    
     * Updated GET /userFollow API response json 

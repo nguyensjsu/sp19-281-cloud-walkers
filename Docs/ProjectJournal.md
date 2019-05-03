@@ -10,6 +10,7 @@ After discussion, we have decided to implement a "clone" of Quora.com.
 * Questions: Get/Add/Update questions,answers and comments
 
 #### Frontend:     ReactJS
+![Architecture](https://user-images.githubusercontent.com/25470890/57170467-e6cfbb00-6dc1-11e9-88a7-799459629284.png)
 
 ### Responsibilitis:
 

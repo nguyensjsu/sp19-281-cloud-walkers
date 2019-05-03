@@ -37,6 +37,7 @@ https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/ProjectJou
 - Frontend (ReactJS) implementation and test ([checklist](https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/Frontend/PageTest.md))
 - Scale out static Frontend server on AWS and set up Kong API Gateway for all backend microservices
 - Assist backend to set up sharded Mongo Cluster
+- Collaborate with team members to solve CORS browser preflight error
 
 3. Hongzhe Yang
 -

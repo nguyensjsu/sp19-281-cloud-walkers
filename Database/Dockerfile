@@ -1,8 +1,8 @@
 FROM golang:latest
 EXPOSE 3001
-RUN mkdir /Database
-ADD . /Database/
-WORKDIR /Database
-ENV GOPATH /Database
-RUN cd /Database ; go install Database
-CMD ["/Database/bin/LoginSystem"]
+RUN mkdir /userprofile
+ADD . /userprofile/
+WORKDIR /userprofile
+ENV GOPATH /userprofile
+RUN cd /userprofile ; go install userprofile
+CMD ["/userprofile/bin/userprofile"]

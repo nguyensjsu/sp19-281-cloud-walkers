@@ -1,8 +1,6 @@
-package handler
+package main
 
 import (
-	"../model"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -15,7 +13,7 @@ import (
 
 func (h *Handler) Signup(c echo.Context) (err error) {
 	// Bind
-	u := &model.User{ID: bson.NewObjectId()}
+	u := &User{ID: bson.NewObjectId()}
 	if err = c.Bind(u); err != nil {
 		return
 	}
@@ -37,18 +35,17 @@ func (h *Handler) Signup(c echo.Context) (err error) {
 	}
 
 	//Json
-	first_name_s := "\"first_name\""
-	last_name_s := "\"last_name\""
-	user_id_s := "\"user_id\""
-
-	responsemessage := join("{ ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, "}")
-
-	return c.JSON(http.StatusCreated, responsemessage)
+	signUpResponse := &SignUpResponse{
+		FirstName: u.FirstName,
+		LastName: u.LastName,
+		Message: "Sign up successful",
+	}
+	return c.JSON(http.StatusOK, signUpResponse)
 }
 
 func (h *Handler) Login(c echo.Context) (err error) {
 	// Bind
-	u := new(model.User)
+	u := new(User)
 	if err = c.Bind(u); err != nil {
 		return
 	}
@@ -74,6 +71,8 @@ func (h *Handler) Login(c echo.Context) (err error) {
 	// Set claims
 	claims := token.Claims.(jwt.MapClaims)
 	claims["id"] = u.ID
+	claims["firstname"] = u.FirstName
+	claims["lastname"] = u.LastName
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
 	// Generate encoded token and send it as response
@@ -81,21 +80,30 @@ func (h *Handler) Login(c echo.Context) (err error) {
 	if err != nil {
 		return err
 	}
-
 	u.Password = "" // Don't send password
 
 	//Json
-	is_aut_s := "\"is_auth\""
-	token_s := "\"token\""
-	first_name_s := "\"first_name\""
-	last_name_s := "\"last_name\""
+	//is_aut_s := "\"is_auth\""
+	//token_s := "\"token\""
+	//first_name_s := "\"first_name\""
+	//last_name_s := "\"last_name\""
 
 
-	responsemessage := join("{ ", is_aut_s," : true, ", token_s, " : ", u.Token,
-		", ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, "}")
-	fmt.Println(responsemessage)
-	return c.JSON(http.StatusOK, responsemessage)
+	//responsemessage := join("{ ", is_aut_s," : true, ", token_s, " : ", u.Token,
+	//	", ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, "}")
+	//fmt.Println(responsemessage)
+	rm := &LoginResponse{
+		FirstName: u.FirstName,
+		LastName: u.LastName,
+		Token: u.Token,
+	}
+	return c.JSON(http.StatusOK, rm)
 }
+
+
+//func (h *Handler) showRecord(c echo.Context) (err error) {
+//
+//}
 
 func userIDFromToken(c echo.Context) string {
 	user := c.Get("user").(*jwt.Token)
@@ -110,3 +118,15 @@ func join(strs ...string) string {
 	}
 	return sb.String()
 }
+
+
+
+
+
+
+
+
+
+
+
+

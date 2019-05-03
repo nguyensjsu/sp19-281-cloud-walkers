@@ -2,5 +2,28 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/codegangsta/negroni" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/dgrijalva/jwt-go" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/go-sql-driver/mysql" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/gorilla/mux" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/kr/pretty" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/kr/text" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/labstack/echo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/labstack/gommon" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/mattn/go-colorable" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/mattn/go-isatty" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/satori/go.uuid" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/streadway/amqp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/stretchr/testify" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/unrolled/render" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/github.com/valyala/fasttemplate" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/golang.org/x/crypto" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/golang.org/x/net" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/golang.org/x/sys" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/golang.org/x/text" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/gopkg.in/check.v1" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/gopkg.in/mgo.v2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/gopkg.in/tomb.v2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Database/src/gopkg.in/yaml.v2" vcs="Git" />
   </component>
 </project>

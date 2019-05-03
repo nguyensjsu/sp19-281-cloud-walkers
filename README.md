@@ -33,8 +33,10 @@ https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/ProjectJou
 -
 
 2. Yu Zhao
--
--
+- Application design and API doc 
+- Frontend (ReactJS) implementation and test ([checklist](https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/Frontend/PageTest.md))
+- Scale out static Frontend server on AWS and set up Kong API Gateway for all backend microservices
+- Assist backend to set up sharded Mongo Cluster
 
 3. Hongzhe Yang
 -

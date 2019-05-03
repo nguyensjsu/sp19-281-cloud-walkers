@@ -32,10 +32,6 @@ type (
 		LastName	string		`json:"lastname" bson:"lastname"`
 		LoginTime	time.Time	`json:"Login Time" bson:"Login Time"`
 	}
-
-	UserRecordAPI struct {
-		AllRecords	[]UserRecord `json:"User Records"`
-	}
 )
 
 

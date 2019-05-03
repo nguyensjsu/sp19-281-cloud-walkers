@@ -33,7 +33,6 @@ func (h *Handler) Signup(c echo.Context) (err error) {
 	if err = db.DB("cw_user").C("users").Insert(u); err != nil {
 		return
 	}
-
 	//Json
 	signUpResponse := &SignUpResponse{
 		FirstName: u.FirstName,
@@ -92,6 +91,25 @@ func (h *Handler) Login(c echo.Context) (err error) {
 	//responsemessage := join("{ ", is_aut_s," : true, ", token_s, " : ", u.Token,
 	//	", ", first_name_s, " : ", u.FirstName, ", ", last_name_s, " : ", u.LastName, "}")
 	//fmt.Println(responsemessage)
+
+	//db2 := h.DB.Clone()
+	//defer db2.Close()
+	//time := time.Now()
+	//urNew := new(UserRecord)
+	//if err = db2.DB("cw_user").C("UserRecord").
+	//	Find(bson.M{"FirstName": u.FirstName, "LastName": u.LastName}).One(urNew); err != nil {
+	//	if err == mgo.ErrNotFound {
+	//		*urNew = UserRecord{FirstName:u.FirstName, LastName:u.LastName, LoginTime:time, Times: 0}
+	//		if err = db2.DB("cw_user").C("UserRecord").Insert(urNew); err != nil {
+	//		}
+	//	}
+	//}
+	//
+	//selector := db2.DB("cw_user").C("UserRecord").Find(bson.M{"FirstName": urNew.FirstName, "LastName": urNew.LastName})
+	//data := bson.M{"$inc": bson.M{"Number of Login": +1,}}
+	//if err = db2.DB("cw_user").C("UserRecord").Update(selector, data); err != nil {
+	//}
+
 	rm := &LoginResponse{
 		FirstName: u.FirstName,
 		LastName: u.LastName,
@@ -101,8 +119,34 @@ func (h *Handler) Login(c echo.Context) (err error) {
 }
 
 
-//func (h *Handler) showRecord(c echo.Context) (err error) {
+//func (h *Handler) Record(c echo.Context) ([]UserRecord, err error) {
+//	// Bind
+//	u := new(User)
+//	if err = c.Bind(u); err != nil {
+//		return
+//	}
 //
+//	allRecords := []UserRecord{}
+	//ur := new(UserRecord)
+	//	//// Find user
+	//	//db := h.DB.Clone()
+	//	//defer db.Close()
+	//	//if err = db.DB("cw_user").C("users").
+	//	//	Find(bson.M{"FirstName": u.FirstName, "LastName": u.LastName}).One(ur); err != nil {
+	//	//	if err == mgo.ErrNotFound {
+	//	//		return allRecords, &echo.HTTPError{Code: http.StatusUnauthorized, Message: "invalid email or password"}
+	//	//	}
+	//	//	return allRecords, c.JSON(http.StatusCreated, u)
+	//	//}
+
+//	db := h.DB.Clone()
+//	defer db.Close()
+//	collection := db.DB("cw_user").C("UserRecord")
+//	query:= collection.Find(bson.M{"FirstName":u.FirstName, "LastName":u.LastName})
+//	if err = query.All(&allRecords); err != nil {
+//		return allRecords, nil
+//	}
+// 	return allRecords, nil
 //}
 
 func userIDFromToken(c echo.Context) string {

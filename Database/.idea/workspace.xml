@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6f4a4fd5-9635-44c8-960d-5f66f539d0cc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/userprofile/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/userprofile/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/userprofile/userhandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/userprofile/userhandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -57,7 +55,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/userprofile/userhandler.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1506">
+            <state relative-caret-position="1545">
               <caret line="103" column="13" lean-forward="true" selection-start-line="103" selection-start-column="13" selection-end-line="103" selection-end-column="13" />
               <folding>
                 <element signature="e#14#158#0" expanded="true" />
@@ -94,28 +92,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Database" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Database" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Database" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Database" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Database" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Database" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="userprofile" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
+      <pane id="ProjectPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -163,15 +140,14 @@
     </recent_temporary>
   </component>
   <component name="ToolWindowManager">
-    <frame x="244" y="23" width="1408" height="948" extended-state="0" />
-    <editor active="true" />
+    <frame x="310" y="23" width="1408" height="948" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2532943" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2532943" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.34228972" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.34228972" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -230,7 +206,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/userprofile/userhandler.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1506">
+        <state relative-caret-position="1545">
           <caret line="103" column="13" lean-forward="true" selection-start-line="103" selection-start-column="13" selection-end-line="103" selection-end-column="13" />
           <folding>
             <element signature="e#14#158#0" expanded="true" />

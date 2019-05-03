@@ -130,6 +130,9 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 
 * User Authorization:
 
-* User Activity:
+* User Activity:    
+    * Updated GET /userFollow API response json 
+    * Added MongoDB two shards for user activity database
+    * Fixed small errors for docker run and other frontend needs 
 
 * Frontend (ReactJS):

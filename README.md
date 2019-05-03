@@ -1,5 +1,6 @@
 # Team Cloudwalkers
 # Architecture
+![Architecture](https://user-images.githubusercontent.com/25470890/57170467-e6cfbb00-6dc1-11e9-88a7-799459629284.png)
 # Team Members
 * [David Ronca](https://github.com/)
 * [Yu Zhao](https://github.com/yarns-backyard)

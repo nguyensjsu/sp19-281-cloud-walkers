@@ -18,16 +18,27 @@ func ToInt(s string) (int){
 	return i
 }
 
-func depth(pp parseInfo)(int){
-	d, ex := pp.queryParams["depth"]
+func booleanVal(pp parseInfo, paramName string, defaultVal bool)(bool){
+	d, ex := pp.queryParams[paramName]
+
+	if(ex == true){
+		return d[0] == "true"
+	}
+	return defaultVal;
+
+}
+
+func intVal(pp parseInfo, paramName string, defaultVal int)(int){
+	d, ex := pp.queryParams[paramName]
 
 	if(ex == true){
 		ret := ToInt(d[0])
 		if(ret < 0){
 			ret = 10000
 		}
+		return ret
 	}
-	return 0;
+	return defaultVal;
 }
 
 func parseUrl(url *url.URL) (parseInfo){

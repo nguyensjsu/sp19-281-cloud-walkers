@@ -203,7 +203,7 @@ chmod +x launch_router.sh
 ```
 
 ## 5. Add Shard to cluster
-SSH into router instance, connect to mongo shell, `mongo --port 27017`
+SSH into router instance, connect to mongos shell, `mongo --port 27017`
 
 ```
 sh.status()

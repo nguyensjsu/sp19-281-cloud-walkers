@@ -16,7 +16,7 @@ After discussion, we have decided to implement a "clone" of Quora.com.
 * Yu Zhao: Frontend design and implementation
 * Yueqiao Zhang: User Activities API
 * Hongzhe Yang: User Authentication API
-* David Ronca: Questions API
+* David Ronca: Messaging API (CWMAPI)
 
 ## Week Apr. 14 - Apr. 21
 
@@ -34,6 +34,10 @@ After discussion on Slake group and meetup after class, we have discussed follow
 * Quesions:
 
 * User Activities:
+    * Set up mongoDB for user follow activities
+    * Set up Docker file to build go API
+    * /home, /userFollow API ready
+
 * User Authentication: 
     * Set up the JWT for user 
     * Set up the MongoDB for user 
@@ -46,6 +50,9 @@ After discussion on Slake group and meetup after class, we have discussed follow
     * Test all individual microservices through frontend
 
 * Yueqiao Zhang:
+    * Work with front end and message store service for communication 
+    * Research about MGO adaptor for find, remove and fetch query
+    * Make JWT worked in user activities API
 
 * Hongzhe Yang:
     * Match the frontend with correct request format
@@ -75,12 +82,19 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 	* Added query for questions by topic.
 	* Moved from Docker Mongo, to 3-node cluser.
 	* Added Kong gateway.
+	* Added support for JWT user token authentication
+	* Added topic query option to exclude followed topics.
  
 * User Authorization:
     * Fixed CORS error 
     * Added Mongo Cluster
     * Moved to AWS with Load Balancer
+
 * User Activity:
+    * Finished all other user activity backend APIs
+    * Enable to get userId from JWT token
+    * Fixed CORS error
+    * Uploaded local files to AWS EC2 instance
 
 * Frontend (ReactJS):
 	* Finished all frontend main pages (`/Home`,`/topics/{topic_name}`, `/questions/{question_id}`, `/login`,`/signup`) and all components included in thest pages. 
@@ -90,6 +104,10 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 ### To Do List:
 
 * David Ronca:
+	* Shard MongoDB based on _id
+	* Add GET userfeed api.
+	* Add load balancer
+	* Fix CORS issue
 
 * Hongzhe Yang:
 
@@ -99,8 +117,19 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
     * Setup static server for Frontend and scale it up
 
 * Yueqiao Zhang:
+    * Test backend between Frontend and Backend with JWT token
+    * Update user activites API with Frontend needed
 
 ## Week Apr.29 - May. 4 
 
 ### Progress:
 
+* CWMAPI (David Ronca):
+	* Added new API GET /userfeed, which will return questions that have topic tags that the user is following.
+	* The Kong gateway was blocking CORS, so disabled for now.  Will need to re-enable after solving the CORS issue.
+
+* User Authorization:
+
+* User Activity:
+
+* Frontend (ReactJS):

@@ -179,7 +179,7 @@ class Home extends Component {
                     show={this.state.show_add}
                     onHide={modal_Q_Close}
                     user_name={this.state.user_name}
-                    after_add={this.after_add}
+                    afteradd={this.afterAdd}
 
                 />
                 {/*}

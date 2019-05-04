@@ -1,12 +1,13 @@
-openapi: 3.0.1
+openapi: 3.0.0
 info:
-  title: CWMAPI
-  description: Post/read questions, answers, and comments
-  version: 1.0.0
+  version: "1"
+  title: 'Cwoura MAPI Protocol'
+  description: ''
+# Added by API Auto Mocking Plugin
 servers:
-- url: http://34.208.28.95:3000/msgstore/v1
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/jonathannah/cwmapi/1
 paths:
-                  
 
   /topics:
     get:
@@ -17,6 +18,12 @@ paths:
         required: true
         schema:
           type: string
+      - name: excludeFollowed
+        in: query
+        description: if present, followed topics for user will be exculded from the search.  If value is not specified, defaults to true.
+        required: false
+        schema:
+          type: boolean
         
       summary: All the topics in the system
       
@@ -154,7 +161,7 @@ paths:
       description: Updated question.
       operationId: putQuestionUpdate
       requestBody:
-        description: Quesdtion Update 
+        description: Question Update 
         required: true
         content:
           application/json:
@@ -181,13 +188,48 @@ paths:
               schema:
                 type: string  
         404:
-          description: commentId is not found
+          description: question is not found
           content:
             text/plain:
               schema:
                 type: string
-
-
+                
+    delete:
+      summary: Delete one or more questions
+      parameters: 
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
+      - name: questionId
+        in: query
+        description: A question _id as a filter for questions.  Multiple questionIds will all be deleted
+        required: false
+        schema:
+          type: string
+      operationId: deleteQuestion
+      responses:
+        200:
+          description: Update has been applied
+          content:
+            text/plain:
+              schema:
+                type: string 
+        401: 
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
+        404:
+          description: questionId is not found
+          content:
+            text/plain:
+              schema:
+                type: string
+ 
 
   /answers:
     get:
@@ -535,6 +577,28 @@ paths:
             text/plain:
               schema:
                 type: string
+
+  /flushcache:
+    put:
+      summary: clear any caching for specific user.  Sent anytime a user makes a change, such as following/unfollowing a topic 
+      parameters:
+      - name: Authorization
+        in: path
+        description: JWT token containing the user ID.  
+        required: true
+        schema:
+          type: string
+      operationId: putUpdateCache
+
+      responses:
+        204:
+          description: cache has been cleared
+        401:
+          description: Invalid JWT token
+          content:
+            text/plain:
+              schema:
+                type: string  
 
 components:
   schemas:

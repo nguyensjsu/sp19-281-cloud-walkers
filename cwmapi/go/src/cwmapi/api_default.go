@@ -80,11 +80,11 @@ func getUserTokenFromRequest(w http.ResponseWriter, r *http.Request)(string, boo
 }
 
 func Ping(w http.ResponseWriter, r *http.Request) {
-	_, ok := getUserTokenFromRequest(w, r)
+	/*_, ok := getUserTokenFromRequest(w, r)
 
 	if(!ok){
 		return
-	}
+	}*/
 
 	//fmt.Fprintf(w, "ping!")
 	ping();
@@ -94,12 +94,36 @@ func Ping(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "pong!\n")
 }
 
+func getUserFollowsTopics(w http.ResponseWriter, r *http.Request) ([]string, bool) {
+
+	userId, ok := getUserTokenFromRequest(w, r)
+
+	if(!ok){
+		return []string{}, false
+	}
+
+	uToken, ok := getUserToken(w, r)
+	if(!ok){
+		return []string{}, false
+	}
+
+	followedTopics, err := getUserFollows(userId, uToken)
+	if(err != nil){
+		http.Error(w, err.Error(), 500)
+		return []string{}, false
+	}
+
+	log.Println(followedTopics)
+	return followedTopics, true
+
+}
+
 // GetTags - All the tags in the system
 func GetTopics(w http.ResponseWriter, r *http.Request) {
 
 	// is authorized user?
 
-	userId, success := getUserTokenFromRequest(w, r)
+	_, success := getUserTokenFromRequest(w, r)
 
 	if(!success){
 		return;
@@ -114,13 +138,13 @@ func GetTopics(w http.ResponseWriter, r *http.Request) {
 	if(needFavs ){
 		// need to get favorites
 
-		userToken, _ := getUserToken(w, r)
-		var err error
-		favorites, err = getUserFollows(userId, userToken)
-		if(err != nil){
-			http.Error(w, err.Error(), 500)
+		var ok bool
+		favorites, ok = getUserFollowsTopics(w, r)
+
+		if(!ok){
 			return
 		}
+
 		filterMode = filterModeExclude
 		log.Println("favorites: ", favorites)
 	}
@@ -147,12 +171,36 @@ func GetTopics(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// GetUserFeed - Gets questions for user based on followed topics
+func GetUserFeed(w http.ResponseWriter, r *http.Request) {
+
+	favorites, ok := getUserFollowsTopics(w, r)
+	if(!ok){
+		return;
+	}
+	var questions = []Question{}
+
+	if(len(favorites) > 0) {
+		questions = getQuestions([]string{}, favorites, intVal(parseUrl(r.URL), "depth", 0), nil, true)
+	}
+
+	jsonVal, err := json.MarshalIndent(questions, "", "   ");
+
+	if(err != nil){
+		log.Fatal(err);
+	}
+	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonVal);
+}
+
 func GetQuestions(w http.ResponseWriter, r *http.Request) {
 
 	// is authorized user?
-	_, success := getUserTokenFromRequest(w, r)
+	_, ok := getUserTokenFromRequest(w, r)
 
-	if(!success){
+	if(!ok){
 		return;
 	}
 
@@ -305,8 +353,28 @@ func PutQuestionUpdate(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// DeleteQuestion - Delete one or more questions
+func DeleteQuestion(w http.ResponseWriter, r *http.Request) {
+	_, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
+
+	pp := parseUrl(r.URL)
+
+	deleteQuestions(queryVals(pp.queryParams, "questionId"))
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
+
 // GetAnswers - Gets all answers for a question
 func GetAnswers(w http.ResponseWriter, r *http.Request) {
+	_, success := getUserTokenFromRequest(w, r)
+
+	if(!success){
+		return;
+	}
 	pp := parseUrl(r.URL)
 
 	answers := getAnswers(

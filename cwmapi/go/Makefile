@@ -13,11 +13,12 @@ build:
 
 run:
 	docker run -d  --name cwmapi -p 3000:3000 \
-       	 	-e "MONGO1=52.10.186.169" \
-        	-e "MONGO2=54.148.30.107" \
-        	-e "MONGO3=54.203.107.100" \
+       	 	-e "MONGO1=10.0.3.78" \
+        	-e "MONGO2=10.0.3.218" \
+        	-e "MONGO3=10.0.3.224" \
 		-e "MONGO_ADMIN=admin" \
 		-e "MONGO_PASSWORD=query" \
+		-e "USER_ACTIVITY_PROXY=http://10.0.2.43:3000" \
 		cwmapi-app
 
 test-ping:

@@ -95,6 +95,12 @@ var routes = Routes{
 		"/msgstore/v1/questions",
 		PutQuestionUpdate,
 	},
+	{
+		"DeleteQuestion",
+		strings.ToUpper("Delete"),
+		"/msgstore/v1/questions",
+		DeleteQuestion,
+	},
 
 	{
 		"GetAnswers",
@@ -150,6 +156,13 @@ var routes = Routes{
 		strings.ToUpper("Put"),
 		"/msgstore/v1/flushcache",
 		FlushCache,
+	},
+
+	{
+		"GetUserFeed",
+		strings.ToUpper("Get"),
+		"/msgstore/v1/userfeed",
+		GetUserFeed,
 	},
 
 }

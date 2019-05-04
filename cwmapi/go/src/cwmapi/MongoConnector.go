@@ -40,14 +40,24 @@ type Pagination struct{
 	limit int
 }
 
+var local = false
+
 var mgoSession *mgo.Session
 
 func DbInit()(error){
-	server1 = os.Getenv("MONGO1")
-	server2 = os.Getenv("MONGO2")
-	server3 = os.Getenv("MONGO3")
-	db_user = os.Getenv("MONGO_ADMIN")
-	db_pwd = os.Getenv("MONGO_PASSWORD")
+
+	local = os.Getenv("USELOCAL") == "true"
+
+	if(local){
+		server1 = mongodb_server
+	}else {
+
+		server1 = os.Getenv("MONGO1")
+		server2 = os.Getenv("MONGO2")
+		server3 = os.Getenv("MONGO3")
+		db_user = os.Getenv("MONGO_ADMIN")
+		db_pwd = os.Getenv("MONGO_PASSWORD")
+	}
 
 	if(len(server1) == 0 && len(server2) == 0 && len(server3) == 0){
 		server1 = mongodb_server
@@ -232,7 +242,7 @@ func getQuestions(questionFilter [] string, topicFilter []string, nestingLevel i
 		for i := 0; i < len(questionRecs); i++ {
 			answers := getAnswers([]string{questionRecs[i].Id.Hex()}, []string{}, nestingLevel - 1)
 
-			if(topAnswer){
+			if(topAnswer && len(answers) > 1){
 				// if we had a ranking system, would give highest ranked answer.  Since that is beyond the
 				// scope of this project, just select one answer at random
 				idx := rand.Intn(len(answers) - 1)
@@ -267,7 +277,9 @@ func postQuestion(newQ NewQuestion, userId string)(*Question){
 	}
 
 	for _, topic := range question.Topics{
-		topicChan <- topic
+		if(len(topic.Label) > 0) {
+			topicChan <- topic
+		}
 	}
 	return &question
 }
@@ -284,6 +296,20 @@ func putQuestionUpdate(question Question){
 	c := session.DB(mongodb_database).C(collection_questions)
 
 	err = c.Update(bson.M{"_id" : question.Id}, question )
+	if err != nil {
+		panic(err)
+	}
+}
+
+func deleteQuestions(questionFilter[] string){
+	session := mgoSession.Copy()
+
+	questionQuery := getOr_id(questionFilter, "_id");
+
+	session.SetMode(mgo.Monotonic, true)
+	c := session.DB(mongodb_database).C(collection_questions)
+
+	err := c.Remove(questionQuery)
 	if err != nil {
 		panic(err)
 	}
@@ -515,10 +541,14 @@ func getTopics(labelFilters []string, filterMode string, nestingLevel int ) []To
 		}
 
 	default:
-		if (len(labelFilters) == 1) {
+		switch len(labelFilters) {
+		case 0:
+			break
+
+		case 1:
 			query = bson.M{"label": labelFilters[0]}
 
-		} else {
+		default:
 			orQuery := []bson.M{}
 
 			for _, label := range labelFilters {

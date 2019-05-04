@@ -14,6 +14,16 @@ import (
 
 var userActivityServerAddr = "http://34.222.10.95:3000"
 
+
+func ufInit(){
+	cwpAddr := os.Getenv("USER_ACTIVITY_PROXY")
+	if(len(cwpAddr) > 0){
+		// build proxy
+		userActivityServerAddr = cwpAddr + "/cwmapiproxy/v1"
+		log.Println("Proxy active at: " + userActivityServerAddr)
+	}
+}
+
 var userFollowsCache, _ = bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
 
 
@@ -77,7 +87,7 @@ func getUserFollows(userId string, userToken string) ([]string, error){
 		ret = append(ret, topic.Label)
 	}
 
-
+/*
 	if(userFollowsCache != nil){
 		buffer := &bytes.Buffer{}
 
@@ -87,6 +97,6 @@ func getUserFollows(userId string, userToken string) ([]string, error){
 
 	}
 
-
+*/
 	return ret, nil
 }

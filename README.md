@@ -45,7 +45,7 @@ https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/ProjectJou
 - Built cwmapi, the messaging service for  CWORA.  Messages are questions, answers and comments.
 - The cwmapi API is defined using OpenAPI.  API def is [here](https://app.swaggerhub.com/apis-docs/jonathannah/cwmapi/1).
 - Established the data model for CWORA messages.
-- SWorked on documentation and presentation
+- Worked on documentation and presentation
 
 2. Yu Zhao
 - Application design and [API Doc](https://docs.google.com/spreadsheets/d/1M4RdDfX2pyHF5RVmjj8jFG7bgsPhhCXzO-LWUfgFXt8/edit?usp=sharing )

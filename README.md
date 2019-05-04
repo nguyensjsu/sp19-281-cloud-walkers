@@ -1,6 +1,4 @@
 # Team Cloudwalkers
-# Architecture
-![Architecture](https://user-images.githubusercontent.com/25470890/57170467-e6cfbb00-6dc1-11e9-88a7-799459629284.png)
 # Team Members
 * [David Ronca](https://github.com/)
 * [Yu Zhao](https://github.com/yarns-backyard)
@@ -8,10 +6,17 @@
   
 * [Hongzhe Yang](https://github.com/)
 * [Janet(Yueqiao)Zhang](https://github.com/treetree0211)
-
-# Project Topic
-The project is a "clone" of Quora(https://www.quora.com) saas platform.
+# Project Topic - CWORA
+The CWORA project is a "clone" of Quora(https://www.quora.com) saas platform.
 ![Screen Shot 2019-05-03 at 5 39 53 PM](https://user-images.githubusercontent.com/25470890/57171836-4a131a80-6dcd-11e9-9aa0-618faaed94eb.png)
+# Architecture
+![Architecture](https://user-images.githubusercontent.com/25470890/57170467-e6cfbb00-6dc1-11e9-88a7-799459629284.png)
+
+#Data Model
+
+![](./Docs/images/CWMAPIDataModel.png)
+#User Feed Sequence
+![](./Docs/images/CWORAGetUserFeed.png)
 
 ## Project Github Repo Link
 https://github.com/nguyensjsu/sp19-281-cloud-walkers
@@ -26,14 +31,14 @@ https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/ProjectJou
 - Docs has all project journal and reasearch resources (Contributes to All)
 - Database has all User Authentication APIs go source code (Contributes to Hongzhe Yang)
 - cwmapi has all Topics,Questions and Answers APIs go source code (Contributes to David Ronca)
-- CWUORA-userDashboard has all User Activity APIs go source code (Contributes to Yueqiao Zhang)
+- CWORA-userDashboard has all User Activity APIs go source code (Contributes to Yueqiao Zhang)
 - frontend has all frontend React source code (Contributes to Yu Zhao)
 
 ## Team member contributions:
 1. David Ronca
-- Built cwmapi, the messaging service for  CWoura.  Messages are questions, answers and comments.
+- Built cwmapi, the messaging service for  CWORA.  Messages are questions, answers and comments.
 - The cwmapi API is defined using OpenAPI.  API def is [here](https://app.swaggerhub.com/apis-docs/jonathannah/cwmapi/1).
-- Established the data model for CWoura messages.
+- Established the data model for CWORA messages.
 - SWorked on documentation and presentation
 
 2. Yu Zhao

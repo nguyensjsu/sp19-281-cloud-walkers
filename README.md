@@ -1,5 +1,6 @@
 # Team Cloudwalkers
 # Architecture
+![Architecture](https://user-images.githubusercontent.com/25470890/57170467-e6cfbb00-6dc1-11e9-88a7-799459629284.png)
 # Team Members
 * [David Ronca](https://github.com/)
 * [Yu Zhao](https://github.com/yarns-backyard)
@@ -29,8 +30,10 @@ https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/ProjectJou
 
 ## Team member contributions:
 1. David Ronca
--
--
+- Built cwmapi, the messaging service for  CWoura.  Messages are questions, answers and comments.
+- The cwmapi API is defined using OpenAPI.  API def is [here](https://app.swaggerhub.com/apis-docs/jonathannah/cwmapi/1).
+- Established the data model for CWoura messages.
+- SWorked on documentation and presentation
 
 2. Yu Zhao
 - Application design and [API Doc](https://docs.google.com/spreadsheets/d/1M4RdDfX2pyHF5RVmjj8jFG7bgsPhhCXzO-LWUfgFXt8/edit?usp=sharing )
@@ -44,5 +47,12 @@ https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/ProjectJou
 -
 
 4. Yueqiao Zhang
+- Implemented User Actitives APIs including /home (Deprecated), POST /userFollow, GET /userFollow, GET /userFeed(Deprecated),
+  POST /userPost in golang and using dockerfile to run the APIs 
+- Implemented MongoDB two shards to store user activities data (used one private subnet instance for config, one private subnet instance for shard1, another one for shard2 and one mongos router)
+- Tested with frontend and fixed issues according to frontend needs
+- Contributed to JWT Token server decode and CORS issues fixed
+- Contributed to project journal and other team docs
+  
 
 

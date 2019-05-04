@@ -12,12 +12,15 @@ The CWORA project is a "clone" of Quora(https://www.quora.com) saas platform.
 # Architecture
 ![Architecture](https://user-images.githubusercontent.com/25470890/57170467-e6cfbb00-6dc1-11e9-88a7-799459629284.png)
 
-#Data Model
+
+# Data Model
 
 
 ![](./Docs/images/CWMAPIDataModel.png)
 
-#User Feed Sequence
+
+
+# User Feed Sequence
 
 ![](./Docs/images/CWORAGetUserFeed.png)
 

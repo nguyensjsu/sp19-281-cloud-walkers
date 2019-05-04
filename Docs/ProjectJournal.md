@@ -127,6 +127,8 @@ By import `cors` package in Go backend, now we are able to pass `Authorization` 
 
 ## Week Apr.29 - May. 4 
 
+![](./images/CWORAGetUserFeed.png)
+
 ### Progress:
 
 * CWMAPI (David Ronca):

@@ -50,15 +50,15 @@ func main() {
 	}))
 
 	// Database connection
-	db, err := mgo.Dial("127.0.0.1:27017")
+	db, err := mgo.Dial("54.201.232.46:27017")
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
 
 	// Create indices
 	if err = db.Copy().DB("cw_user").C("users").EnsureIndex(mgo.Index{
-		Key:    []string{"email"},
-		Unique: true,
+		Key:    []string{"_id"},
+		//Unique: true,
 	}); err != nil {
 		log.Fatal(err)
 	}

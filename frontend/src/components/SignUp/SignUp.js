@@ -60,7 +60,7 @@ class SignUp extends Component {
             axios.post(user_auth_apis + '/signup', data)
                 .then(response => {
                     console.log("Status Code : ", response.status);
-                    if (response.status === 201) {
+                    if (response.status === 200) {
                         //cookie.save('userId', response.data.user_id, { path: '/', expires: "", maxAge: 1000, httpOnly: false });
                         //cookie.save('role', response.data.role, { path: '/', expires: "", maxAge: 1000, httpOnly: false });
                         //                   const cookies = new Cookies();

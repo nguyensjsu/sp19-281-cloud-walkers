@@ -11,6 +11,7 @@
 
 # Project Topic
 The project is a "clone" of Quora(https://www.quora.com) saas platform.
+![Screen Shot 2019-05-03 at 5 39 53 PM](https://user-images.githubusercontent.com/25470890/57171836-4a131a80-6dcd-11e9-9aa0-618faaed94eb.png)
 
 ## Project Github Repo Link
 https://github.com/nguyensjsu/sp19-281-cloud-walkers

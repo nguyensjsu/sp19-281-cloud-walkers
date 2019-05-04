@@ -52,8 +52,12 @@ https://github.com/nguyensjsu/sp19-281-cloud-walkers/blob/master/Docs/ProjectJou
 - Collaborate with team members to solve CORS browser preflight error
 
 3. Hongzhe Yang
--
--
+- User database authentication implementation
+- JWT usage 
+- Login/Signup API implmented in go
+- User login information track in user database
+- Mongo sharding on AWS 
+- Architecture graph and other docs in team drives
 
 4. Yueqiao Zhang
 - Implemented User Actitives APIs including /home (Deprecated), POST /userFollow, GET /userFollow, GET /userFeed(Deprecated),

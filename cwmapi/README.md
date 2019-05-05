@@ -1,5 +1,5 @@
-#CWMAPI
-##Overview
+# CWMAPI
+## Overview
 CWMapi is the CWORA Message service.  It provides scalable and stateless access to the CWORA message data.  The current implentation is using MongoDB, but the service and API has been modeled such that it would be easy to move to a different NOSQL store such as Cassandra or Riak.
 
 ## CWORA Data Model

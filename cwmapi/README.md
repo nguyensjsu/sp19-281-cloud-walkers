@@ -9,14 +9,14 @@ The cwmapi data model maps cleany to CWORA.  There is a Question table, an Answe
 
 ![](./images/CWMAPIDataModel.png)
 
-##cwmapi API
+## cwmapi API
 The cwmapi API was built using OpenIO 3.0, which provides for both always current and upto date [online documentation](https://app.swaggerhub.com/apis-docs/jonathannah/cwmapi/1), and code stubs for both client and server.
 
-##cwmapi Architecture
+## cwmapi Architecture
 ###Database
 cwmapi was built with MongoDB as the NoSQL data engine.  However, the API is separated from the data model so that it will be possible to move to a different NoSQL engine such as Cassandra in the future.  After considering some of the queries needed to run CWORA, it is believed that MongoDB will not scale suitably.  Thus, it would be necessary to move to Cassandra or some other AP database to achieve high scale.
 
-###Major Components
+### Major Components
 cwmapi has 5 moajor components: API, Database Connector, User Follows Connector, User Activity Notifications, and a User Follows Connector Proxy and cache service.  These are shown in the image and discussed further below.
 
 ![](./images/CWMapiArchitecture.png)
